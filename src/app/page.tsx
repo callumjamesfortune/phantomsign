@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { DocumentDuplicateIcon } from '@heroicons/react/outline'; // Ensure you have Heroicons installed
+import { DocumentDuplicateIcon, OfficeBuildingIcon } from '@heroicons/react/outline'; // Ensure you have Heroicons installed
 
 const COUNTDOWN_TIME = 120; // Countdown time in seconds (e.g., 120 seconds for 2 minutes)
 
@@ -60,7 +60,10 @@ export default function Home() {
         if (data.link) {
           displayContent = (
             <div className='flex mt-8 gap-4 items-end'>
-              <span className='px-4 py-2 rounded-lg bg-gray-100 text-center font-bold self-end'>{data.company || 'No company data available'}</span>
+              <div className='flex items-center gap-2'>
+                <OfficeBuildingIcon className="w-5 h-5" />
+                <span className='px-4 py-2 rounded-lg bg-gray-100 text-center font-bold self-end'>{data.company || 'No company data available'}</span>
+              </div>
               <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg self-end" onClick={() => window.open(data.link, "_blank")}>
                 Verify Link
               </button>
@@ -69,7 +72,10 @@ export default function Home() {
         } else if (data.code) {
           displayContent = (
             <div className='flex mt-8 gap-4 items-end'>
-              <span className='px-4 py-2 rounded-lg bg-gray-100 text-center font-bold self-end'>{data.company || 'No company data available'}</span>
+              <div className='flex items-center gap-2'>
+                <OfficeBuildingIcon className="w-5 h-5" />
+                <span className='px-4 py-2 rounded-lg bg-gray-100 text-center font-bold self-end'>{data.company || 'No company data available'}</span>
+              </div>
               <div onClick={() => navigator.clipboard.writeText(data.code)} className="relative px-4 py-2 border rounded-lg bg-gray-100 hover:bg-gray-300 hover:scale-[1.05] duration-75 cursor-pointer self-end">
                 {data.code}
                 <div className='p-1 rounded-lg bg-gray-100 text-gray-600 absolute top-0 right-0 translate-y-[-50%] translate-x-[50%]'>
