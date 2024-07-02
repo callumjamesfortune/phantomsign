@@ -25,12 +25,12 @@ class TempEmailService {
 
     try {
       const response = await axios.post(
-        `https://api.mailslurp.com/inboxes?emailAddress=${emailId}@mailslurp.net`,
+        `https://api.mailslurp.com/inboxes?emailAddress=${emailId}@seefortune.co.uk`,
         {},
         { headers: { 'x-api-key': this.apiKey } }
       );
 
-      console.log("Response: " + JSON.stringify(response.data));
+      console.log("MAINRES: " + JSON.stringify(response.data));
 
       // Extract and return the inbox ID
       const inboxId = response.data.id;
