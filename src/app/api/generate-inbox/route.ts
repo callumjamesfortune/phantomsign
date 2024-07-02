@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import TempEmailService from 'src/lib/tempEmailService';
+import TempEmailService from 'src/lib/temp-email-service';
 
 const apiKey = process.env.MAILSLURP_API_KEY as string;
 const tempEmailService = new TempEmailService(apiKey);

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ClipboardIcon } from '@heroicons/react/outline'; // Ensure you have Heroicons installed
+import { DocumentDuplicateIcon } from '@heroicons/react/outline'; // Ensure you have Heroicons installed
 
 export default function Home() {
   const [email, setEmail] = useState('');
@@ -33,18 +33,26 @@ export default function Home() {
         let displayContent;
         if (data.link) {
           displayContent = (
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4" onClick={() => window.open(data.link, "_blank")}>
-              Verify Link
-            </button>
+            <div className='flex mt-8 gap-4 items-end'>
+              <span className='px-4 py-2 rounded-lg bg-gray-100 text-center font-bold self-end'>{data.company}</span>
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg self-end" onClick={() => window.open(data.link, "_blank")}>
+                Verify Link
+              </button>
+            </div>
           );
         } else {
           displayContent = (
-            <div className="relative mt-4 px-4 py-2 border rounded-lg bg-gray-100 cursor-pointer text-center">
-              {data.code}
-              {/* <ClipboardIcon
-                className="h-5 w-5 absolute top-0 right-0 translate-y-[-50%] translate-x-[50%] cursor-pointer"
-                onClick={() => navigator.clipboard.writeText(data.code)}
-              /> */}
+            <div className='flex mt-8 gap-4 items-end'>
+              <span className='px-4 py-2 rounded-lg bg-gray-100 text-center font-bold self-end'>{data.company}</span>
+              <div onClick={() => navigator.clipboard.writeText(data.code)} className="relative px-4 py-2 border rounded-lg bg-gray-100 hover:bg-gray-300 hover:scale-[1.05] duration-75 cursor-pointer self-end">
+                {data.code}
+                <div className='p-1 rounded-lg bg-gray-100 text-gray-600 absolute top-0 right-0 translate-y-[-50%] translate-x-[50%]'>
+                  <DocumentDuplicateIcon
+                    className="w-5 h-5 cursor-pointer"
+                    onClick={() => navigator.clipboard.writeText(data.code)}
+                  />
+                </div>
+              </div>
             </div>
           );
         }
@@ -67,7 +75,7 @@ export default function Home() {
 
       <div className="relative flex flex-col flex-grow items-center bg-gray-200 pt-[100px]">
         <button
-          className="absolute bg-blue-500 hover:bg-blue-700 text-white text-[1.5em] font-bold py-2 px-4 rounded flex items-center justify-center"
+          className="absolute bg-blue-500 hover:bg-blue-700 text-white text-[1.5em] font-bold py-2 px-4 rounded-lg flex items-center justify-center"
           style={{ top: '0', transform: 'translateY(-50%)' }}
           onClick={generateEmail}
           disabled={loading}
@@ -77,6 +85,8 @@ export default function Home() {
               <svg className="animate-spin h-5 w-5 mr-3 border-4 border-t-4 border-gray-200 border-t-white rounded-full" viewBox="0 0 24 24"></svg>
               Generating...
             </>
+          ) : email ? (
+            'Regenerate Email'
           ) : (
             'Generate Email'
           )}
@@ -85,12 +95,14 @@ export default function Home() {
         {email && (
           <div className='flex flex-col mt-8'>
             <h2 className='text-center font-bold'>Email Address</h2>
-            <div className="relative mt-4 px-4 py-2 border rounded-lg bg-gray-100 cursor-pointer">
+            <div onClick={() => navigator.clipboard.writeText(email)} className="relative mt-4 px-4 py-2 border rounded-lg bg-gray-100 hover:bg-gray-300 hover:scale-[1.05] duration-75 cursor-pointer">
               {email}
-              <ClipboardIcon
-                className="h-5 w-5 absolute top-2 right-2 cursor-pointer"
-                onClick={() => navigator.clipboard.writeText(email)}
-              />
+              <div className='p-1 rounded-lg bg-gray-100 text-gray-600 absolute top-0 right-0 translate-y-[-50%] translate-x-[50%]'>
+                <DocumentDuplicateIcon
+                  className="w-5 h-5 cursor-pointer"
+                  onClick={() => navigator.clipboard.writeText(email)}
+                />
+              </div>
             </div>
           </div>
         )}
