@@ -25,7 +25,7 @@ class TempEmailService {
 
     try {
       const response = await axios.post(
-        `https://api.mailslurp.com/inboxes?emailAddress=${emailId}@seefortune.co.uk`,
+        `https://api.mailslurp.com/inboxes?emailAddress=${emailId}@seefortune.co.uk&expiresIn=600000`, //10 mins expiry
         {},
         { headers: { 'x-api-key': this.apiKey } }
       );

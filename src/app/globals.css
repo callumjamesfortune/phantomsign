@@ -27,10 +27,10 @@
     background-image: linear-gradient(
       110deg,
       #3b82f6 20%,
-      #2563eb 40%,
+      #8963e2 40%,
       #3b82f6 60%
     );
-    animation: shimmer 6s linear infinite;
+    animation: shimmer 15s linear infinite;
     color: white;
     text-align: center;
     font-weight: bold;
@@ -39,5 +39,9 @@
   .shimmery-button:disabled {
     background: #3b82f6;
     animation: none;
+  }
+
+  .simple-shadow {
+    box-shadow: 0 0 9px #767676;
   }
   

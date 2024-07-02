@@ -79,6 +79,7 @@ async function pollForEmail(inboxId: string, timeout: number, interval: number) 
     }
 
     console.log('Polling timed out without finding an email.');
+    await tempEmailService.deleteInbox(inboxId);
     return null;
 }
 
