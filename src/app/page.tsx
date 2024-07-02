@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { ClipboardIcon } from '@heroicons/react/outline'; // Ensure you have Heroicons installed
 
 export default function Home() {
   const [email, setEmail] = useState('');
@@ -19,6 +20,7 @@ export default function Home() {
       pollForVerificationData(data.inboxId);
     } catch (error: any) {
       setVerificationData(`Error: ${error.message}`);
+      setLoading(false);
     }
   };
 
@@ -31,12 +33,20 @@ export default function Home() {
         let displayContent;
         if (data.link) {
           displayContent = (
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => window.open(data.link, "_blank")}>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4" onClick={() => window.open(data.link, "_blank")}>
               Verify Link
             </button>
           );
         } else {
-          displayContent = `Verification Code: ${data.code}`;
+          displayContent = (
+            <div className="relative mt-4 px-4 py-2 border rounded-lg bg-gray-100 cursor-pointer text-center">
+              {data.code}
+              {/* <ClipboardIcon
+                className="h-5 w-5 absolute top-0 right-0 translate-y-[-50%] translate-x-[50%] cursor-pointer"
+                onClick={() => navigator.clipboard.writeText(data.code)}
+              /> */}
+            </div>
+          );
         }
         setVerificationData(displayContent);
         setLoading(false);
@@ -50,24 +60,43 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1 className="text-3xl font-bold mb-4">Email Verification</h1>
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        onClick={generateEmail}
-        disabled={loading}
-      >
-        {loading ? 'Generating Email...' : 'Generate Email'}
-      </button>
-      {email && (
-        <div
-          className="mt-4 p-2 border rounded bg-white cursor-pointer"
-          onClick={() => navigator.clipboard.writeText(email)}
+    <div className="relative flex flex-col min-h-screen">
+      <div className='w-screen h-[300px] bg-white grid place-content-center'>
+        <h1 className='text-green-600 text-[4em] font-bold'>Phantom<span className='text-gray-600'>Sign</span></h1>
+      </div>
+
+      <div className="relative flex flex-col flex-grow items-center bg-gray-200 pt-[100px]">
+        <button
+          className="absolute bg-blue-500 hover:bg-blue-700 text-white text-[1.5em] font-bold py-2 px-4 rounded flex items-center justify-center"
+          style={{ top: '0', transform: 'translateY(-50%)' }}
+          onClick={generateEmail}
+          disabled={loading}
         >
-          Email Address: {email}
-        </div>
-      )}
-      {verificationData && <div className="mt-4">{verificationData}</div>}
+          {loading ? (
+            <>
+              <svg className="animate-spin h-5 w-5 mr-3 border-4 border-t-4 border-gray-200 border-t-white rounded-full" viewBox="0 0 24 24"></svg>
+              Generating...
+            </>
+          ) : (
+            'Generate Email'
+          )}
+        </button>
+
+        {email && (
+          <div className='flex flex-col mt-8'>
+            <h2 className='text-center font-bold'>Email Address</h2>
+            <div className="relative mt-4 px-4 py-2 border rounded-lg bg-gray-100 cursor-pointer">
+              {email}
+              <ClipboardIcon
+                className="h-5 w-5 absolute top-2 right-2 cursor-pointer"
+                onClick={() => navigator.clipboard.writeText(email)}
+              />
+            </div>
+          </div>
+        )}
+
+        {verificationData}
+      </div>
     </div>
   );
 }

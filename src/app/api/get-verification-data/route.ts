@@ -7,7 +7,7 @@ const tempEmailService = new TempEmailService(apiKey);
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY as string });
 
 const POLLING_INTERVAL = 2000; // 2 seconds
-const POLLING_TIMEOUT = 30000; // 30 seconds
+const POLLING_TIMEOUT = 120000; // 120 seconds
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
