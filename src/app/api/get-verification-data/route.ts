@@ -9,6 +9,7 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY as string });
 
 const POLLING_INTERVAL = 2000; // 2 seconds
 const POLLING_TIMEOUT = 120000; // 120 seconds
+const AI_RETRY_LIMIT = 2; // Limit the number of retries for the AI
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
@@ -44,8 +45,7 @@ export async function GET(request: NextRequest) {
         const cleanedEmailContent = cleanEmailContent(emailBody);
         console.log("LATEST EMAIL: " + cleanedEmailContent);
 
-        let verificationData = await getGroqChatCompletion(cleanedEmailContent);
-        verificationData = verificationData != null ? extractJsonFromResponse(verificationData) : {};
+        let verificationData = await getVerificationDataWithRetry(cleanedEmailContent, AI_RETRY_LIMIT);
 
         await tempEmailService.deleteInbox(inboxId);
         console.log("verificationData: " + JSON.stringify(verificationData));
@@ -90,7 +90,7 @@ async function getGroqChatCompletion(text: string) {
             messages: [
                 {
                     role: "user",
-                    content: `Extract and return only the verification code or magic link from this email body. Specifically look for text and href attributes in <a> tags. Return the code or link and the company name in the following JSON format: {"code": "your_code_here", "company": "company_name_here"} or {"link": "your_link_here", "company": "company_name_here"}. Do not include any additional text or characters.
+                    content: `Extract and return only the verification code or magic link from this email body. Specifically look for text and href attributes in <a> tags and ensure that the entire URL is selected if it is a link. Ensure that the email address itself is not mistakenly selected as the verification code. Return the code or link and the company name in the following JSON format: {"code": "your_code_here", "company": "company_name_here"} or {"link": "your_link_here", "company": "company_name_here"}. Do not include any additional text or characters.
 
 Examples:
 
@@ -108,6 +108,8 @@ Unacceptable Responses:
 - Here is your verification code: 5678. Sent by ExampleCorp.
 - Click the following link to verify your account: https://example.com/verify?token=abcd1234. From ExampleCorp
 - The code is 1234 from ExampleCorp.
+- Email address itself is selected as the verification code.
+- Only part of the URL is selected as the code.
 
 Given Email Body: ${text}
 
@@ -123,6 +125,31 @@ Return only the extracted verification code or link and the company name in the 
     } catch (error: any) {
         throw new Error(`Failed to get verification data from Groq: ${error.message}`);
     }
+}
+
+async function getVerificationDataWithRetry(text: string, retries: number) {
+    let attempts = 0;
+    let verificationData = null;
+
+    while (attempts < retries && !verificationData) {
+        attempts++;
+        console.log(`Attempt ${attempts} to get verification data from AI`);
+        try {
+            const response = await getGroqChatCompletion(text);
+            verificationData = response != null ? extractJsonFromResponse(response) : null;
+        } catch (error: any) {
+            console.error(`Error on attempt ${attempts}: ${error.message}`);
+            if (attempts >= retries) {
+                throw new Error('Max retry attempts reached.');
+            }
+        }
+    }
+
+    if (!verificationData) {
+        throw new Error('Failed to extract verification data after multiple attempts.');
+    }
+
+    return verificationData;
 }
 
 function extractJsonFromResponse(responseText: string) {
