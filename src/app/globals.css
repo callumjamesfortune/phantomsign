@@ -27,7 +27,7 @@ body, html {
     #8963e2 40%,
     #3b82f6 60%
   );
-  animation: shimmer 15s linear infinite;
+  animation: shimmer 12s linear infinite;
   color: white;
   text-align: center;
   font-weight: bold;
