@@ -118,80 +118,114 @@ export default function Home() {
   };
 
   return (
-    <div className="relative flex flex-col min-h-screen">
-      {/* SEO FOR ME below */}
-      <a href="https://seefortune.co.uk" className='hidden'/>
-      <Toaster />
-      <div className='w-screen h-[300px] bg-white flex flex-col items-start justify-start md:items-center md:justify-center px-[5%] py-2'>
-        <h1 className='text-green-600 text-[1.5em] md:text-[4em] font-bold relative'>Phantom<span className='text-gray-600'>Sign</span>
-          {/* <span className='opacity-90 text-gray-600 hidden md:block text-[0.3em] font-medium absolute bottom-0 right-0 transform translate-y-[30%] translate-x-[50%] rotate-[-10deg] border-4 font-bold border-red-500 text-red-500 px-4 py-2 rounded-lg'>
-            F*CK SPAM
-          </span> */}
-        </h1>
-      </div>
+    <>
+      <div className="relative flex flex-col min-h-screen">
+        {/* SEO FOR ME below */}
+        <a href="https://seefortune.co.uk" className='hidden'/>
+        <Toaster />
+        <div className='w-screen h-[300px] bg-white flex flex-col items-center justify-center px-[5%] py-2'>
 
-      <div className="relative flex flex-col flex-grow items-center bg-gray-200">
-        <div className='float-animation absolute'>
-          <Image 
-            src={logo} 
-            alt="PhantomSign Logo" 
-            width={100} 
-            height={100}
-            className='translate-y-[-80%]'
-          />
+
+
+          <div className='absolute top-0 left-0 w-screen flex items-center justify-between px-[5%] pt-2'>
+
+            <div>
+
+              <Image 
+                src={logo} 
+                alt="PhantomSign Logo" 
+                width={50} 
+                height={50}
+                className=''
+              />
+              
+            </div>
+
+            <ul className='flex gap-8 md:gap-16 text-gray-600'>
+              <li><a href="#about">What is this</a></li>
+              <li><a href="#instructions">How to use</a></li>
+            </ul>
+
+          </div>
+
+
+
+
+          <h1 className='text-green-600 text-[2.5em] md:text-[4em] font-bold relative'>Phantom<span className='text-gray-600'>Sign</span>
+            {/* <span className='opacity-90 text-gray-600 hidden md:block text-[0.3em] font-medium absolute bottom-0 right-0 transform translate-y-[30%] translate-x-[50%] rotate-[-10deg] border-4 font-bold border-red-500 text-red-500 px-4 py-2 rounded-lg'>
+              F*CK SPAM
+            </span> */}
+          </h1>
         </div>
-        <button
-          className="shimmery-button simple-shadow absolute text-white text-[1.5em] font-bold py-2 px-6 rounded-lg flex items-center justify-center"
-          style={{ top: '0', transform: 'translateY(-50%)' }}
-          onClick={generateEmail}
-          disabled={loadingInbox}
-        >
-          {loadingInbox ? (
-            <>
-              <svg className="animate-spin h-5 w-5 mr-3 border-4 border-t-4 border-gray-200 border-t-white rounded-full" viewBox="0 0 24 24"></svg>
-              Generating...
-            </>
-          ) : email ? (
-            'Regenerate Email'
-          ) : (
-            <span className='flex items-center'>
-              Generate Email
-              <SparklesIcon className="w-5 h-5 ml-4 scale-[1.2]" />
-            </span>
-          )}
-        </button>
 
-        {email && (
-          <div className='flex flex-col mt-8'>
-            {/* <h2 className='text-center font-bold'>Email Address</h2> */}
-            <div onClick={() => {
-              navigator.clipboard.writeText(email);
-              toast.success("Copied to clipboard");
-              }} className="relative text-[1em] md:text-[1.4em] mt-4 px-4 py-2 border rounded-lg bg-white border border-gray-400 hover:scale-[1.05] duration-75 cursor-pointer">
-              {email}
-              <div className='p-1 rounded-lg bg-white text-gray-600 absolute top-0 right-0 translate-y-[-50%] translate-x-[50%]'>
-                <DocumentDuplicateIcon
-                  className="w-5 h-5 cursor-pointer"
-                  onClick={() => {
-                    navigator.clipboard.writeText(email);
-                    toast.success("Copied to clipboard");
-                  }}
-                />
+        <div className="relative flex flex-col flex-grow items-center bg-gray-200">
+          <div className='float-animation absolute'>
+            <Image 
+              src={logo} 
+              alt="PhantomSign Logo" 
+              width={100} 
+              height={100}
+              className='translate-y-[-80%]'
+            />
+          </div>
+          <button
+            className="shimmery-button simple-shadow absolute text-white text-[1.5em] font-bold py-2 px-6 rounded-lg flex items-center justify-center"
+            style={{ top: '0', transform: 'translateY(-50%)' }}
+            onClick={generateEmail}
+            disabled={loadingInbox}
+          >
+            {loadingInbox ? (
+              <>
+                <svg className="animate-spin h-5 w-5 mr-3 border-4 border-t-4 border-gray-200 border-t-white rounded-full" viewBox="0 0 24 24"></svg>
+                Generating...
+              </>
+            ) : email ? (
+              'Regenerate Email'
+            ) : (
+              <span className='flex items-center'>
+                Generate Email
+                <SparklesIcon className="w-5 h-5 ml-4 scale-[1.2]" />
+              </span>
+            )}
+          </button>
+
+          {email && (
+            <div className='flex flex-col mt-8'>
+              {/* <h2 className='text-center font-bold'>Email Address</h2> */}
+              <div onClick={() => {
+                navigator.clipboard.writeText(email);
+                toast.success("Copied to clipboard");
+                }} className="relative text-[1em] md:text-[1.4em] mt-4 px-4 py-2 border rounded-lg bg-white border border-gray-400 hover:scale-[1.05] duration-75 cursor-pointer">
+                {email}
+                <div className='p-1 rounded-lg bg-white text-gray-600 absolute top-0 right-0 translate-y-[-50%] translate-x-[50%]'>
+                  <DocumentDuplicateIcon
+                    className="w-5 h-5 cursor-pointer"
+                    onClick={() => {
+                      navigator.clipboard.writeText(email);
+                      toast.success("Copied to clipboard");
+                    }}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {loadingEmail && (
-          <div className='flex flex-col mt-8 items-center'>
-            <svg className="animate-spin h-5 w-5 mr-3 border-4 border-t-4 border-gray-200 border-t-white rounded-full" viewBox="0 0 24 24"></svg>
-            <p className='mt-8'>Deleting email in</p>
-            <p className='mt-2 text-[2em] text-gray-600'>{Math.floor(countdown / 60)}:{String(countdown % 60).padStart(2, '0')}</p>
-          </div>
-        )}
+          {loadingEmail && (
+            <div className='flex flex-col mt-8 items-center'>
+              <svg className="animate-spin h-5 w-5 mr-3 border-4 border-t-4 border-gray-200 border-t-white rounded-full" viewBox="0 0 24 24"></svg>
+              <p className='mt-8'>Deleting email in</p>
+              <p className='mt-2 text-[2em] text-gray-600'>{Math.floor(countdown / 60)}:{String(countdown % 60).padStart(2, '0')}</p>
+            </div>
+          )}
 
-        {verificationData}
+          {verificationData}
+        </div>
       </div>
-    </div>
+
+      <div id="about" className='relative flex flex-col min-h-[50vh]'></div>
+
+      <div id="instructions" className='relative flex flex-col min-h-[50vh] bg-gray-200'></div>
+
+    </>
   );
 }
