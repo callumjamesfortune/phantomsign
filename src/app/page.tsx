@@ -300,7 +300,7 @@ export default function Home() {
               <div className="flex items-center justify-center w-10 h-10 rounded-full text-gray-600 font-bold">
                 1
               </div>
-              <p className='text-gray-600'>Click the "Generate Email" button to create a temporary email address.</p>
+              <p className='text-gray-600'>Click the &quot;Generate Email&quot; button to create a temporary email address.</p>
             </div>
             <div className="flex flex-col items-center gap-4">
               <div className="flex items-center justify-center w-10 h-10 rounded-full text-gray-600 font-bold">
