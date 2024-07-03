@@ -160,7 +160,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="relative flex flex-col min-h-screen">
+      <div className="relative flex flex-col min-h-[100svh]">
         {/* SEO FOR ME below */}
         <a href="https://seefortune.co.uk" className='hidden'/>
         <Toaster />
