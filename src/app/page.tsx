@@ -62,7 +62,10 @@ export default function Home() {
         const data = await response.json();
         let displayContent;
         const companyInfo = data.company ? (
-          <span className='px-4 py-2 rounded-lg bg-white text-center font-bold self-end'>{data.company}</span>
+          <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-center font-bold self-end">
+            <OfficeBuildingIcon className="w-5 h-5" />
+            {data.company}
+          </div>
         ) : (
           <span className='px-4 py-2 rounded-lg bg-red-100 text-center font-bold self-end'>Company information unavailable</span>
         );
@@ -70,10 +73,7 @@ export default function Home() {
         if (data.link) {
           displayContent = (
             <div className='flex mt-8 gap-4 items-end'>
-              <div className='flex items-center gap-2'>
-                <OfficeBuildingIcon className="w-5 h-5" />
-                {companyInfo}
-              </div>
+              {companyInfo}
               <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg self-end" onClick={() => window.open(data.link, "_blank")}>
                 Verify Link
               </button>
@@ -82,10 +82,7 @@ export default function Home() {
         } else if (data.code) {
           displayContent = (
             <div className='flex mt-8 gap-4 items-end'>
-              <div className='flex items-center gap-2'>
-                <OfficeBuildingIcon className="w-5 h-5" />
-                {companyInfo}
-              </div>
+              {companyInfo}
               <div onClick={() => {
                 navigator.clipboard.writeText(data.code);
                 toast.success("Copied to clipboard");
