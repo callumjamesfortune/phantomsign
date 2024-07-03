@@ -62,7 +62,7 @@ export default function Home() {
         const data = await response.json();
         let displayContent;
         const companyInfo = data.company ? (
-          <span className='px-4 py-2 rounded-lg bg-gray-100 text-center font-bold self-end'>{data.company}</span>
+          <span className='px-4 py-2 rounded-lg bg-white text-center font-bold self-end'>{data.company}</span>
         ) : (
           <span className='px-4 py-2 rounded-lg bg-red-100 text-center font-bold self-end'>Company information unavailable</span>
         );
@@ -90,7 +90,7 @@ export default function Home() {
                 navigator.clipboard.writeText(data.code);
                 toast.success("Copied to clipboard");
                 }}
-                className="relative px-4 py-2 border rounded-lg bg-white hover:scale-[1.05] duration-75 cursor-pointer self-end">
+                className="relative px-4 py-2 border border-gray-400 rounded-lg bg-white hover:scale-[1.05] duration-75 cursor-pointer self-end">
                 {data.code}
                 <div className='p-1 rounded-lg bg-white text-gray-600 absolute top-0 right-0 translate-y-[-50%] translate-x-[50%]'>
                   <DocumentDuplicateIcon className="w-5 h-5 cursor-pointer" onClick={
@@ -122,6 +122,8 @@ export default function Home() {
 
   return (
     <div className="relative flex flex-col min-h-screen">
+      {/* SEO FOR ME below */}
+      <a href="https://seefortune.co.uk" className='hidden'/>
       <Toaster />
       <div className='w-screen h-[300px] bg-white flex flex-col items-start justify-start md:items-center md:justify-center px-[5%] py-2'>
         <h1 className='text-green-600 text-[1.5em] md:text-[4em] font-bold relative'>Phantom<span className='text-gray-600'>Sign</span>
