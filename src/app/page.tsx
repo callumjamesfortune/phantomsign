@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { DocumentDuplicateIcon, OfficeBuildingIcon } from '@heroicons/react/outline'; // Ensure you have Heroicons installed
+import { DocumentDuplicateIcon, OfficeBuildingIcon, SparklesIcon } from '@heroicons/react/outline'; // Ensure you have Heroicons installed
 import { toast, Toaster } from 'react-hot-toast';
 import Image from 'next/image';
 import logo from '../../public/phantom.svg';
@@ -125,9 +125,9 @@ export default function Home() {
       <Toaster />
       <div className='w-screen h-[300px] bg-white flex flex-col items-start justify-start md:items-center md:justify-center px-[5%] py-2'>
         <h1 className='text-green-600 text-[1.5em] md:text-[4em] font-bold relative'>Phantom<span className='text-gray-600'>Sign</span>
-          <span className='opacity-90 text-gray-600 hidden md:block text-[0.3em] font-medium absolute bottom-0 right-0 transform translate-y-[30%] translate-x-[50%] rotate-[-10deg] border-4 font-bold border-red-500 text-red-500 px-4 py-2 rounded-lg'>
+          {/* <span className='opacity-90 text-gray-600 hidden md:block text-[0.3em] font-medium absolute bottom-0 right-0 transform translate-y-[30%] translate-x-[50%] rotate-[-10deg] border-4 font-bold border-red-500 text-red-500 px-4 py-2 rounded-lg'>
             F*CK SPAM
-          </span>
+          </span> */}
         </h1>
       </div>
 
@@ -146,13 +146,16 @@ export default function Home() {
           ) : email ? (
             'Regenerate Email'
           ) : (
-            'Generate Email'
+            <span className='flex items-center'>
+              Generate Email
+              <SparklesIcon className="w-5 h-5 ml-4 scale-[1.2]" />
+            </span>
           )}
         </button>
 
         {email && (
           <div className='flex flex-col mt-8'>
-            <Image src={logo} alt="PhantomSign Logo" width={100} height={100}/>
+            {/* <Image src={logo} alt="PhantomSign Logo" width={100} height={100}/> */}
             {/* <h2 className='text-center font-bold'>Email Address</h2> */}
             <div onClick={() => {
               navigator.clipboard.writeText(email);
