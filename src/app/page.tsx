@@ -131,6 +131,15 @@ export default function Home() {
       </div>
 
       <div className="relative flex flex-col flex-grow items-center bg-gray-200">
+        <div className='float-animation absolute'>
+          <Image 
+            src={logo} 
+            alt="PhantomSign Logo" 
+            width={100} 
+            height={100}
+            className='translate-y-[-80%]'
+          />
+        </div>
         <button
           className="shimmery-button simple-shadow absolute text-white text-[1.5em] font-bold py-2 px-6 rounded-lg flex items-center justify-center"
           style={{ top: '0', transform: 'translateY(-50%)' }}
@@ -154,7 +163,6 @@ export default function Home() {
 
         {email && (
           <div className='flex flex-col mt-8'>
-            {/* <Image src={logo} alt="PhantomSign Logo" width={100} height={100}/> */}
             {/* <h2 className='text-center font-bold'>Email Address</h2> */}
             <div onClick={() => {
               navigator.clipboard.writeText(email);
