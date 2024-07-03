@@ -6,7 +6,7 @@ import { toast, Toaster } from 'react-hot-toast';
 import Image from 'next/image';
 import logo from '../../public/phantom.svg';
 
-const COUNTDOWN_TIME = 120; // Countdown time in seconds (e.g., 120 seconds for 2 minutes)
+const COUNTDOWN_TIME = 300; // Countdown time in seconds (e.g., 300 seconds for 5 minutes)
 
 export default function Home() {
   const [email, setEmail] = useState('');
@@ -212,7 +212,7 @@ export default function Home() {
 
           {loadingEmail && (
             <div className='flex flex-col mt-8 items-center'>
-              <svg className="animate-spin h-5 w-5 mr-3 border-4 border-t-4 border-gray-200 border-t-white rounded-full" viewBox="0 0 24 24"></svg>
+              <svg className="animate-spin h-5 w-5 mr-3 border-4 border-t-4 border-gray-200 border-t-green-600 rounded-full" viewBox="0 0 24 24"></svg>
               <p className='mt-8'>Deleting email in</p>
               <p className='mt-2 text-[2em] text-gray-600'>{Math.floor(countdown / 60)}:{String(countdown % 60).padStart(2, '0')}</p>
             </div>
