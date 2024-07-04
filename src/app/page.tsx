@@ -196,7 +196,7 @@ export default function Home() {
               />
             </div>
             <button
-              className="shimmery-button simple-shadow absolute -translate-y-[50%] text-white text-[1.5em] font-bold py-2 px-6 rounded-lg flex items-center justify-center"
+              className="shimmery-button z-[1000] simple-shadow absolute -translate-y-[50%] text-white text-[1.5em] font-bold py-2 px-6 rounded-lg flex items-center justify-center"
               onClick={generateEmail}
               disabled={loadingInbox}
             >
