@@ -17,21 +17,27 @@ export default function Home() {
   const [loadingInbox, setLoadingInbox] = useState(false);
   const [loadingEmail, setLoadingEmail] = useState(false);
   const [countdown, setCountdown] = useState(COUNTDOWN_TIME);
-  const [emailCount, setEmailCount] = useState<number>(0);
+  const [emailStats, setEmailStats] = useState({ generatedEmailsCount: 0, codesFoundCount: 0, linksFoundCount: 0 });
 
   useEffect(() => {
-    const fetchEmailCount = async () => {
-      const { count, error } = await supabase
-        .from('generatedEmails')
-        .select('*', { count: 'exact', head: true });
+    const fetchEmailStats = async () => {
+      const { data, error } = await supabase
+        .from('email_statistics')
+        .select('generated_emails_count, codes_found_count, links_found_count')
+        .eq('id', 1)
+        .single();
       if (error) {
-        console.error('Error fetching email count:', error);
+        console.error('Error fetching email stats:', error);
       } else {
-        count && setEmailCount(count);
+        setEmailStats({
+          generatedEmailsCount: data.generated_emails_count,
+          codesFoundCount: data.codes_found_count,
+          linksFoundCount: data.links_found_count
+        });
       }
     };
 
-    fetchEmailCount();
+    fetchEmailStats();
   }, []);
 
   useEffect(() => {
@@ -235,24 +241,22 @@ export default function Home() {
                 <></>
               )}
 
-              {!email && !loadingInbox && emailCount > 0 && (
+              {!email && !loadingInbox && (
                 <div className='flex flex-col md:flex-row gap-12 py-12 pb-8'>
-
                   <div className='flex flex-col items-center bg-white rounded-lg simple-shadow p-4 w-[180px]' style={{ aspectRatio: 1 }}>
                     <h2 className='text-[1em]'>Codes found</h2>
-                    <h2 className='text-[4em] text-gray-600'>{emailCount}</h2>
+                    <h2 className='text-[4em] text-gray-600'>{emailStats.codesFoundCount}</h2>
                   </div>
 
                   <div className='flex flex-col items-center bg-white rounded-lg simple-shadow p-4 w-[180px]' style={{ aspectRatio: 1, transform: 'scale(1.2)' }}>
                     <h2 className='text-[1em]'>Emails generated</h2>
-                    <h2 className='text-[4em] text-gray-600'>{emailCount}</h2>
+                    <h2 className='text-[4em] text-gray-600'>{emailStats.generatedEmailsCount}</h2>
                   </div>
 
                   <div className='flex flex-col items-center bg-white rounded-lg simple-shadow p-4 w-[180px]' style={{ aspectRatio: 1 }}>
                     <h2 className='text-[1em]'>Links found</h2>
-                    <h2 className='text-[2em] md:text-[4em] text-gray-600'>{emailCount}</h2>
+                    <h2 className='text-[2em] md:text-[4em] text-gray-600'>{emailStats.linksFoundCount}</h2>
                   </div>
-
                 </div>
               )}
 
