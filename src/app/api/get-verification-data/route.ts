@@ -20,12 +20,12 @@ export async function GET(request: NextRequest) {
     try {
         const latestEmail = await pollForEmail(inboxId, POLLING_TIMEOUT, POLLING_INTERVAL);
         if (!latestEmail) {
-            return NextResponse.json({ message: 'No email yet' }, { status: 200 });
+            return NextResponse.json({ message: 'No email yet' }, { status: 204 });
         }
 
         const emailBody = latestEmail.body;
         if (!emailBody) {
-            return NextResponse.json({ message: 'No email content found' }, { status: 200 });
+            return NextResponse.json({ message: 'No email content found' }, { status: 204 });
         }
 
         const cleanEmailContent = (str: string) => {
