@@ -63,7 +63,7 @@ async function pollForEmail(inboxId: string, timeout: number, interval: number) 
                 .from('incoming_emails')
                 .select('*')
                 .eq('email', inboxId)
-                .order('received_at', { ascending: false })
+                .order('created_at', { ascending: false })
                 .limit(1);
 
             if (error) {

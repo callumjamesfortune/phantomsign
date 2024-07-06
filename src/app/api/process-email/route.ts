@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
         // Recipient exists, insert the email into the incoming_emails table
         const { error: insertError } = await supabaseServerClient
           .from('incoming_emails')
-          .insert([{ email: recipient, body: plainTextBody, received_at: receivedAt }]);
+          .insert([{ email: recipient, body: plainTextBody }]);
 
         if (insertError) {
           console.error('Error inserting email into incoming_emails:', insertError);
