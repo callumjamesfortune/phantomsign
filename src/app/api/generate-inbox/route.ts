@@ -29,16 +29,41 @@ function generateEmail(): string {
   return finalResult;
 }
 
-export async function POST(request: NextRequest) {
-  const emailString = generateEmail(); // Adjust the length as needed
+export async function POST(req: NextRequest) {
+  if (req.method !== 'POST') {
+    return NextResponse.json({ error: `Method ${req.method} Not Allowed` }, { status: 405 });
+  }
+
+  const emailString = generateEmail();
   const emailAddress = `${emailString}@seefortune.co.uk`;
 
   try {
-    const { error } = await supabaseServerClient
+    const { error: insertError } = await supabaseServerClient
       .from('generated_emails')
       .insert([{ email: emailAddress }]);
 
-    if (error) throw error;
+    if (insertError) throw insertError;
+
+    // Increment the generated_emails_count in the email_statistics table
+    const { data, error: selectError } = await supabaseServerClient
+      .from('email_statistics')
+      .select('generated_emails_count')
+      .eq('id', 1)
+      .single();
+
+    if (selectError) throw selectError;
+
+    const newCount = data.generated_emails_count + 1;
+
+    const { error: finalUpdateError } = await supabaseServerClient
+      .from('email_statistics')
+      .update({ 
+        generated_emails_count: newCount,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', 1);
+
+    if (finalUpdateError) throw finalUpdateError;
 
     return NextResponse.json({ emailAddress }, { status: 200 });
   } catch (error: any) {

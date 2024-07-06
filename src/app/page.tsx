@@ -8,6 +8,7 @@ import Image from 'next/image';
 import logo from '../../public/phantom.svg';
 
 const COUNTDOWN_TIME = parseInt(process.env.NEXT_PUBLIC_DELETE_AFTER_MINUTES!, 10) * 60 || 300; // Default to 300 seconds (5 minutes)
+const POLLING_INTERVAL = 2000; // 2 seconds
 
 export default function Home() {
   const supabase = createClientComponentClient();
@@ -17,7 +18,6 @@ export default function Home() {
   const [loadingEmail, setLoadingEmail] = useState(false);
   const [countdown, setCountdown] = useState(COUNTDOWN_TIME);
   const [emailCount, setEmailCount] = useState<number>(0);
-  const [pollingInProgress, setPollingInProgress] = useState(false);
 
   useEffect(() => {
     const fetchEmailCount = async () => {
@@ -62,16 +62,16 @@ export default function Home() {
       });
       const data = await response.json();
       const emailAddress = data.emailAddress;
-  
+
       // Log out the received email
       console.log('Generated email:', emailAddress);
-  
+
       if (!emailAddress) {
         throw new Error('Failed to generate email');
       }
-  
+
       setEmail(emailAddress);
-  
+
       setLoadingInbox(false);
       setLoadingEmail(true);
       pollForVerificationData(emailAddress);
@@ -85,92 +85,89 @@ export default function Home() {
   };
 
   const pollForVerificationData = async (inboxId: string) => {
-    if (pollingInProgress) {
-      console.log('Polling already in progress, aborting new poll request.');
-      return;
-    }
+    const endTime = Date.now() + COUNTDOWN_TIME * 1000;
 
-    setPollingInProgress(true);
+    const poll = async () => {
+      if (Date.now() > endTime) {
+        setLoadingEmail(false);
+        setVerificationData(<span className='px-4 py-2 rounded-lg bg-gray-100 text-center font-bold'>Polling timed out</span>);
+        return;
+      }
 
-    const pollTimeout = setTimeout(() => {
-      console.log('Polling timed out.');
-      setPollingInProgress(false);
-    }, COUNTDOWN_TIME * 1000);
-
-    try {
-      while (pollingInProgress) {
+      try {
         const response = await fetch(`/api/get-verification-data?inboxId=${inboxId}`);
         if (response.ok) {
           const data = await response.json();
-          clearTimeout(pollTimeout);
-
-          let displayContent;
-          const companyInfo = data.company ? (
-            <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-center font-bold self-end">
-              <OfficeBuildingIcon className="w-5 h-5" />
-              {data.company}
-            </div>
-          ) : (
-            <span className='px-4 py-2 rounded-lg bg-red-100 text-center font-bold self-end'>Company information unavailable</span>
-          );
-
-          if (data.link) {
-            displayContent = (
-              <div className='flex flex-col'>
-                <p className='mt-8 text-center'>Email received</p>
-                <div className='flex flex-col md:flex-row mt-8 gap-4 items-end'>
-                  {companyInfo}
-                  <button
-                    className="w-full md:w-[auto] bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg self-end flex items-center"
-                    onClick={() => window.open(data.link, "_blank")}
-                  >
-                    Verify Link
-                    <ExternalLinkIcon className="w-5 h-5 ml-2" />
-                  </button>
-                </div>
+          if (data) {
+            let displayContent;
+            const companyInfo = data.company ? (
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-center font-bold self-end">
+                <OfficeBuildingIcon className="w-5 h-5" />
+                {data.company}
               </div>
+            ) : (
+              <span className='px-4 py-2 rounded-lg bg-red-100 text-center font-bold self-end'>Company information unavailable</span>
             );
-          } else if (data.code) {
-            displayContent = (
-              <div className='flex mt-8 gap-4 items-end'>
-                {companyInfo}
-                <div onClick={() => {
-                  navigator.clipboard.writeText(data.code);
-                  toast.success("Copied to clipboard");
-                  }}
-                  className="relative px-4 py-2 border border-gray-400 rounded-lg bg-white hover:scale-[1.05] duration-75 cursor-pointer self-end">
-                  {data.code}
-                  <div className='p-1 rounded-lg bg-white text-gray-600 absolute top-0 right-0 translate-y-[-50%] translate-x-[50%]'>
-                    <DocumentDuplicateIcon className="w-5 h-5 cursor-pointer" onClick={
-                      () => {navigator.clipboard.writeText(data.code);
-                      toast.success("Copied to clipboard");
-                      }} />
+
+            if (data.link) {
+              displayContent = (
+                <div className='flex flex-col'>
+                  <p className='mt-8 text-center'>Email received</p>
+                  <div className='flex flex-col md:flex-row mt-8 gap-4 items-end'>
+                    {companyInfo}
+                    <button
+                      className="w-full md:w-[auto] bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg self-end flex items-center"
+                      onClick={() => window.open(data.link, "_blank")}
+                    >
+                      Verify Link
+                      <ExternalLinkIcon className="w-5 h-5 ml-2" />
+                    </button>
                   </div>
                 </div>
-              </div>
-            );
-          } else {
-            displayContent = (
-              <div className='flex mt-8 gap-4 items-center'>
-                <span className='px-4 py-2 rounded-lg bg-gray-100 text-center font-bold'>No verification code or link found</span>
-              </div>
-            );
-          }
+              );
+            } else if (data.code) {
+              displayContent = (
+                <div className='flex mt-8 gap-4 items-end'>
+                  {companyInfo}
+                  <div onClick={() => {
+                    navigator.clipboard.writeText(data.code);
+                    toast.success("Copied to clipboard");
+                    }}
+                    className="relative px-4 py-2 border border-gray-400 rounded-lg bg-white hover:scale-[1.05] duration-75 cursor-pointer self-end">
+                    {data.code}
+                    <div className='p-1 rounded-lg bg-white text-gray-600 absolute top-0 right-0 translate-y-[-50%] translate-x-[50%]'>
+                      <DocumentDuplicateIcon className="w-5 h-5 cursor-pointer" onClick={
+                        () => {navigator.clipboard.writeText(data.code);
+                        toast.success("Copied to clipboard");
+                        }} />
+                    </div>
+                  </div>
+                </div>
+              );
+            } else {
+              displayContent = (
+                <div className='flex mt-8 gap-4 items-center'>
+                  <span className='px-4 py-2 rounded-lg bg-gray-100 text-center font-bold'>No verification code or link found</span>
+                </div>
+              );
+            }
 
-          setVerificationData(displayContent);
-          setLoadingEmail(false);
-          setPollingInProgress(false);
-          break;
-        } else {
-          await new Promise(res => setTimeout(res, 2000)); // Retry after 2 seconds
+            setVerificationData(displayContent);
+            setLoadingEmail(false);
+            return; // Exit polling once data is found
+          }
         }
+      } catch (error: any) {
+        setVerificationData(`Error: ${error.message}`);
+        setLoadingEmail(false);
+        toast.error(`Error retrieving verification data: ${error.message}`);
+        return; // Exit polling on error
       }
-    } catch (error: any) {
-      setVerificationData(`Error: ${error.message}`);
-      setLoadingEmail(false);
-      setPollingInProgress(false);
-      toast.error(`Error retrieving verification data: ${error.message}`);
-    }
+
+      setTimeout(poll, POLLING_INTERVAL); // Retry after interval
+    };
+
+    poll();
   };
 
   return (

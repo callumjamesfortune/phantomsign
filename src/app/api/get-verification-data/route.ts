@@ -45,6 +45,10 @@ export async function GET(request: NextRequest) {
 
         let verificationData = await getVerificationDataWithRetry(cleanedEmailContent, AI_RETRY_LIMIT);
 
+        if (verificationData) {
+            await updateStatistics(verificationData);
+        }
+
         console.log("verificationData: " + JSON.stringify(verificationData));
         return NextResponse.json(verificationData);
     } catch (error: any) {
@@ -166,4 +170,40 @@ function extractJsonFromResponse(responseText: string) {
         return JSON.parse(jsonMatch[0]);
     }
     throw new Error('Failed to extract JSON from response text');
+}
+
+async function updateStatistics(verificationData: any) {
+    try {
+        const { data, error: selectError } = await supabaseServerClient
+            .from('email_statistics')
+            .select('*')
+            .eq('id', 1)
+            .single();
+
+        if (selectError) throw selectError;
+
+        let newCodesFoundCount = data.codes_found_count;
+        let newLinksFoundCount = data.links_found_count;
+
+        if (verificationData.code) {
+            newCodesFoundCount += 1;
+        } else if (verificationData.link) {
+            newLinksFoundCount += 1;
+        }
+
+        const { error: updateError } = await supabaseServerClient
+            .from('email_statistics')
+            .update({ 
+                codes_found_count: newCodesFoundCount,
+                links_found_count: newLinksFoundCount,
+                updated_at: new Date().toISOString()
+            })
+            .eq('id', 1);
+
+        if (updateError) throw updateError;
+
+        console.log("Statistics updated successfully");
+    } catch (error: any) {
+        console.error("Error updating statistics:", error);
+    }
 }
