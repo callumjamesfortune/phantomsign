@@ -19,23 +19,34 @@ export async function POST(request: NextRequest) {
 
     console.log('Received email:', email);
 
-    // Check if the recipient exists in the Supabase database
+    // Extract recipient and body from the email object
     const recipient = email.mail.destination[0];
-    const { data: generatedEmails, error } = await supabase
+    const body = email.content; // Assuming the body is in the 'content' field
+    const receivedAt = new Date().toISOString();
+
+    // Check if the recipient exists in the Supabase database
+    const { data: generatedEmails, error: queryError } = await supabase
       .from('generated_emails')
       .select('*')
       .eq('email', recipient);
 
-    if (error) {
-      console.error('Error querying Supabase:', error);
+    if (queryError) {
+      console.error('Error querying Supabase:', queryError);
       return NextResponse.json({ error: 'Error querying Supabase' }, { status: 500 });
     }
 
     if (generatedEmails && generatedEmails.length > 0) {
-      // Recipient exists, process the email
-      console.log('Recipient exists, processing email...');
-      // Call another endpoint or perform processing here
+      // Recipient exists, insert the email into the incoming_emails table
+      const { error: insertError } = await supabase
+        .from('incoming_emails')
+        .insert([{ email: recipient, body: body, received_at: receivedAt }]);
 
+      if (insertError) {
+        console.error('Error inserting email into incoming_emails:', insertError);
+        return NextResponse.json({ error: 'Error inserting email into incoming_emails' }, { status: 500 });
+      }
+
+      console.log('Email processed successfully');
       return NextResponse.json({ message: 'Email processed successfully' });
     } else {
       console.log('Recipient does not exist in the database');
