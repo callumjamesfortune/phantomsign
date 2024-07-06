@@ -35,11 +35,7 @@ const deleteOldEmails = async () => {
   }
 };
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   await deleteOldEmails();
   return NextResponse.json({ message: 'Cleanup task completed' });
-}
-
-export async function GET(req: NextRequest) {
-  return NextResponse.json({ error: 'Method Not Allowed' }, { status: 405 });
 }
