@@ -21,8 +21,8 @@ export async function POST(request: NextRequest) {
 
     // Check if the recipient exists in the Supabase database
     const recipient = email.mail.destination[0];
-    const { data: users, error } = await supabase
-      .from('users')
+    const { data: generatedEmails, error } = await supabase
+      .from('generated_emails')
       .select('*')
       .eq('email', recipient);
 
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Error querying Supabase' }, { status: 500 });
     }
 
-    if (users && users.length > 0) {
+    if (generatedEmails && generatedEmails.length > 0) {
       // Recipient exists, process the email
       console.log('Recipient exists, processing email...');
       // Call another endpoint or perform processing here
