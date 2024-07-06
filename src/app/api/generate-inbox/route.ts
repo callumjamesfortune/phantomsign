@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
   const emailAddress = `${emailLocalPart}@seefortune.co.uk`;
 
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('generated_emails')
       .insert([{ email: emailAddress }]);
 

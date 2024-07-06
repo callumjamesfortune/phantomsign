@@ -73,7 +73,7 @@ export default function Home() {
   
       setLoadingInbox(false);
       setLoadingEmail(true);
-      pollForVerificationData(data.inboxId);
+      pollForVerificationData(emailAddress);
       toast.success('Email generated successfully!');
     } catch (error: any) {
       setVerificationData(`Error: ${error.message}`);
@@ -83,9 +83,6 @@ export default function Home() {
     }
   };
   
-  
-  
-
   const pollForVerificationData = async (inboxId: string) => {
     try {
       const response = await fetch(`/api/get-verification-data?inboxId=${inboxId}`);
