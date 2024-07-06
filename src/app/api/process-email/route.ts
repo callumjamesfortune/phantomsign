@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import supabase from '../../../lib/supabaseClient';
+import { simpleParser } from 'mailparser';
 
 export async function POST(request: NextRequest) {
   const messageType = request.headers.get('x-amz-sns-message-type');
@@ -21,36 +22,45 @@ export async function POST(request: NextRequest) {
 
     // Extract recipient and body from the email object
     const recipient = email.mail.destination[0];
-    const body = email.content; // Assuming the body is in the 'content' field
-    const receivedAt = new Date().toISOString();
+    const base64Content = email.content; // Assuming the body is in the 'content' field
+    const decodedContent = Buffer.from(base64Content, 'base64');
 
-    // Check if the recipient exists in the Supabase database
-    const { data: generatedEmails, error: queryError } = await supabase
-      .from('generated_emails')
-      .select('*')
-      .eq('email', recipient);
+    try {
+      const parsedEmail = await simpleParser(decodedContent);
+      const plainTextBody = parsedEmail.text || '';
+      const receivedAt = new Date().toISOString();
 
-    if (queryError) {
-      console.error('Error querying Supabase:', queryError);
-      return NextResponse.json({ error: 'Error querying Supabase' }, { status: 500 });
-    }
+      // Check if the recipient exists in the Supabase database
+      const { data: generatedEmails, error: queryError } = await supabase
+        .from('generated_emails')
+        .select('*')
+        .eq('email', recipient);
 
-    if (generatedEmails && generatedEmails.length > 0) {
-      // Recipient exists, insert the email into the incoming_emails table
-      const { error: insertError } = await supabase
-        .from('incoming_emails')
-        .insert([{ email: recipient, body: body, received_at: receivedAt }]);
-
-      if (insertError) {
-        console.error('Error inserting email into incoming_emails:', insertError);
-        return NextResponse.json({ error: 'Error inserting email into incoming_emails' }, { status: 500 });
+      if (queryError) {
+        console.error('Error querying Supabase:', queryError);
+        return NextResponse.json({ error: 'Error querying Supabase' }, { status: 500 });
       }
 
-      console.log('Email processed successfully');
-      return NextResponse.json({ message: 'Email processed successfully' });
-    } else {
-      console.log('Recipient does not exist in the database');
-      return NextResponse.json({ message: 'Recipient not found' }, { status: 404 });
+      if (generatedEmails && generatedEmails.length > 0) {
+        // Recipient exists, insert the email into the incoming_emails table
+        const { error: insertError } = await supabase
+          .from('incoming_emails')
+          .insert([{ email: recipient, body: plainTextBody, received_at: receivedAt }]);
+
+        if (insertError) {
+          console.error('Error inserting email into incoming_emails:', insertError);
+          return NextResponse.json({ error: 'Error inserting email into incoming_emails' }, { status: 500 });
+        }
+
+        console.log('Email processed successfully');
+        return NextResponse.json({ message: 'Email processed successfully' });
+      } else {
+        console.log('Recipient does not exist in the database');
+        return NextResponse.json({ message: 'Recipient not found' }, { status: 404 });
+      }
+    } catch (error) {
+      console.error('Error parsing email:', error);
+      return NextResponse.json({ error: 'Error parsing email' }, { status: 500 });
     }
   } else {
     return NextResponse.json({ error: 'Invalid message type' }, { status: 400 });
