@@ -2,32 +2,39 @@ import { NextRequest, NextResponse } from 'next/server';
 import supabase from '../../../lib/supabaseClient';
 
 // Function to generate a random alphanumeric string
-function generateRandomString(length: number): string {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+function generateEmail(): string {
+  let insideWord = "phantom";
+  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
-  for (let i = 0; i < length; i++) {
+
+  // Generate 8 random characters
+  for (let i = 0; i < 8; i++) {
     result += characters.charAt(Math.floor(Math.random() * characters.length));
   }
-  return result;
-}
 
-// Function to intersperse 'phantom' in the random string
-function interspersePhantom(randomString: string): string {
-  const insertion = 'phantom';
-  let result = '';
-  for (let i = 0; i < randomString.length; i++) {
-    result += randomString[i];
-    if ((i + 1) % 2 === 0 && insertion) {
-      result += insertion[Math.floor(i / 2) % insertion.length];
+  // Intersperse letters of 'phantom' between the random characters
+  let finalResult = '';
+  for (let i = 0; i < 8; i++) {
+    finalResult += result[i];
+    if (i < insideWord.length) {
+      finalResult += insideWord[i];
     }
   }
-  return result;
+
+  // Add the remaining letters of 'phantom' if there are any
+  if (insideWord.length > 8) {
+    finalResult += insideWord.slice(8);
+  }
+
+  return finalResult;
 }
 
+console.log(generateEmail());
+
+
 export async function POST(request: NextRequest) {
-  const randomString = generateRandomString(12); // Adjust the length as needed
-  const emailLocalPart = interspersePhantom(randomString);
-  const emailAddress = `${emailLocalPart}@seefortune.co.uk`;
+  const emailString = generateEmail(); // Adjust the length as needed
+  const emailAddress = `${emailString}@seefortune.co.uk`;
 
   try {
     const { error } = await supabase
