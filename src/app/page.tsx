@@ -73,7 +73,7 @@ export default function Home() {
   
       setLoadingInbox(false);
       setLoadingEmail(true);
-      //pollForVerificationData(data.inboxId);
+      pollForVerificationData(data.inboxId);
       toast.success('Email generated successfully!');
     } catch (error: any) {
       setVerificationData(`Error: ${error.message}`);

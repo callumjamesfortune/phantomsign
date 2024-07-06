@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import TempEmailService from 'src/lib/temp-email-service';
+import supabase from '../../../lib/supabaseClient';
 import Groq from 'groq-sdk';
 import sanitizeHtml from 'sanitize-html';
 
-const apiKey = process.env.MAILSLURP_API_KEY as string;
-const tempEmailService = new TempEmailService(apiKey);
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY as string });
 
 const POLLING_INTERVAL = 2000; // 2 seconds
@@ -25,7 +23,7 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ message: 'No email yet' }, { status: 200 });
         }
 
-        const emailBody = latestEmail.body || latestEmail.textExcerpt;
+        const emailBody = latestEmail.body;
         if (!emailBody) {
             return NextResponse.json({ message: 'No email content found' }, { status: 200 });
         }
@@ -47,7 +45,6 @@ export async function GET(request: NextRequest) {
 
         let verificationData = await getVerificationDataWithRetry(cleanedEmailContent, AI_RETRY_LIMIT);
 
-        await tempEmailService.deleteInbox(inboxId);
         console.log("verificationData: " + JSON.stringify(verificationData));
         return NextResponse.json(verificationData);
     } catch (error: any) {
@@ -62,8 +59,19 @@ async function pollForEmail(inboxId: string, timeout: number, interval: number) 
     while (Date.now() < endTime) {
         try {
             console.log(`Polling for email in inbox: ${inboxId}`);
-            const email = await tempEmailService.getLatestEmail(inboxId, interval);
-            if (email) {
+            const { data: emails, error } = await supabase
+                .from('incoming_emails')
+                .select('*')
+                .eq('email', inboxId)
+                .order('received_at', { ascending: false })
+                .limit(1);
+
+            if (error) {
+                throw new Error('Error querying Supabase: ' + error.message);
+            }
+
+            if (emails && emails.length > 0) {
+                const email = emails[0];
                 console.log('Email found:', email);
                 return email;
             } else {
@@ -79,7 +87,6 @@ async function pollForEmail(inboxId: string, timeout: number, interval: number) 
     }
 
     console.log('Polling timed out without finding an email.');
-    await tempEmailService.deleteInbox(inboxId);
     return null;
 }
 
