@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import supabase from '../../../lib/supabaseClient';
+import supabaseServerClient from '../../../lib/supabaseServerClient';
 
 // Function to generate a random alphanumeric string
 function generateEmail(): string {
@@ -29,15 +29,12 @@ function generateEmail(): string {
   return finalResult;
 }
 
-console.log(generateEmail());
-
-
 export async function POST(request: NextRequest) {
   const emailString = generateEmail(); // Adjust the length as needed
   const emailAddress = `${emailString}@seefortune.co.uk`;
 
   try {
-    const { error } = await supabase
+    const { error } = await supabaseServerClient
       .from('generated_emails')
       .insert([{ email: emailAddress }]);
 

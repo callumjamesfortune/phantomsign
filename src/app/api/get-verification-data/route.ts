@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import supabase from '../../../lib/supabaseClient';
+import supabaseServerClient from '../../../lib/supabaseServerClient';
 import Groq from 'groq-sdk';
 import sanitizeHtml from 'sanitize-html';
 
@@ -59,7 +59,7 @@ async function pollForEmail(inboxId: string, timeout: number, interval: number) 
     while (Date.now() < endTime) {
         try {
             console.log(`Polling for email in inbox: ${inboxId}`);
-            const { data: emails, error } = await supabase
+            const { data: emails, error } = await supabaseServerClient
                 .from('incoming_emails')
                 .select('*')
                 .eq('email', inboxId)

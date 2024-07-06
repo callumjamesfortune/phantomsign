@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import supabase from '../../../lib/supabaseClient';
+import supabaseServerClient from '../../../lib/supabaseServerClient';
 import { simpleParser } from 'mailparser';
 
 export async function POST(request: NextRequest) {
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
       const receivedAt = new Date().toISOString();
 
       // Check if the recipient exists in the Supabase database
-      const { data: generatedEmails, error: queryError } = await supabase
+      const { data: generatedEmails, error: queryError } = await supabaseServerClient
         .from('generated_emails')
         .select('*')
         .eq('email', recipient);
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
 
       if (generatedEmails && generatedEmails.length > 0) {
         // Recipient exists, insert the email into the incoming_emails table
-        const { error: insertError } = await supabase
+        const { error: insertError } = await supabaseServerClient
           .from('incoming_emails')
           .insert([{ email: recipient, body: plainTextBody, received_at: receivedAt }]);
 
