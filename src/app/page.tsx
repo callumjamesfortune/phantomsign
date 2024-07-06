@@ -255,7 +255,7 @@ export default function Home() {
 
                   <div className='flex flex-col items-center bg-white rounded-lg simple-shadow p-4 w-[180px]' style={{ aspectRatio: 1 }}>
                     <h2 className='text-[1em]'>Links found</h2>
-                    <h2 className='text-[2em] md:text-[4em] text-gray-600'>{emailStats.linksFoundCount}</h2>
+                    <h2 className='text-[4em] md:text-[4em] text-gray-600'>{emailStats.linksFoundCount}</h2>
                   </div>
                 </div>
               )}
