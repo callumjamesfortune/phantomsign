@@ -60,23 +60,17 @@ export default function Home() {
         method: 'POST',
       });
       const data = await response.json();
-      setEmail(data.emailAddress);
-
-      // Save the generated email to Supabase
-      const { error } = await supabase
-        .from('generatedEmails')
-        .insert([{ email: data.emailAddress }]);
-      if (error) {
-        console.error('Error saving email to Supabase:', error);
-        toast.error(`Error saving email: ${error.message}`);
-      } else {
-        // Fetch updated email count
-        const { count } = await supabase
-          .from('generatedEmails')
-          .select('*', { count: 'exact', head: true });
-        count && setEmailCount(count);
+      const emailAddress = data.emailAddress;
+  
+      // Log out the received email
+      console.log('Generated email:', emailAddress);
+  
+      if (!emailAddress) {
+        throw new Error('Failed to generate email');
       }
-
+  
+      setEmail(emailAddress);
+  
       setLoadingInbox(false);
       setLoadingEmail(true);
       pollForVerificationData(data.inboxId);
@@ -88,6 +82,9 @@ export default function Home() {
       toast.error(`Error generating email: ${error.message}`);
     }
   };
+  
+  
+  
 
   const pollForVerificationData = async (inboxId: string) => {
     try {
