@@ -165,12 +165,12 @@ export default function Home() {
             console.log('Data found:', data);
             let displayContent;
             const companyInfo = data.company ? (
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-center font-bold self-end">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-center font-bold">
                 <OfficeBuildingIcon className="w-5 h-5" />
                 {data.company}
               </div>
             ) : (
-              <span className='px-4 py-2 rounded-lg bg-red-100 text-center font-bold self-end'>Company information unavailable</span>
+              <span className='px-4 py-2 rounded-lg bg-red-100 text-center font-bold'>Company information unavailable</span>
             );
 
             if (data.link) {
