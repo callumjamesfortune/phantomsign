@@ -17,7 +17,7 @@ export default function Home() {
   const [loadingInbox, setLoadingInbox] = useState(false);
   const [loadingEmail, setLoadingEmail] = useState(false);
   const [countdown, setCountdown] = useState(COUNTDOWN_TIME);
-  const [emailStats, setEmailStats] = useState({ generatedEmailsCount: 0, codesFoundCount: 0, linksFoundCount: 0 });
+  const [emailStats, setEmailStats] = useState({ generatedEmailsCount: null, codesFoundCount: null, linksFoundCount: null });
   const currentEmailRef = useRef<string | null>(null);
   const pollingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -55,6 +55,10 @@ export default function Home() {
             clearInterval(pollingTimeoutRef.current!);
             deleteInbox(currentEmailRef.current!);
             setLoadingEmail(false);
+            
+            // Reload the page
+            window.location.reload();
+            
             return 0;
           }
           return prevCountdown - 1;
@@ -291,17 +295,29 @@ export default function Home() {
                 <div className='flex flex-col md:flex-row gap-12 py-12 pb-8'>
                   <div className='flex flex-col items-center bg-white rounded-lg simple-shadow p-4 w-[180px]' style={{ aspectRatio: 1 }}>
                     <h2 className='text-[1em]'>Codes found</h2>
-                    <h2 className='text-[4em] text-gray-600'>{emailStats.codesFoundCount}</h2>
+                    {emailStats.codesFoundCount === null ? (
+                      <svg className="animate-spin h-10 w-10 my-8 border-4 border-t-4 border-gray-200 border-t-green-600 rounded-full" viewBox="0 0 24 24"></svg>
+                    ) : (
+                      <h2 className='text-[4em] text-gray-600'>{emailStats.codesFoundCount}</h2>
+                    )}
                   </div>
 
                   <div className='flex flex-col items-center bg-white rounded-lg simple-shadow p-4 w-[180px]' style={{ aspectRatio: 1, transform: 'scale(1.2)' }}>
                     <h2 className='text-[1em]'>Emails generated</h2>
-                    <h2 className='text-[4em] text-gray-600'>{emailStats.generatedEmailsCount}</h2>
+                    {emailStats.generatedEmailsCount === null ? (
+                      <svg className="animate-spin h-10 w-10 my-8 border-4 border-t-4 border-gray-200 border-t-green-600 rounded-full" viewBox="0 0 24 24"></svg>
+                    ) : (
+                      <h2 className='text-[4em] text-gray-600'>{emailStats.generatedEmailsCount}</h2>
+                    )}
                   </div>
 
                   <div className='flex flex-col items-center bg-white rounded-lg simple-shadow p-4 w-[180px]' style={{ aspectRatio: 1 }}>
                     <h2 className='text-[1em]'>Links found</h2>
-                    <h2 className='text-[4em] md:text-[4em] text-gray-600'>{emailStats.linksFoundCount}</h2>
+                    {emailStats.linksFoundCount === null ? (
+                      <svg className="animate-spin h-10 w-10 my-8 border-4 border-t-4 border-gray-200 border-t-green-600 rounded-full" viewBox="0 0 24 24"></svg>
+                    ) : (
+                      <h2 className='text-[4em] md:text-[4em] text-gray-600'>{emailStats.linksFoundCount}</h2>
+                    )}
                   </div>
                 </div>
               )}
