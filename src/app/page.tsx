@@ -79,43 +79,39 @@ export default function Home() {
     return () => clearInterval(countdownTimerRef.current!);
   }, [loadingEmail]);
 
-  useEffect(() => {
-    const requestNotificationPermission = async () => {
-      if ('Notification' in window && 'serviceWorker' in navigator) {
-        const permission = await Notification.requestPermission();
-        if (permission === 'granted') {
-          try {
-            const registration = await navigator.serviceWorker.register('/sw.js');
-            console.log('Service Worker registered:', registration);
+  const requestNotificationPermission = async () => {
+    if ('Notification' in window && 'serviceWorker' in navigator) {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        try {
+          const registration = await navigator.serviceWorker.register('/sw.js');
+          console.log('Service Worker registered:', registration);
 
-            // Wait for the service worker to become active
-            const sw = await navigator.serviceWorker.ready;
+          // Wait for the service worker to become active
+          const sw = await navigator.serviceWorker.ready;
 
-            // Subscribe to push notifications
-            const subscription = await sw.pushManager.subscribe({
-              userVisibleOnly: true,
-              applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!),
-            });
+          // Subscribe to push notifications
+          const subscription = await sw.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!),
+          });
 
-            // Send subscription to backend
-            await fetch('/api/subscribe', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ subscription }),
-            });
+          // Send subscription to backend
+          await fetch('/api/subscribe', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ subscription }),
+          });
 
-            console.log('Push subscription successful:', subscription);
-          } catch (error) {
-            console.error('Push subscription error:', error);
-          }
+          console.log('Push subscription successful:', subscription);
+        } catch (error) {
+          console.error('Push subscription error:', error);
         }
       }
-    };
-
-    requestNotificationPermission();
-  }, []);
+    }
+  };
 
   const deleteInbox = async (emailAddress: string) => {
     try {
@@ -406,6 +402,12 @@ export default function Home() {
             </div>
           </div>
         </div>
+        <button
+          className="shimmery-button z-[1000] simple-shadow text-white text-[1.5em] font-bold py-2 px-6 rounded-lg flex items-center justify-center mt-4"
+          onClick={requestNotificationPermission}
+        >
+          Enable Notifications
+        </button>
       </div>
       <div className='flex flex-col md:flex-row justify-center items-start gap-8 px-[5%] pt-8'>
         <div id="about" className='relative flex flex-col p-6 bg-white rounded-lg shadow-lg w-full md:w-[45%] text-center'>
