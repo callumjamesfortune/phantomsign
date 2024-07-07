@@ -214,7 +214,7 @@ export default function Home() {
               navigator.serviceWorker.ready.then((registration) => {
                 console.log("SHOULD SEND HERE")
                 registration.showNotification('New Email Received', {
-                  body: 'You have a new email in your temporary inbox.',
+                  body: 'We recieved an email to your temporary address.',
                   icon: '/phantom.svg',
                 });
               });
