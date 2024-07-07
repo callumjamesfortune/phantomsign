@@ -10,14 +10,24 @@ import logo from '../../public/phantom.svg';
 const COUNTDOWN_TIME = parseInt(process.env.NEXT_PUBLIC_DELETE_AFTER_MINUTES!, 10) * 60 || 300; // Default to 300 seconds (5 minutes)
 const POLLING_INTERVAL = 5000; // 5 seconds
 
+interface EmailStats {
+  generatedEmailsCount: number | null;
+  codesFoundCount: number | null;
+  linksFoundCount: number | null;
+}
+
 export default function Home() {
   const supabase = createClientComponentClient();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState<string>('');
   const [verificationData, setVerificationData] = useState<string | JSX.Element>('');
-  const [loadingInbox, setLoadingInbox] = useState(false);
-  const [loadingEmail, setLoadingEmail] = useState(false);
-  const [countdown, setCountdown] = useState(COUNTDOWN_TIME);
-  const [emailStats, setEmailStats] = useState({ generatedEmailsCount: null, codesFoundCount: null, linksFoundCount: null });
+  const [loadingInbox, setLoadingInbox] = useState<boolean>(false);
+  const [loadingEmail, setLoadingEmail] = useState<boolean>(false);
+  const [countdown, setCountdown] = useState<number>(COUNTDOWN_TIME);
+  const [emailStats, setEmailStats] = useState<EmailStats>({
+    generatedEmailsCount: null,
+    codesFoundCount: null,
+    linksFoundCount: null,
+  });
   const currentEmailRef = useRef<string | null>(null);
   const pollingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -35,13 +45,13 @@ export default function Home() {
         setEmailStats({
           generatedEmailsCount: data.generated_emails_count,
           codesFoundCount: data.codes_found_count,
-          linksFoundCount: data.links_found_count
+          linksFoundCount: data.links_found_count,
         });
       }
     };
 
     fetchEmailStats();
-  }, []);
+  }, [supabase]);
 
   useEffect(() => {
     if (loadingEmail) {
@@ -49,16 +59,16 @@ export default function Home() {
         clearInterval(countdownTimerRef.current);
       }
       countdownTimerRef.current = setInterval(() => {
-        setCountdown(prevCountdown => {
+        setCountdown((prevCountdown) => {
           if (prevCountdown <= 1) {
             clearInterval(countdownTimerRef.current!);
             clearInterval(pollingTimeoutRef.current!);
-            deleteInbox(currentEmailRef.current!);
+            if (currentEmailRef.current) deleteInbox(currentEmailRef.current);
             setLoadingEmail(false);
-            
+
             // Reload the page
             window.location.reload();
-            
+
             return 0;
           }
           return prevCountdown - 1;
@@ -69,14 +79,52 @@ export default function Home() {
     return () => clearInterval(countdownTimerRef.current!);
   }, [loadingEmail]);
 
+  useEffect(() => {
+    const requestNotificationPermission = async () => {
+      if ('Notification' in window && 'serviceWorker' in navigator) {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          try {
+            const registration = await navigator.serviceWorker.register('/sw.js');
+            console.log('Service Worker registered:', registration);
+
+            // Wait for the service worker to become active
+            const sw = await navigator.serviceWorker.ready;
+
+            // Subscribe to push notifications
+            const subscription = await sw.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!),
+            });
+
+            // Send subscription to backend
+            await fetch('/api/subscribe', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ subscription }),
+            });
+
+            console.log('Push subscription successful:', subscription);
+          } catch (error) {
+            console.error('Push subscription error:', error);
+          }
+        }
+      }
+    };
+
+    requestNotificationPermission();
+  }, []);
+
   const deleteInbox = async (emailAddress: string) => {
     try {
       await fetch('/api/delete-inbox', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ emailAddress })
+        body: JSON.stringify({ emailAddress }),
       });
       console.log(`Inbox for ${emailAddress} deleted.`);
     } catch (error: any) {
@@ -87,7 +135,7 @@ export default function Home() {
   useEffect(() => {
     const poll = async () => {
       if (!currentEmailRef.current || !loadingEmail) {
-        console.log("No current email to poll for or polling stopped.");
+        console.log('No current email to poll for or polling stopped.');
         return;
       }
 
@@ -102,7 +150,7 @@ export default function Home() {
           }
 
           if (data) {
-            console.log("Data found:", data);
+            console.log('Data found:', data);
             let displayContent;
             const companyInfo = data.company ? (
               <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-center font-bold self-end">
@@ -121,7 +169,7 @@ export default function Home() {
                     {companyInfo}
                     <button
                       className="w-full md:w-[auto] bg-blue-500 text-white font-bold py-2 px-4 rounded-lg self-end flex items-center justify-center"
-                      onClick={() => window.open(data.link, "_blank")}
+                      onClick={() => window.open(data.link, '_blank')}
                     >
                       Verify Link
                       <ExternalLinkIcon className="w-5 h-5 ml-2" />
@@ -133,17 +181,22 @@ export default function Home() {
               displayContent = (
                 <div className='flex mt-8 gap-4 items-end'>
                   {companyInfo}
-                  <div onClick={() => {
-                    navigator.clipboard.writeText(data.code);
-                    toast.success("Copied to clipboard");
+                  <div
+                    onClick={() => {
+                      navigator.clipboard.writeText(data.code);
+                      toast.success('Copied to clipboard');
                     }}
-                    className="relative px-4 py-2 border border-gray-400 rounded-lg bg-white hover:scale-[1.05] duration-75 cursor-pointer self-end">
+                    className="relative px-4 py-2 border border-gray-400 rounded-lg bg-white hover:scale-[1.05] duration-75 cursor-pointer self-end"
+                  >
                     {data.code}
                     <div className='p-1 rounded-lg bg-white text-gray-600 absolute top-0 right-0 translate-y-[-50%] translate-x-[50%]'>
-                      <DocumentDuplicateIcon className="w-5 h-5 cursor-pointer" onClick={
-                        () => {navigator.clipboard.writeText(data.code);
-                        toast.success("Copied to clipboard");
-                        }} />
+                      <DocumentDuplicateIcon
+                        className="w-5 h-5 cursor-pointer"
+                        onClick={() => {
+                          navigator.clipboard.writeText(data.code);
+                          toast.success('Copied to clipboard');
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
@@ -159,10 +212,21 @@ export default function Home() {
             setVerificationData(displayContent);
             deleteInbox(currentEmailRef.current!);
             setLoadingEmail(false);
+
+            // Send a push notification
+            if ('Notification' in window && 'serviceWorker' in navigator) {
+              navigator.serviceWorker.ready.then((registration) => {
+                console.log("SHOULD SEND HERE")
+                registration.showNotification('New Email Received', {
+                  body: 'You have a new email in your temporary inbox.',
+                  icon: '/phantom.svg',
+                });
+              });
+            }
           }
         }
       } catch (error: any) {
-        console.error("Error retrieving verification data:", error.message);
+        console.error('Error retrieving verification data:', error.message);
         setVerificationData(`Error: ${error.message}`);
         setLoadingEmail(false);
         toast.error(`Error retrieving verification data: ${error.message}`);
@@ -195,7 +259,7 @@ export default function Home() {
   }, [email, loadingEmail]);
 
   const generateEmail = async () => {
-    console.log("Generating email...");
+    console.log('Generating email...');
     setLoadingInbox(true);
     setVerificationData('');
     setCountdown(COUNTDOWN_TIME);
@@ -218,7 +282,7 @@ export default function Home() {
       setLoadingEmail(true);
       toast.success('Email generated successfully!');
     } catch (error: any) {
-      console.error("Error generating email:", error.message);
+      console.error('Error generating email:', error.message);
       setVerificationData(`Error: ${error.message}`);
       setLoadingInbox(false);
       setLoadingEmail(false);
@@ -229,8 +293,6 @@ export default function Home() {
   return (
     <>
       <div className="relative flex flex-col min-h-[100svh]">
-        {/* SEO FOR ME below */}
-        <a href="https://seefortune.co.uk" className='hidden'/>
         <Toaster />
         <div className='w-screen h-[300px] bg-white flex flex-col items-center justify-center px-[5%] py-2'>
           <div className='absolute top-0 left-0 w-screen flex items-center justify-between px-[5%] pt-2'>
@@ -240,7 +302,7 @@ export default function Home() {
                 alt="PhantomSign Logo" 
                 width={50} 
                 height={50}
-                className=']'
+                className=''
               />
             </div>
             <ul className='flex pr-2 md:pr-[auto] gap-8 md:gap-16 text-gray-600 font-bold'>
@@ -248,11 +310,9 @@ export default function Home() {
               <li><a href="#instructions">How to use</a></li>
             </ul>
           </div>
-          <h1 className='text-green-600 text-[2.5em] md:text-[4em] font-bold relative'>Phantom<span className='text-gray-600'>Sign</span>
-          </h1>
+          <h1 className='text-green-600 text-[2.5em] md:text-[4em] font-bold relative'>Phantom<span className='text-gray-600'>Sign</span></h1>
         </div>
         <div className="relative flex flex-col items-center bg-gray-200 flex-grow">
-
           <div className='absolute'>
             <div className='w-full flex justify-center float-animation absolute -translate-y-[50%] -top-[80px]'>
               <Image 
@@ -283,14 +343,11 @@ export default function Home() {
               )}
             </button>
           </div>
-
           <div className='relative w-full flex-grow flex flex-col items-center justify-center'>
-
             <div className='w-full flex flex-col items-center'>
               {!email && !loadingInbox && (
                 <></>
               )}
-
               {!email && !loadingInbox && (
                 <div className='flex flex-col md:flex-row gap-12 py-12 pb-8'>
                   <div className='flex flex-col items-center bg-white rounded-lg simple-shadow p-4 w-[180px]' style={{ aspectRatio: 1 }}>
@@ -301,7 +358,6 @@ export default function Home() {
                       <h2 className='text-[4em] text-gray-600'>{emailStats.codesFoundCount}</h2>
                     )}
                   </div>
-
                   <div className='flex flex-col items-center bg-white rounded-lg simple-shadow p-4 w-[180px]' style={{ aspectRatio: 1, transform: 'scale(1.2)' }}>
                     <h2 className='text-[1em]'>Emails generated</h2>
                     {emailStats.generatedEmailsCount === null ? (
@@ -310,7 +366,6 @@ export default function Home() {
                       <h2 className='text-[4em] text-gray-600'>{emailStats.generatedEmailsCount}</h2>
                     )}
                   </div>
-
                   <div className='flex flex-col items-center bg-white rounded-lg simple-shadow p-4 w-[180px]' style={{ aspectRatio: 1 }}>
                     <h2 className='text-[1em]'>Links found</h2>
                     {emailStats.linksFoundCount === null ? (
@@ -321,7 +376,6 @@ export default function Home() {
                   </div>
                 </div>
               )}
-
               {email && (
                 <div className='flex flex-col'>
                   <div onClick={() => {
@@ -341,7 +395,6 @@ export default function Home() {
                   </div>
                 </div>
               )}
-
               {loadingEmail && (
                 <div className='flex flex-col items-center mt-6'>
                   <svg className="animate-spin h-5 w-5 mr-3 border-4 border-t-4 border-gray-200 border-t-green-600 rounded-full" viewBox="0 0 24 24"></svg>
@@ -349,13 +402,11 @@ export default function Home() {
                   <p className='mt-2 text-[2em] text-gray-600'>{Math.floor(countdown / 60)}:{String(countdown % 60).padStart(2, '0')}</p>
                 </div>
               )}
-
               {verificationData}
             </div>
           </div>
         </div>
       </div>
-
       <div className='flex flex-col md:flex-row justify-center items-start gap-8 px-[5%] pt-8'>
         <div id="about" className='relative flex flex-col p-6 bg-white rounded-lg shadow-lg w-full md:w-[45%] text-center'>
           <h1 className='text-[1.5em] font-bold mb-6'>What is PhantomSign?</h1>
@@ -370,7 +421,6 @@ export default function Home() {
             your inbox sparkling. Welcome to the future of email privacy!
           </p>
         </div>
-
         <div id="instructions" className='relative flex flex-col p-6 bg-white rounded-lg shadow-lg w-full md:w-[45%] text-center'>
           <h1 className='text-[1.5em] font-bold mb-6'>How does it work?</h1>
           <div className="flex flex-col items-center gap-4">
@@ -402,13 +452,27 @@ export default function Home() {
               <p>&copy; 2024 PhantomSign. All rights reserved.</p>
             </div>
             <div className='flex gap-4 mt-4 md:mt-0'>
-              {/* <a href="#" className='hover:text-gray-400'>Privacy Policy</a>
-              <a href="#" className='hover:text-gray-400'>Terms of Service</a>
-              <a href="#" className='hover:text-gray-400'>Contact Us</a> */}
+              {/* <a href="#" class='hover:text-gray-400'>Privacy Policy</a>
+              <a href="#" class='hover:text-gray-400'>Terms of Service</a>
+              <a href="#" class='hover:text-gray-400'>Contact Us</a> */}
             </div>
           </div>
         </div>
       </footer>
     </>
   );
+}
+
+function urlBase64ToUint8Array(base64String: string): Uint8Array {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+
+  return outputArray;
 }
