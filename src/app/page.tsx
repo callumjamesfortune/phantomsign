@@ -198,7 +198,7 @@ export default function Home() {
                       navigator.clipboard.writeText(data.code);
                       toast.success('Copied to clipboard');
                     }}
-                    className="relative px-4 py-2 border border-gray-400 rounded-lg bg-white hover:scale-[1.05] duration-75 cursor-pointer self-end"
+                    className="relative px-4 py-2 border border-gray-400 rounded-lg bg-white hover:scale-[1.05] duration-75 cursor-pointer"
                   >
                     {data.code}
                     <div className='p-1 rounded-lg bg-white text-gray-600 absolute top-0 right-0 translate-y-[-50%] translate-x-[50%]'>
