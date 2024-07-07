@@ -114,7 +114,9 @@ Unacceptable Responses:
 
 Given Email Body: ${text}
 
-Return only the extracted verification code or link and the company name in the specified JSON format.`,
+Return only the extracted verification code or link and the company name in the specified JSON format.
+
+Before returning a link, ensure that it is a valid http or https link that can be followed`,
                 },
             ],
             model: "llama3-8b-8192",
