@@ -177,10 +177,10 @@ export default function Home() {
               displayContent = (
                 <div className='flex flex-col justify-center'>
                   <p className='mt-8 text-center'>Email received</p>
-                  <div className='flex flex-col md:flex-row mt-8 gap-4 items-end'>
+                  <div className='flex flex-col md:flex-row mt-8 gap-4 items-center'>
                     {companyInfo}
                     <button
-                      className="w-full md:w-[auto] bg-blue-500 text-white font-bold py-2 px-4 rounded-lg self-end flex items-center justify-center"
+                      className="w-full md:w-[auto] bg-blue-500 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center"
                       onClick={() => window.open(data.link, '_blank')}
                     >
                       Verify Link

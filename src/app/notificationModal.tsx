@@ -10,7 +10,7 @@ interface NotificationModalProps {
 const NotificationModal: React.FC<NotificationModalProps> = ({ onEnable, onClose }) => {
   return (
     <div className="fixed z-[2000] inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg">
+      <div className="bg-white p-6 rounded-lg shadow-lg text-center">
         <h2 className="text-lg font-bold mb-4">Enable Notifications</h2>
         <p className="mb-4">Do you want to enable notifications?</p>
         <div className="flex justify-center">
