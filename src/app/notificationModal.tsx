@@ -13,7 +13,7 @@ const NotificationModal: React.FC<NotificationModalProps> = ({ onEnable, onClose
       <div className="bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-lg font-bold mb-4">Enable Notifications</h2>
         <p className="mb-4">Do you want to enable notifications?</p>
-        <div className="flex justify-end">
+        <div className="flex justify-center">
           <button
             className="bg-gray-200 text-gray-600 py-2 px-4 rounded-lg mr-2"
             onClick={onClose}

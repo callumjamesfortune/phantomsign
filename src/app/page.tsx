@@ -175,7 +175,7 @@ export default function Home() {
 
             if (data.link) {
               displayContent = (
-                <div className='flex flex-col items-center'>
+                <div className='flex flex-col justify-center'>
                   <p className='mt-8 text-center'>Email received</p>
                   <div className='flex flex-col md:flex-row mt-8 gap-4 items-end'>
                     {companyInfo}
