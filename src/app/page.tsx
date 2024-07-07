@@ -1,11 +1,13 @@
+// Home.tsx
 'use client';
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useState, useEffect, useRef } from 'react';
-import { ExternalLinkIcon, DocumentDuplicateIcon, OfficeBuildingIcon, SparklesIcon } from '@heroicons/react/outline';
+import { ExternalLinkIcon, DocumentDuplicateIcon, OfficeBuildingIcon, SparklesIcon, BellIcon } from '@heroicons/react/outline';
 import { toast, Toaster } from 'react-hot-toast';
 import Image from 'next/image';
 import logo from '../../public/phantom.svg';
+import NotificationModal from './notificationModal';
 
 const COUNTDOWN_TIME = parseInt(process.env.NEXT_PUBLIC_DELETE_AFTER_MINUTES!, 10) * 60 || 300; // Default to 300 seconds (5 minutes)
 const POLLING_INTERVAL = 5000; // 5 seconds
@@ -28,6 +30,8 @@ export default function Home() {
     codesFoundCount: null,
     linksFoundCount: null,
   });
+  const [isNotificationEnabled, setIsNotificationEnabled] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
   const currentEmailRef = useRef<string | null>(null);
   const pollingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -79,6 +83,16 @@ export default function Home() {
     return () => clearInterval(countdownTimerRef.current!);
   }, [loadingEmail]);
 
+  useEffect(() => {
+    const checkNotificationPermission = () => {
+      if ('Notification' in window && Notification.permission === 'granted') {
+        setIsNotificationEnabled(true);
+      }
+    };
+
+    checkNotificationPermission();
+  }, []);
+
   const requestNotificationPermission = async () => {
     if ('Notification' in window && 'serviceWorker' in navigator) {
       const permission = await Notification.requestPermission();
@@ -106,6 +120,8 @@ export default function Home() {
           });
 
           console.log('Push subscription successful:', subscription);
+          setIsNotificationEnabled(true);
+          setShowModal(false);
         } catch (error) {
           console.error('Push subscription error:', error);
         }
@@ -159,7 +175,7 @@ export default function Home() {
 
             if (data.link) {
               displayContent = (
-                <div className='flex flex-col'>
+                <div className='flex flex-col items-center'>
                   <p className='mt-8 text-center'>Email received</p>
                   <div className='flex flex-col md:flex-row mt-8 gap-4 items-end'>
                     {companyInfo}
@@ -214,7 +230,7 @@ export default function Home() {
               navigator.serviceWorker.ready.then((registration) => {
                 console.log("SHOULD SEND HERE")
                 registration.showNotification('New Email Received', {
-                  body: 'We recieved an email to your temporary address.',
+                  body: 'We received an email to your temporary address.',
                   icon: '/phantom.svg',
                 });
               });
@@ -288,6 +304,12 @@ export default function Home() {
 
   return (
     <>
+      {showModal && (
+        <NotificationModal
+          onEnable={requestNotificationPermission}
+          onClose={() => setShowModal(false)}
+        />
+      )}
       <div className="relative flex flex-col min-h-[100svh]">
         <Toaster />
         <div className='w-screen h-[300px] bg-white flex flex-col items-center justify-center px-[5%] py-2'>
@@ -305,6 +327,14 @@ export default function Home() {
               <li><a href="#about">What is this</a></li>
               <li><a href="#instructions">How to use</a></li>
             </ul>
+            {!isNotificationEnabled && (
+              <button
+                className="bg-gray-200 text-gray-600 text-[1em] font-bold py-2 px-2 rounded-lg flex items-center justify-center"
+                onClick={() => setShowModal(true)}
+              >
+                <BellIcon className="w-5 h-5" />
+              </button>
+            )}
           </div>
           <h1 className='text-green-600 text-[2.5em] md:text-[4em] font-bold relative'>Phantom<span className='text-gray-600'>Sign</span></h1>
         </div>
@@ -402,12 +432,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <button
-          className="shimmery-button z-[1000] simple-shadow text-white text-[1.5em] font-bold py-2 px-6 rounded-lg flex items-center justify-center mt-4"
-          onClick={requestNotificationPermission}
-        >
-          Enable Notifications
-        </button>
       </div>
       <div className='flex flex-col md:flex-row justify-center items-start gap-8 px-[5%] pt-8'>
         <div id="about" className='relative flex flex-col p-6 bg-white rounded-lg shadow-lg w-full md:w-[45%] text-center'>
