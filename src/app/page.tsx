@@ -1,14 +1,14 @@
 'use client';
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ExternalLinkIcon, DocumentDuplicateIcon, OfficeBuildingIcon, SparklesIcon } from '@heroicons/react/outline';
 import { toast, Toaster } from 'react-hot-toast';
 import Image from 'next/image';
 import logo from '../../public/phantom.svg';
 
 const COUNTDOWN_TIME = parseInt(process.env.NEXT_PUBLIC_DELETE_AFTER_MINUTES!, 10) * 60 || 300; // Default to 300 seconds (5 minutes)
-const POLLING_INTERVAL = 2000; // 2 seconds
+const POLLING_INTERVAL = 5000; // 5 seconds
 
 export default function Home() {
   const supabase = createClientComponentClient();
@@ -18,6 +18,9 @@ export default function Home() {
   const [loadingEmail, setLoadingEmail] = useState(false);
   const [countdown, setCountdown] = useState(COUNTDOWN_TIME);
   const [emailStats, setEmailStats] = useState({ generatedEmailsCount: 0, codesFoundCount: 0, linksFoundCount: 0 });
+  const currentEmailRef = useRef<string | null>(null);
+  const pollingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const fetchEmailStats = async () => {
@@ -41,12 +44,16 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
     if (loadingEmail) {
-      timer = setInterval(() => {
+      if (countdownTimerRef.current) {
+        clearInterval(countdownTimerRef.current);
+      }
+      countdownTimerRef.current = setInterval(() => {
         setCountdown(prevCountdown => {
           if (prevCountdown <= 1) {
-            clearInterval(timer);
+            clearInterval(countdownTimerRef.current!);
+            clearInterval(pollingTimeoutRef.current!);
+            deleteInbox(currentEmailRef.current!);
             setLoadingEmail(false);
             return 0;
           }
@@ -55,56 +62,43 @@ export default function Home() {
       }, 1000);
     }
 
-    return () => clearInterval(timer);
+    return () => clearInterval(countdownTimerRef.current!);
   }, [loadingEmail]);
 
-  const generateEmail = async () => {
-    setLoadingInbox(true);
-    setVerificationData('');
-    setCountdown(COUNTDOWN_TIME);
+  const deleteInbox = async (emailAddress: string) => {
     try {
-      const response = await fetch('/api/generate-inbox', {
+      await fetch('/api/delete-inbox', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ emailAddress })
       });
-      const data = await response.json();
-      const emailAddress = data.emailAddress;
-
-      // Log out the received email
-      console.log('Generated email:', emailAddress);
-
-      if (!emailAddress) {
-        throw new Error('Failed to generate email');
-      }
-
-      setEmail(emailAddress);
-
-      setLoadingInbox(false);
-      setLoadingEmail(true);
-      pollForVerificationData(emailAddress);
-      toast.success('Email generated successfully!');
+      console.log(`Inbox for ${emailAddress} deleted.`);
     } catch (error: any) {
-      setVerificationData(`Error: ${error.message}`);
-      setLoadingInbox(false);
-      setLoadingEmail(false);
-      toast.error(`Error generating email: ${error.message}`);
+      console.error(`Error deleting inbox for ${emailAddress}:`, error.message);
     }
   };
 
-  const pollForVerificationData = async (inboxId: string) => {
-    const endTime = Date.now() + COUNTDOWN_TIME * 1000;
-
+  useEffect(() => {
     const poll = async () => {
-      if (Date.now() > endTime) {
-        setLoadingEmail(false);
-        setVerificationData(<span className='px-4 py-2 rounded-lg bg-gray-100 text-center font-bold'>Polling timed out</span>);
+      if (!currentEmailRef.current || !loadingEmail) {
+        console.log("No current email to poll for or polling stopped.");
         return;
       }
 
+      console.log(`Polling for email in inbox: ${currentEmailRef.current}`);
       try {
-        const response = await fetch(`/api/get-verification-data?inboxId=${inboxId}`);
+        const response = await fetch(`/api/get-verification-data?inboxId=${currentEmailRef.current}`);
         if (response.ok) {
           const data = await response.json();
+          if (data.message === 'No email yet' || data.message === 'No email content found') {
+            console.log(data.message);
+            return;
+          }
+
           if (data) {
+            console.log("Data found:", data);
             let displayContent;
             const companyInfo = data.company ? (
               <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-center font-bold self-end">
@@ -122,7 +116,7 @@ export default function Home() {
                   <div className='flex flex-col md:flex-row mt-8 gap-4 items-end'>
                     {companyInfo}
                     <button
-                      className="w-full md:w-[auto] bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg self-end flex items-center"
+                      className="w-full md:w-[auto] bg-blue-500 text-white font-bold py-2 px-4 rounded-lg self-end flex items-center justify-center"
                       onClick={() => window.open(data.link, "_blank")}
                     >
                       Verify Link
@@ -159,21 +153,73 @@ export default function Home() {
             }
 
             setVerificationData(displayContent);
+            deleteInbox(currentEmailRef.current!);
             setLoadingEmail(false);
-            return; // Exit polling once data is found
           }
         }
       } catch (error: any) {
+        console.error("Error retrieving verification data:", error.message);
         setVerificationData(`Error: ${error.message}`);
         setLoadingEmail(false);
         toast.error(`Error retrieving verification data: ${error.message}`);
-        return; // Exit polling on error
       }
-
-      setTimeout(poll, POLLING_INTERVAL); // Retry after interval
     };
 
-    poll();
+    const startPolling = () => {
+      if (pollingTimeoutRef.current) {
+        clearTimeout(pollingTimeoutRef.current);
+      }
+
+      const pollingLoop = async () => {
+        if (!currentEmailRef.current || !loadingEmail) {
+          return;
+        }
+        await poll();
+        pollingTimeoutRef.current = setTimeout(pollingLoop, POLLING_INTERVAL);
+      };
+
+      pollingLoop();
+    };
+
+    startPolling();
+
+    return () => {
+      if (pollingTimeoutRef.current) {
+        clearTimeout(pollingTimeoutRef.current);
+      }
+    };
+  }, [email, loadingEmail]);
+
+  const generateEmail = async () => {
+    console.log("Generating email...");
+    setLoadingInbox(true);
+    setVerificationData('');
+    setCountdown(COUNTDOWN_TIME);
+    try {
+      const response = await fetch('/api/generate-inbox', {
+        method: 'POST',
+      });
+      const data = await response.json();
+      const emailAddress = data.emailAddress;
+
+      console.log('Generated email:', emailAddress);
+
+      if (!emailAddress) {
+        throw new Error('Failed to generate email');
+      }
+
+      setEmail(emailAddress);
+      currentEmailRef.current = emailAddress;
+      setLoadingInbox(false);
+      setLoadingEmail(true);
+      toast.success('Email generated successfully!');
+    } catch (error: any) {
+      console.error("Error generating email:", error.message);
+      setVerificationData(`Error: ${error.message}`);
+      setLoadingInbox(false);
+      setLoadingEmail(false);
+      toast.error(`Error generating email: ${error.message}`);
+    }
   };
 
   return (
@@ -265,7 +311,7 @@ export default function Home() {
                   <div onClick={() => {
                     navigator.clipboard.writeText(email);
                     toast.success("Copied to clipboard");
-                    }} className="relative text-[1em] md:text-[1.4em] mt-4 px-4 py-2 border rounded-lg bg-white border border-gray-400 hover:scale-[1.05] duration-75 cursor-pointer">
+                    }} className="relative text-[1em] md:text-[1.4em] mt-4 px-4 py-2 border rounded-lg bg-white border border-gray-400 hover:scale-[1.05] duration-75 cursor-pointer self-end">
                     {email}
                     <div className='p-1 rounded-lg bg-white text-gray-600 absolute top-0 right-0 translate-y-[-50%] translate-x-[50%]'>
                       <DocumentDuplicateIcon

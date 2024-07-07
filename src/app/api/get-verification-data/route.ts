@@ -5,8 +5,6 @@ import sanitizeHtml from 'sanitize-html';
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY as string });
 
-const POLLING_INTERVAL = 2000; // 2 seconds
-const POLLING_TIMEOUT = 120000; // 120 seconds
 const AI_RETRY_LIMIT = 2; // Limit the number of retries for the AI
 
 export async function GET(request: NextRequest) {
@@ -18,14 +16,14 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-        const latestEmail = await pollForEmail(inboxId, POLLING_TIMEOUT, POLLING_INTERVAL);
+        const latestEmail = await fetchLatestEmail(inboxId);
         if (!latestEmail) {
-            return NextResponse.json({ message: 'No email yet' }, { status: 204 });
+            return NextResponse.json({ message: 'No email yet' }, { status: 200 });
         }
 
         const emailBody = latestEmail.body;
         if (!emailBody) {
-            return NextResponse.json({ message: 'No email content found' }, { status: 204 });
+            return NextResponse.json({ message: 'No email content found' }, { status: 200 });
         }
 
         const cleanEmailContent = (str: string) => {
@@ -57,41 +55,32 @@ export async function GET(request: NextRequest) {
     }
 }
 
-async function pollForEmail(inboxId: string, timeout: number, interval: number) {
-    const endTime = Date.now() + timeout;
+async function fetchLatestEmail(inboxId: string) {
+    try {
+        console.log(`Fetching latest email in inbox: ${inboxId}`);
+        const { data: emails, error } = await supabaseServerClient
+            .from('incoming_emails')
+            .select('*')
+            .eq('email', inboxId)
+            .order('created_at', { ascending: false })
+            .limit(1);
 
-    while (Date.now() < endTime) {
-        try {
-            console.log(`Polling for email in inbox: ${inboxId}`);
-            const { data: emails, error } = await supabaseServerClient
-                .from('incoming_emails')
-                .select('*')
-                .eq('email', inboxId)
-                .order('created_at', { ascending: false })
-                .limit(1);
-
-            if (error) {
-                throw new Error('Error querying Supabase: ' + error.message);
-            }
-
-            if (emails && emails.length > 0) {
-                const email = emails[0];
-                console.log('Email found:', email);
-                return email;
-            } else {
-                console.log('No email found, retrying...');
-            }
-        } catch (error: any) {
-            console.error('Error while polling for email:', error.message);
-            if (!error.message.includes('No email yet')) {
-                throw error;
-            }
+        if (error) {
+            throw new Error('Error querying Supabase: ' + error.message);
         }
-        await new Promise(res => setTimeout(res, interval));
-    }
 
-    console.log('Polling timed out without finding an email.');
-    return null;
+        if (emails && emails.length > 0) {
+            const email = emails[0];
+            console.log('Email found:', email);
+            return email;
+        } else {
+            console.log('No email found.');
+            return null;
+        }
+    } catch (error: any) {
+        console.error('Error while fetching email:', error.message);
+        throw error;
+    }
 }
 
 async function getGroqChatCompletion(text: string) {
