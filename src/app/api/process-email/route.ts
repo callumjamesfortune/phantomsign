@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     try {
       const parsedEmail = await simpleParser(decodedContent);
       const plainTextBody = parsedEmail.text || '';
-      const receivedAt = new Date().toISOString();
+      const receivedAtEpoch = Date.now(); // Current time in milliseconds since epoch
 
       // Check if the recipient exists in the Supabase database
       const { data: generatedEmails, error: queryError } = await supabaseServerClient
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
         // Recipient exists, insert the email into the incoming_emails table
         const { error: insertError } = await supabaseServerClient
           .from('incoming_emails')
-          .insert([{ email: recipient, body: plainTextBody }]);
+          .insert([{ email: recipient, body: plainTextBody, created_at: receivedAtEpoch }]);
 
         if (insertError) {
           console.error('Error inserting email into incoming_emails:', insertError);

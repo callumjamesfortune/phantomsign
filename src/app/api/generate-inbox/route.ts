@@ -38,9 +38,11 @@ export async function POST(req: NextRequest) {
   const emailAddress = `${emailString}@seefortune.co.uk`;
 
   try {
+    const currentTime = Date.now(); // Get current time in milliseconds since epoch
+
     const { error: insertError } = await supabaseServerClient
       .from('generated_emails')
-      .insert([{ email: emailAddress }]);
+      .insert([{ email: emailAddress, created_at: currentTime }]);
 
     if (insertError) throw insertError;
 
