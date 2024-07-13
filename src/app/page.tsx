@@ -323,7 +323,7 @@ export default function Home() {
                 className=''
               />
             </div>
-            <ul className='flex pr-2 md:pr-[auto] gap-8 md:gap-16 text-gray-600 font-bold'>
+            <ul className='flex md:pr-[auto] gap-8 md:gap-16 text-gray-600 font-bold'>
               <li><a href="#about">What is this</a></li>
               <li><a href="#instructions">How to use</a></li>
             </ul>

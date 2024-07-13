@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
   }
 
   const emailString = generateEmail();
-  const emailAddress = `${emailString}@seefortune.co.uk`;
+  const emailAddress = `${emailString}@phantomsign.com`;
 
   try {
     const currentTime = Date.now(); // Get current time in milliseconds since epoch
