@@ -34,7 +34,7 @@ export default function Home() {
   const [showModal, setShowModal] = useState<boolean>(false);
   const currentEmailRef = useRef<string | null>(null);
   const pollingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const endTimeRef = useRef<number | null>(null);
 
   useEffect(() => {
     const fetchEmailStats = async () => {
@@ -58,29 +58,28 @@ export default function Home() {
   }, [supabase]);
 
   useEffect(() => {
-    if (loadingEmail) {
-      if (countdownTimerRef.current) {
-        clearInterval(countdownTimerRef.current);
+    const updateCountdown = () => {
+      if (endTimeRef.current !== null) {
+        const remainingTime = Math.max(0, endTimeRef.current - Date.now());
+        setCountdown(Math.floor(remainingTime / 1000));
+        if (remainingTime <= 0) {
+          if (currentEmailRef.current) deleteInbox(currentEmailRef.current);
+          setLoadingEmail(false);
+          window.location.reload();
+        } else {
+          requestAnimationFrame(updateCountdown);
+        }
       }
-      countdownTimerRef.current = setInterval(() => {
-        setCountdown((prevCountdown) => {
-          if (prevCountdown <= 1) {
-            clearInterval(countdownTimerRef.current!);
-            clearInterval(pollingTimeoutRef.current!);
-            if (currentEmailRef.current) deleteInbox(currentEmailRef.current);
-            setLoadingEmail(false);
+    };
 
-            // Reload the page
-            window.location.reload();
-
-            return 0;
-          }
-          return prevCountdown - 1;
-        });
-      }, 1000);
+    if (loadingEmail) {
+      endTimeRef.current = Date.now() + countdown * 1000;
+      requestAnimationFrame(updateCountdown);
     }
 
-    return () => clearInterval(countdownTimerRef.current!);
+    return () => {
+      endTimeRef.current = null;
+    };
   }, [loadingEmail]);
 
   useEffect(() => {
@@ -101,16 +100,12 @@ export default function Home() {
           const registration = await navigator.serviceWorker.register('/sw.js');
           console.log('Service Worker registered:', registration);
 
-          // Wait for the service worker to become active
           const sw = await navigator.serviceWorker.ready;
-
-          // Subscribe to push notifications
           const subscription = await sw.pushManager.subscribe({
             userVisibleOnly: true,
             applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!),
           });
 
-          // Send subscription to backend
           await fetch('/api/subscribe', {
             method: 'POST',
             headers: {
@@ -225,7 +220,6 @@ export default function Home() {
             deleteInbox(currentEmailRef.current!);
             setLoadingEmail(false);
 
-            // Send a push notification
             if ('Notification' in window && 'serviceWorker' in navigator) {
               navigator.serviceWorker.ready.then((registration) => {
                 console.log("SHOULD SEND HERE")
@@ -414,7 +408,7 @@ export default function Home() {
                         className="w-5 h-5 cursor-pointer"
                         onClick={() => {
                           navigator.clipboard.writeText(email);
-                          toast.success("Copied to clipboard");
+                          toast.success('Copied to clipboard');
                         }}
                       />
                     </div>
@@ -434,7 +428,7 @@ export default function Home() {
         </div>
       </div>
       <div className='flex flex-col md:flex-row justify-center items-start gap-8 px-[5%] pt-8'>
-        <div id="about" className='relative flex flex-col p-6 bg-white rounded-lg shadow-lg w-full md:w-[45%] text-center'>
+        <div id="about" className='relative flex flex-col p-6 bg-white rounded-lg w-full md:w-[45%] text-center'>
           <h1 className='text-[1.5em] font-bold mb-6'>What is PhantomSign?</h1>
           <p className='text-gray-600'>
             PhantomSign is your digital ally against spam and unwanted emails! 
@@ -447,7 +441,7 @@ export default function Home() {
             your inbox sparkling. Welcome to the future of email privacy!
           </p>
         </div>
-        <div id="instructions" className='relative flex flex-col p-6 bg-white rounded-lg shadow-lg w-full md:w-[45%] text-center'>
+        <div id="instructions" className='relative flex flex-col p-6 bg-white rounded-lg w-full md:w-[45%] text-center'>
           <h1 className='text-[1.5em] font-bold mb-6'>How does it work?</h1>
           <div className="flex flex-col items-center gap-4">
             <div className="flex flex-col items-center gap-4">

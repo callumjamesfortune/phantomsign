@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import supabaseServerClient from '../../../lib/supabaseServerClient';
 
-const DELETE_AFTER_MINUTES = parseInt(process.env.NEXT_PUBLIC_DELETE_AFTER_MINUTES!, 10) || 10;
+const DELETE_AFTER_MINUTES = parseInt(process.env.NEXT_PUBLIC_DELETE_AFTER_MINUTES!) || 10;
 
 const deleteOldEmails = async () => {
-  const deleteBefore = Date.now() - DELETE_AFTER_MINUTES * 60000;
+  const deleteBefore = Date.now() - (DELETE_AFTER_MINUTES * 60000);
 
   try {
     // Delete old generated emails
