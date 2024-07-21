@@ -3,7 +3,7 @@
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useState, useEffect, useRef } from 'react';
-import { ExternalLinkIcon, DocumentDuplicateIcon, OfficeBuildingIcon, SparklesIcon, BellIcon } from '@heroicons/react/outline';
+import { ExternalLinkIcon, DocumentDuplicateIcon, OfficeBuildingIcon, SparklesIcon, BellIcon, CodeIcon } from '@heroicons/react/outline';
 import { toast, Toaster } from 'react-hot-toast';
 import Image from 'next/image';
 import logo from '../../public/phantom.svg';
@@ -318,17 +318,17 @@ export default function Home() {
               />
             </div>
             <ul className='flex md:pr-[auto] gap-8 md:gap-16 text-gray-600 font-bold'>
-              <li><a href="#about">What is this</a></li>
-              <li><a href="#instructions">How to use</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#api">PhantomSign API</a></li>
             </ul>
-            {!isNotificationEnabled && (
+            {/* {!isNotificationEnabled && (
               <button
                 className="bg-gray-200 text-gray-600 text-[1em] font-bold py-2 px-2 rounded-lg flex items-center justify-center"
                 onClick={() => setShowModal(true)}
               >
                 <BellIcon className="w-5 h-5" />
               </button>
-            )}
+            )} */}
           </div>
           <h1 className='text-green-600 text-[2.5em] md:text-[4em] font-bold relative'>Phantom<span className='text-gray-600'>Sign</span></h1>
         </div>
@@ -427,45 +427,65 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className='flex flex-col md:flex-row justify-center items-start gap-8 px-[5%] pt-8'>
-        <div id="about" className='relative flex flex-col p-6 bg-white rounded-lg w-full md:w-[45%] text-center'>
-          <h1 className='text-[1.5em] font-bold mb-6'>What is PhantomSign?</h1>
-          <p className='text-gray-600'>
-            PhantomSign is your digital ally against spam and unwanted emails! 
-            It creates secret email addresses that self-destruct after a set 
-            time, keeping your main inbox clean. Use PhantomSign&apos;s temporary 
-            addresses for sign-ups to hide your personal email from prying eyes 
-            and pesky marketers. Plus, PhantomSign automatically extracts verification 
-            codes or links from emails, saving you time. With a sprinkle of magic and a 
-            dash of phantom stealth, PhantomSign keeps your online presence secure and 
-            your inbox sparkling. Welcome to the future of email privacy!
-          </p>
+      <div id="about" className='bg-white flex flex-col w-full gap-8 px-[5%] py-8'>
+
+        <div className='w-full flex items-center'>
+          <div className='w-full md:w-1/2 items-center bg-white rounded-lg simple-shadow p-4'>
+            <h2 className='text-[1.5em] mb-2'>Generate an email</h2>
+
+            <p>PhantomSign will create a temporary email address that is valid for up to 5 minutes.</p>
+          </div>
+          <h1 className='text-gray-200 px-8 text-[4em]'>1</h1>
         </div>
-        <div id="instructions" className='relative flex flex-col p-6 bg-white rounded-lg w-full md:w-[45%] text-center'>
-          <h1 className='text-[1.5em] font-bold mb-6'>How does it work?</h1>
-          <div className="flex flex-col items-center gap-4">
-            <div className="flex flex-col items-center gap-4">
-              <div className="flex items-center justify-center w-10 h-10 rounded-full text-gray-600 font-bold">
-                1
-              </div>
-              <p className='text-gray-600'>Click the &quot;Generate Email&quot; button to create a temporary email address.</p>
+
+        <div className='w-full flex items-center justify-end'>
+          <h1 className='text-gray-200 px-8 text-[4em]'>2</h1>
+          <div className='w-full md:w-1/2 items-center bg-white rounded-lg simple-shadow p-4'>
+            <h2 className='text-[1.5em] mb-2'>Use it for signup</h2>
+
+            <p>The PhantomSign email can be used to signup to a service of your choice that may require the email to be verified.</p>
+          </div>
+        </div>
+
+        <div className='w-full flex items-center'>
+          <div className='w-full md:w-1/2 items-center bg-white rounded-lg simple-shadow p-4'>
+            <h2 className='text-[1.5em] mb-2'>Receive code or link</h2>
+
+            <p>PhantomSign will try to extract the verificatio code or link from the verification email and output it straight to your screen.</p>
+          </div>
+          <h1 className='text-gray-200 px-8 text-[4em]'>3</h1>
+        </div>
+
+
+
+      </div>
+      <div id="api" className='bg-gray-200 min-h-screen w-full flex flex-col items-center gap-8 px-[5%] pt-8'>
+
+        <div className='relative flex flex-col p-6 w-full md:w-[60%] text-center text-black'>
+          <h1 className='text-[2.5em] md:text-[4em] font-bold mb-6'>PhantomSign API</h1>
+          <p className='text-black mb-4'>
+            PhantomSign offers a simple and effective API to extract verification codes and links from temporary email addresses.
+          </p>
+          <div className='flex items-center mb-4 text-white'>
+            {/* <CodeIcon /> */}
+            {/* <span className='font-bold text-gray-300'>API Endpoints:</span> */}
+          </div>
+          <div className='text-left'>
+            <div className='mb-4'>
+              <p className='font-bold mb-2 text-[1.5em]'>Generate Inbox</p>
+              <p className='mb-2'>Generates a new temporary email inbox.</p>
+              <p className='px-4 py-2 border border-gray-400 rounded-lg bg-white text-black'><span className='text-green-500 mr-2 font-bold'>GET</span> /api/generate-inbox</p>
             </div>
-            <div className="flex flex-col items-center gap-4">
-              <div className="flex items-center justify-center w-10 h-10 rounded-full text-gray-600 font-bold">
-                2
-              </div>
-              <p className='text-gray-600'>Use this temporary email address for any online sign-ups or verifications.</p>
-            </div>
-            <div className="flex flex-col items-center gap-4">
-              <div className="flex items-center justify-center w-10 h-10 rounded-full text-gray-600 font-bold">
-                3
-              </div>
-              <p className='text-gray-600'>PhantomSign monitors the inbox and automatically extracts verification codes or links from incoming emails, displaying them on the screen.</p>
+            <div className='mb-4'>
+              <p className='font-bold mb-2 text-[1.5em]'>Get Verification Data</p>
+              <p className='mb-2'>Checks the inbox for a verification email, returning the link or code if found..</p>
+              <p className='px-4 py-2 border border-gray-400 rounded-lg bg-white text-black'><span className='text-green-500 mr-2 font-bold'>GET</span> /api/get-verification-data?inboxId=INBOX_ID</p>
             </div>
           </div>
         </div>
+        
       </div>
-      <footer className='bg-gray-200 text-gray-600 py-8 mt-12'>
+      <footer className='bg-gray-200 text-gray-600 py-8'>
         <div className='container mx-auto px-4'>
           <div className='flex flex-col md:flex-row justify-between items-center'>
             <div className='text-center md:text-left'>
