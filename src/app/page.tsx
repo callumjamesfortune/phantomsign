@@ -271,7 +271,7 @@ export default function Home() {
     setCountdown(COUNTDOWN_TIME);
     try {
       const response = await fetch('/api/generate-inbox', {
-        method: 'POST',
+        method: 'GET',
       });
       const data = await response.json();
       const emailAddress = data.emailAddress;
