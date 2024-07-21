@@ -30,21 +30,32 @@ function generateEmail(): string {
 }
 
 export async function GET(req: NextRequest) {
+  console.log('Received request:', req.method);
+
   if (req.method !== 'GET') {
+    console.error(`Method ${req.method} Not Allowed`);
     return NextResponse.json({ error: `Method ${req.method} Not Allowed` }, { status: 405 });
   }
 
   const emailString = generateEmail();
   const emailAddress = `${emailString}@phantomsign.com`;
 
+  console.log(`Generated email address: ${emailAddress}`);
+
   try {
     const currentTime = Date.now(); // Get current time in milliseconds since epoch
+    console.log(`Current Time (ms since epoch): ${currentTime}`);
 
     const { error: insertError } = await supabaseServerClient
       .from('generated_emails')
       .insert([{ email: emailAddress, created_at: currentTime }]);
 
-    if (insertError) throw insertError;
+    if (insertError) {
+      console.error(`Insert Error: ${insertError.message}`);
+      throw insertError;
+    }
+
+    console.log(`Inserted email address: ${emailAddress}`);
 
     // Increment the generated_emails_count in the email_statistics table
     const { data, error: selectError } = await supabaseServerClient
@@ -53,9 +64,13 @@ export async function GET(req: NextRequest) {
       .eq('id', 1)
       .single();
 
-    if (selectError) throw selectError;
+    if (selectError) {
+      console.error(`Select Error: ${selectError.message}`);
+      throw selectError;
+    }
 
     const newCount = data.generated_emails_count + 1;
+    console.log(`New Generated Emails Count: ${newCount}`);
 
     const { error: finalUpdateError } = await supabaseServerClient
       .from('email_statistics')
@@ -65,10 +80,16 @@ export async function GET(req: NextRequest) {
       })
       .eq('id', 1);
 
-    if (finalUpdateError) throw finalUpdateError;
+    if (finalUpdateError) {
+      console.error(`Final Update Error: ${finalUpdateError.message}`);
+      throw finalUpdateError;
+    }
+
+    console.log(`Updated email_statistics count to: ${newCount}`);
 
     return NextResponse.json({ emailAddress }, { status: 200 });
   } catch (error: any) {
+    console.error(`Error: ${error.message}`);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
