@@ -148,7 +148,7 @@ export default function Home() {
 
       console.log(`Polling for email in inbox: ${currentEmailRef.current}`);
       try {
-        const response = await fetch(`/api/get-verification-data?inboxId=${currentEmailRef.current}`);
+        const response = await fetch(`/api/get-verification-data?inboxId=${currentEmailRef.current}`, {cache: 'no-store'});
         if (response.ok) {
           const data = await response.json();
           if (data.message === 'No email yet' || data.message === 'No email content found') {
@@ -272,6 +272,7 @@ export default function Home() {
     try {
       const response = await fetch('/api/generate-inbox', {
         method: 'GET',
+        cache: 'no-store'
       });
       const data = await response.json();
       const emailAddress = data.emailAddress;
