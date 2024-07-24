@@ -5,8 +5,8 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-[[functions]]
+[functions]
   directory = "netlify/functions"
 
-[functions."cleanup"]
+[functions.cleanup]
   schedule = "*/5 * * * *"
