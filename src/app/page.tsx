@@ -270,7 +270,10 @@ export default function Home() {
     setVerificationData('');
     setCountdown(COUNTDOWN_TIME);
     try {
-      const response = await fetch(`/api/generate-inbox?nocache=${Date.now()}`, {cache: 'no-store'});
+      const response = await fetch(`/api/generate-inbox?`, {
+        method: 'POST',
+        cache: 'no-store'
+      });
       const data = await response.json();
       const emailAddress = data.emailAddress;
 

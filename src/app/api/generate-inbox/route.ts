@@ -29,10 +29,10 @@ function generateEmail(): string {
   return finalResult;
 }
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   console.log('Received request:', req.method);
 
-  if (req.method !== 'GET') {
+  if (req.method !== 'POST') {
     console.error(`Method ${req.method} Not Allowed`);
     return NextResponse.json({ error: `Method ${req.method} Not Allowed` }, { status: 405 });
   }
