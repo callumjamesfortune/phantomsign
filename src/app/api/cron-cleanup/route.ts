@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import supabaseServerClient from '../../../lib/supabaseServerClient';
 
 const DELETE_AFTER_MINUTES = parseInt(process.env.NEXT_PUBLIC_DELETE_AFTER_MINUTES!) || 10;
+const SECRET_KEY = process.env.SECRET_KEY; // Set this in your Netlify environment variables
 
 const deleteOldEmails = async () => {
   const deleteBefore = Date.now() - (DELETE_AFTER_MINUTES * 60000);
@@ -35,7 +36,14 @@ const deleteOldEmails = async () => {
   }
 };
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
+  const url = new URL(req.url);
+  const key = url.searchParams.get('key');
+
+  if (key !== SECRET_KEY) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
+
   await deleteOldEmails();
   return NextResponse.json({ message: 'Cleanup task completed' });
 }
