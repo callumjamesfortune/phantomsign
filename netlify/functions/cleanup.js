@@ -1,18 +1,14 @@
 import { schedule } from '@netlify/functions';
-import { createClient } from '@supabase/supabase-js';
+import supabaseServerClient from '../../src/lib/supabaseServerClient';
 
 const DELETE_AFTER_MINUTES = parseInt(process.env.NEXT_PUBLIC_DELETE_AFTER_MINUTES) || 10;
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 const deleteOldEmails = async () => {
   const deleteBefore = Date.now() - (DELETE_AFTER_MINUTES * 60000);
 
   try {
     // Delete old generated emails
-    let { error: generatedEmailsError } = await supabase
+    let { error: generatedEmailsError } = await supabaseServerClient
       .from('generated_emails')
       .delete()
       .lt('created_at', deleteBefore);
@@ -24,7 +20,7 @@ const deleteOldEmails = async () => {
     }
 
     // Delete old incoming emails
-    let { error: incomingEmailsError } = await supabase
+    let { error: incomingEmailsError } = await supabaseServerClient
       .from('incoming_emails')
       .delete()
       .lt('created_at', deleteBefore);
