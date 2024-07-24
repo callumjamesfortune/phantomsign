@@ -1,6 +1,6 @@
 import { schedule } from '@netlify/functions';
 
-const API_ENDPOINT = 'https://phantomsign.com?key=YOUR_SECRET_KEY';
+const API_ENDPOINT = `https://phantomsign.com?key=${process.env.SECRET_KEY}`;
 
 export const handler = schedule('*/5 * * * *', async (event, context) => {
   try {
