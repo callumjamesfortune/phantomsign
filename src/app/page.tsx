@@ -150,7 +150,7 @@ export default function Home() {
       try {
         const response = await fetch(`/api/get-verification-data?inboxId=${currentEmailRef.current}`, {cache: 'no-store'});
         if (response.ok) {
-          const data = await response.json();
+          const data = await response.json(); 
           if (data.message === 'No email yet' || data.message === 'No email content found') {
             console.log(data.message);
             return;
@@ -270,7 +270,7 @@ export default function Home() {
     setVerificationData('');
     setCountdown(COUNTDOWN_TIME);
     try {
-      const response = await fetch('/api/generate-inbox', {cache: 'no-store'});
+      const response = await fetch(`/api/generate-inbox?nocache=${Date.now()}`, {cache: 'no-store'});
       const data = await response.json();
       const emailAddress = data.emailAddress;
 
