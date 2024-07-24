@@ -1,5 +1,4 @@
-// Home.tsx
-'use client';
+'use client'
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useState, useEffect, useRef } from 'react';
@@ -268,9 +267,11 @@ export default function Home() {
     console.log('Generating email...');
     setLoadingInbox(true);
     setVerificationData('');
-    setCountdown(COUNTDOWN_TIME);
+    setCountdown(COUNTDOWN_TIME); // Reset the countdown timer
+    endTimeRef.current = Date.now() + COUNTDOWN_TIME * 1000; // Update the end time reference
+
     try {
-      const response = await fetch(`/api/generate-inbox?`, {
+      const response = await fetch('/api/generate-inbox', {
         method: 'POST',
         cache: 'no-store'
       });
@@ -475,7 +476,7 @@ export default function Home() {
             <div className='mb-4'>
               <p className='font-bold mb-2 text-[1.5em]'>Generate Inbox</p>
               <p className='mb-2'>Generates a new temporary email inbox.</p>
-              <p className='px-4 py-2 border border-gray-400 rounded-lg bg-white text-black'><span className='text-green-500 mr-2 font-bold'>GET</span> /api/generate-inbox</p>
+              <p className='px-4 py-2 border border-gray-400 rounded-lg bg-white text-black'><span className='text-green-500 mr-2 font-bold'>POST</span> /api/generate-inbox</p>
             </div>
             <div className='mb-4'>
               <p className='font-bold mb-2 text-[1.5em]'>Get Verification Data</p>
