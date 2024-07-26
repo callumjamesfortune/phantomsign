@@ -160,12 +160,12 @@ export default function Home() {
             console.log('Data found:', data);
             let displayContent;
             const companyInfo = data.company ? (
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-center font-bold">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-md bg-white text-center font-bold">
                 <OfficeBuildingIcon className="w-5 h-5" />
                 {data.company}
               </div>
             ) : (
-              <span className='px-4 py-2 rounded-lg bg-red-100 text-center font-bold'>Company information unavailable</span>
+              <span className='px-4 py-2 rounded-md bg-red-100 text-center font-bold'>Company information unavailable</span>
             );
 
             if (data.link) {
@@ -175,7 +175,7 @@ export default function Home() {
                   <div className='flex flex-col md:flex-row mt-8 gap-4 items-center'>
                     {companyInfo}
                     <button
-                      className="w-full md:w-[auto] bg-blue-500 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center"
+                      className="w-full md:w-[auto] bg-blue-500 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center"
                       onClick={() => window.open(data.link, '_blank')}
                     >
                       Verify Link
@@ -193,10 +193,10 @@ export default function Home() {
                       navigator.clipboard.writeText(data.code);
                       toast.success('Copied to clipboard');
                     }}
-                    className="relative px-4 py-2 border border-gray-400 rounded-lg bg-white hover:scale-[1.05] duration-75 cursor-pointer"
+                    className="relative px-4 py-2 border border-gray-400 rounded-md bg-white hover:scale-[1.05] duration-75 cursor-pointer"
                   >
                     {data.code}
-                    <div className='p-1 rounded-lg bg-white text-gray-600 absolute top-0 right-0 translate-y-[-50%] translate-x-[50%]'>
+                    <div className='p-1 rounded-md bg-white text-gray-600 absolute top-0 right-0 translate-y-[-50%] translate-x-[50%]'>
                       <DocumentDuplicateIcon
                         className="w-5 h-5 cursor-pointer"
                         onClick={() => {
@@ -211,7 +211,7 @@ export default function Home() {
             } else {
               displayContent = (
                 <div className='flex mt-8 gap-4 items-center'>
-                  <span className='px-4 py-2 rounded-lg bg-gray-100 text-center font-bold'>No verification code or link found</span>
+                  <span className='px-4 py-2 rounded-md bg-gray-100 text-center font-bold'>No verification code or link found</span>
                 </div>
               );
             }
@@ -327,7 +327,7 @@ export default function Home() {
             </ul>
             {/* {!isNotificationEnabled && (
               <button
-                className="bg-gray-200 text-gray-600 text-[1em] font-bold py-2 px-2 rounded-lg flex items-center justify-center"
+                className="bg-gray-200 text-gray-600 text-[1em] font-bold py-2 px-2 rounded-md flex items-center justify-center"
                 onClick={() => setShowModal(true)}
               >
                 <BellIcon className="w-5 h-5" />
@@ -348,7 +348,7 @@ export default function Home() {
               />
             </div>
             <button
-              className="shimmery-button z-[1000] simple-shadow absolute -translate-y-[50%] text-white text-[1.5em] font-bold py-2 px-6 rounded-lg flex items-center justify-center"
+              className="shimmery-button z-[1000] simple-shadow absolute -translate-y-[50%] text-white text-[1.5em] font-bold py-2 px-6 rounded-md flex items-center justify-center"
               onClick={generateEmail}
               disabled={loadingInbox}
             >
@@ -374,7 +374,7 @@ export default function Home() {
               )}
               {!email && !loadingInbox && (
                 <div className='flex flex-col md:flex-row gap-12 py-12 pb-8'>
-                  <div className='flex flex-col items-center bg-white rounded-lg simple-shadow p-4 w-[180px]' style={{ aspectRatio: 1 }}>
+                  <div className='flex flex-col items-center bg-white rounded-md simple-shadow p-4 w-[180px]' style={{ aspectRatio: 1 }}>
                     <h2 className='text-[1em]'>Codes found</h2>
                     {emailStats.codesFoundCount === null ? (
                       <svg className="animate-spin h-10 w-10 my-8 border-4 border-t-4 border-gray-200 border-t-green-600 rounded-full" viewBox="0 0 24 24"></svg>
@@ -382,7 +382,7 @@ export default function Home() {
                       <h2 className='text-[4em] text-gray-600'>{emailStats.codesFoundCount}</h2>
                     )}
                   </div>
-                  <div className='flex flex-col items-center bg-white rounded-lg simple-shadow p-4 w-[180px]' style={{ aspectRatio: 1, transform: 'scale(1.2)' }}>
+                  <div className='flex flex-col items-center bg-white rounded-md simple-shadow p-4 w-[180px]' style={{ aspectRatio: 1, transform: 'scale(1.2)' }}>
                     <h2 className='text-[1em]'>Emails generated</h2>
                     {emailStats.generatedEmailsCount === null ? (
                       <svg className="animate-spin h-10 w-10 my-8 border-4 border-t-4 border-gray-200 border-t-green-600 rounded-full" viewBox="0 0 24 24"></svg>
@@ -390,7 +390,7 @@ export default function Home() {
                       <h2 className='text-[4em] text-gray-600'>{emailStats.generatedEmailsCount}</h2>
                     )}
                   </div>
-                  <div className='flex flex-col items-center bg-white rounded-lg simple-shadow p-4 w-[180px]' style={{ aspectRatio: 1 }}>
+                  <div className='flex flex-col items-center bg-white rounded-md simple-shadow p-4 w-[180px]' style={{ aspectRatio: 1 }}>
                     <h2 className='text-[1em]'>Links found</h2>
                     {emailStats.linksFoundCount === null ? (
                       <svg className="animate-spin h-10 w-10 my-8 border-4 border-t-4 border-gray-200 border-t-green-600 rounded-full" viewBox="0 0 24 24"></svg>
@@ -405,9 +405,9 @@ export default function Home() {
                   <div onClick={() => {
                     navigator.clipboard.writeText(email);
                     toast.success("Copied to clipboard");
-                    }} className="relative text-[1em] md:text-[1.4em] mt-4 px-4 py-2 border rounded-lg bg-white border border-gray-400 hover:scale-[1.05] duration-75 cursor-pointer self-end">
+                    }} className="relative text-[1em] md:text-[1.4em] mt-4 px-4 py-2 border rounded-md bg-white border border-gray-400 hover:scale-[1.05] duration-75 cursor-pointer self-end">
                     {email}
-                    <div className='p-1 rounded-lg bg-white text-gray-600 absolute top-0 right-0 translate-y-[-50%] translate-x-[50%]'>
+                    <div className='p-1 rounded-md bg-white text-gray-600 absolute top-0 right-0 translate-y-[-50%] translate-x-[50%]'>
                       <DocumentDuplicateIcon
                         className="w-5 h-5 cursor-pointer"
                         onClick={() => {
@@ -434,7 +434,7 @@ export default function Home() {
       <div id="about" className='bg-white flex flex-col w-full gap-8 px-[5%] py-8'>
 
         <div className='w-full flex items-center'>
-          <div className='w-full md:w-1/2 items-center bg-white rounded-lg p-4'>
+          <div className='w-full md:w-1/2 items-center bg-white rounded-md p-4'>
             <h2 className='text-[1.5em] mb-2'>Generate an email</h2>
 
             <p>PhantomSign will create a temporary email address that is valid for up to 5 minutes.</p>
@@ -444,7 +444,7 @@ export default function Home() {
 
         <div className='w-full flex items-center justify-end'>
           <h1 className='text-gray-200 px-8 text-[4em]'>2</h1>
-          <div className='w-full md:w-1/2 items-center bg-white rounded-lg p-4'>
+          <div className='w-full md:w-1/2 items-center bg-white rounded-md p-4'>
             <h2 className='text-[1.5em] mb-2'>Use it for signups</h2>
 
             <p>The PhantomSign email can be used to signup to a service of your choice that may require the email to be verified.</p>
@@ -452,7 +452,7 @@ export default function Home() {
         </div>
 
         <div className='w-full flex items-center'>
-          <div className='w-full md:w-1/2 items-center bg-white rounded-lg p-4'>
+          <div className='w-full md:w-1/2 items-center bg-white rounded-md p-4'>
             <h2 className='text-[1.5em] mb-2'>Receive code or link</h2>
 
             <p>PhantomSign will try to extract the verification code or link from the verification email and output it straight to your screen.</p>
@@ -474,7 +474,7 @@ export default function Home() {
       <div className='mb-4'>
         <p className='font-bold mb-2 text-[1.5em]'>Generate Inbox</p>
         <p className='mb-2'>Generates a new temporary email inbox.</p>
-        <p className='px-4 py-2 border border-gray-400 rounded-lg bg-white text-black'>
+        <p className='px-4 py-2 border border-gray-400 rounded-md bg-white text-black'>
           <span className='text-green-500 mr-2 font-bold'>POST</span> /api/generate-inbox
         </p>
         <p className='mt-2'><strong>Request:</strong></p>
@@ -499,7 +499,7 @@ Body: {}
       <div className='mb-4'>
         <p className='font-bold mb-2 text-[1.5em]'>Get Verification Data</p>
         <p className='mb-2'>Checks the inbox for a verification email, returning the link or code if found.</p>
-        <p className='px-4 py-2 border border-gray-400 rounded-lg bg-white text-black'>
+        <p className='px-4 py-2 border border-gray-400 rounded-md bg-white text-black'>
           <span className='text-green-500 mr-2 font-bold'>GET</span> /api/get-verification-data?inboxId=emailAddress
         </p>
         <p className='mt-2'><strong>Request:</strong></p>
@@ -544,7 +544,7 @@ Body: {}
       <div className='mb-4'>
         <p className='font-bold mb-2 text-[1.5em]'>Delete Inbox</p>
         <p className='mb-2'>Deletes a temporary email inbox.</p>
-        <p className='px-4 py-2 border border-gray-400 rounded-lg bg-white text-black'>
+        <p className='px-4 py-2 border border-gray-400 rounded-md bg-white text-black'>
           <span className='text-red-500 mr-2 font-bold'>DELETE</span> /api/delete-inbox
         </p>
         <p className='mt-2'><strong>Request:</strong></p>

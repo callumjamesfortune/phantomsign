@@ -41,20 +41,20 @@ export default function LoginPage() {
     <main>
       <Toaster />
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <div className="bg-white p-8 rounded-md shadow-md w-full max-w-md">
           <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">Login or Sign Up</h2>
           <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
             <div>
               <label htmlFor="email" className="block text-gray-700">Email:</label>
-              <input id="email" name="email" type="email" required className="w-full px-3 py-2 border rounded-lg"/>
+              <input id="email" name="email" type="email" required className="w-full px-3 py-2 border rounded-md"/>
             </div>
             <div>
               <label htmlFor="password" className="block text-gray-700">Password:</label>
-              <input id="password" name="password" type="password" required className="w-full px-3 py-2 border rounded-lg"/>
+              <input id="password" name="password" type="password" required className="w-full px-3 py-2 border rounded-md"/>
             </div>
             <div className="flex justify-between">
-              <button type="submit" name="login" className="w-[48%] py-2 px-4 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600" disabled={isSubmitting}>Log in</button>
-              <button type="submit" name="signup" className="w-[48%] py-2 px-4 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600" disabled={isSubmitting}>Sign up</button>
+              <button type="submit" name="login" className="w-[48%] py-2 px-4 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600" disabled={isSubmitting}>Log in</button>
+              <button type="submit" name="signup" className="w-[48%] py-2 px-4 bg-green-500 text-white font-bold rounded-md hover:bg-green-600" disabled={isSubmitting}>Sign up</button>
             </div>
           </form>
         </div>

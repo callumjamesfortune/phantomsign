@@ -1,4 +1,4 @@
-'use server'
+'use server';
 
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
@@ -15,5 +15,15 @@ export default async function Dashboard() {
     redirect('/login');
   }
 
-  return <KeysClient user={data.user} />;
+  const { data: apiKeys, error: apiKeysError } = await supabase
+    .from('api_keys')
+    .select('id, api_key, description')
+    .eq('user_id', data.user.id);
+
+  if (apiKeysError) {
+    console.error('Error fetching API keys:', apiKeysError.message);
+    // Handle error appropriately, maybe redirect to an error page
+  }
+
+  return <KeysClient user={data.user} initialApiKeys={apiKeys || []} />;
 }

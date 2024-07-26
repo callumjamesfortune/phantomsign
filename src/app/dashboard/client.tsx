@@ -23,7 +23,8 @@ export default function DashboardClient({ user }: DashboardClientProps) {
 
         <p className="text-gray-700 mb-4 font-bold mt-8">Hello, {user.email?.split("@")[0]}</p>
 
-        
+        <div className='bg-gray-200 w-full'></div>
+
       </div>
     </div>
   );
