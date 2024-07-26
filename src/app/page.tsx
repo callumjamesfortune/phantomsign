@@ -126,7 +126,7 @@ export default function Home() {
   const deleteInbox = async (emailAddress: string) => {
     try {
       await fetch('/api/delete-inbox', {
-        method: 'POST',
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -319,9 +319,10 @@ export default function Home() {
                 className=''
               />
             </div>
-            <ul className='flex md:pr-[auto] gap-8 md:gap-16 text-gray-600 font-bold'>
+            <ul className='flex items-center md:pr-[auto] gap-8 md:gap-16 text-gray-600 font-bold'>
               <li><a href="#about">About</a></li>
               <li><a href="#api">PhantomSign API</a></li>
+              <li className='bg-black text-white px-6 py-2 rounded-lg'><a href="#api">Login</a></li>
             </ul>
             {/* {!isNotificationEnabled && (
               <button
@@ -461,32 +462,131 @@ export default function Home() {
 
 
       </div>
-      <div id="api" className='bg-gray-200 min-h-screen w-full flex flex-col items-center gap-8 px-[5%] pt-8'>
 
-        <div className='relative flex flex-col p-6 w-full md:w-[60%] text-center text-black'>
-          <h1 className='text-[2.5em] md:text-[4em] font-bold mb-6'>PhantomSign API</h1>
-          <p className='text-black mb-4'>
-            PhantomSign offers a simple and effective API to extract verification codes and links from temporary email addresses.
-          </p>
-          <div className='flex items-center mb-4 text-white'>
-            {/* <CodeIcon /> */}
-            {/* <span className='font-bold text-gray-300'>API Endpoints:</span> */}
-          </div>
-          <div className='text-left'>
-            <div className='mb-4'>
-              <p className='font-bold mb-2 text-[1.5em]'>Generate Inbox</p>
-              <p className='mb-2'>Generates a new temporary email inbox.</p>
-              <p className='px-4 py-2 border border-gray-400 rounded-lg bg-white text-black'><span className='text-green-500 mr-2 font-bold'>POST</span> /api/generate-inbox</p>
-            </div>
-            <div className='mb-4'>
-              <p className='font-bold mb-2 text-[1.5em]'>Get Verification Data</p>
-              <p className='mb-2'>Checks the inbox for a verification email, returning the link or code if found..</p>
-              <p className='px-4 py-2 border border-gray-400 rounded-lg bg-white text-black'><span className='text-green-500 mr-2 font-bold'>GET</span> /api/get-verification-data?inboxId=INBOX_ID</p>
-            </div>
-          </div>
-        </div>
-        
+      <div id="api" className='bg-gray-200 min-h-screen w-full flex flex-col items-center gap-8 px-[5%] pt-8'>
+  <div className='relative flex flex-col p-6 w-full md:w-[60%] text-center text-black'>
+    <h1 className='text-[2.5em] md:text-[4em] font-bold mb-6'>PhantomSign API</h1>
+    <p className='text-black mb-4'>
+      PhantomSign offers a simple and effective API to extract verification codes and links from temporary email addresses.
+    </p>
+    <div className='text-left'>
+      <div className='mb-4'>
+        <p className='font-bold mb-2 text-[1.5em]'>Generate Inbox</p>
+        <p className='mb-2'>Generates a new temporary email inbox.</p>
+        <p className='px-4 py-2 border border-gray-400 rounded-lg bg-white text-black'>
+          <span className='text-green-500 mr-2 font-bold'>POST</span> /api/generate-inbox
+        </p>
+        <p className='mt-2'><strong>Request:</strong></p>
+        <pre className='bg-gray-100 p-2 rounded'>
+          <code>
+            {`POST /api/generate-inbox
+Headers:
+  Content-Type: application/json
+Body: {}
+`}
+          </code>
+        </pre>
+        <p className='mt-2'><strong>Response:</strong></p>
+        <pre className='bg-gray-100 p-2 rounded'>
+          <code>
+            {`{
+  "emailAddress": "your_generated_email@phantomsign.com"
+}`}
+          </code>
+        </pre>
       </div>
+      <div className='mb-4'>
+        <p className='font-bold mb-2 text-[1.5em]'>Get Verification Data</p>
+        <p className='mb-2'>Checks the inbox for a verification email, returning the link or code if found.</p>
+        <p className='px-4 py-2 border border-gray-400 rounded-lg bg-white text-black'>
+          <span className='text-green-500 mr-2 font-bold'>GET</span> /api/get-verification-data?inboxId=emailAddress
+        </p>
+        <p className='mt-2'><strong>Request:</strong></p>
+        <pre className='bg-gray-100 p-2 rounded'>
+          <code>
+            {`GET /api/get-verification-data?inboxId=emailAddress`}
+          </code>
+        </pre>
+        <p className='mt-2'><strong>Response:</strong></p>
+        <pre className='bg-gray-100 p-2 rounded'>
+          <code>
+            {`// If no email is found
+{
+  "message": "No email yet"
+}
+
+// If no email content is found
+{
+  "message": "No email content found"
+}
+
+// If a verification code is found
+{
+  "company": "Company Name",
+  "code": "123456"
+}
+
+// If a verification link is found
+{
+  "company": "Company Name",
+  "link": "https://verification-link.com"
+}
+
+// If there is an error
+{
+  "error": "Error message"
+}
+`}
+          </code>
+        </pre>
+      </div>
+      <div className='mb-4'>
+        <p className='font-bold mb-2 text-[1.5em]'>Delete Inbox</p>
+        <p className='mb-2'>Deletes a temporary email inbox.</p>
+        <p className='px-4 py-2 border border-gray-400 rounded-lg bg-white text-black'>
+          <span className='text-red-500 mr-2 font-bold'>DELETE</span> /api/delete-inbox
+        </p>
+        <p className='mt-2'><strong>Request:</strong></p>
+        <pre className='bg-gray-100 p-2 rounded'>
+          <code>
+            {`DELETE /api/delete-inbox
+Headers:
+  Content-Type: application/json
+Body: {
+  "emailAddress": "your_generated_email@phantomsign.com"
+}
+`}
+          </code>
+        </pre>
+        <p className='mt-2'><strong>Response:</strong></p>
+        <pre className='bg-gray-100 p-2 rounded'>
+          <code>
+            {`// If successful
+{
+  "message": "Inbox deleted successfully"
+}
+
+// If email address is missing
+{
+  "error": "Email address is required"
+}
+
+// If there is an error
+{
+  "error": "Error message"
+}
+`}
+          </code>
+        </pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
       <footer className='bg-gray-200 text-gray-600 py-8'>
         <div className='container mx-auto px-4'>
           <div className='flex flex-col md:flex-row justify-between items-center'>

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import supabaseServerClient from '../../../lib/supabaseServerClient';
 
-export async function POST(req: NextRequest) {
+export async function DELETE(req: NextRequest) {
 
   try {
     const { emailAddress } = await req.json();
