@@ -25,10 +25,10 @@ export default function LogoutButton() {
   return (
     <button
       onClick={handleLogout}
-      className="flex items-center px-4 py-2 mt-6 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600"
+      className="flex items-center px-4 py-2 bg-black text-white rounded-md"
       disabled={isPending}
     >
-      <LogoutIcon className="w-5 h-5 mr-2" />
+      {/* <LogoutIcon className="w-5 h-5 mr-2" /> */}
       Logout
     </button>
   );

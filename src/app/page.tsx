@@ -320,9 +320,9 @@ export default function Home() {
                 className=''
               />
             </div>
-            <ul className='flex items-center md:pr-[auto] gap-8 md:gap-16 text-gray-600 font-bold'>
+            <ul className='flex items-center md:pr-[auto] gap-6 md:gap-12 text-gray-600 font-bold'>
               <li><a href="#about">About</a></li>
-              <li><a href="#api">PhantomSign API</a></li>
+              <li><a href="#api">API</a></li>
               <Link className='bg-black text-white px-4 py-2 rounded-md' href="/dashboard">Login</Link>
             </ul>
             {/* {!isNotificationEnabled && (

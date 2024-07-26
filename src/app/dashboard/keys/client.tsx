@@ -6,15 +6,14 @@ import { SparklesIcon, KeyIcon } from '@heroicons/react/outline';
 import Image from 'next/image';
 import logo from '../../../public/phantom.svg';
 import { toast } from 'react-hot-toast';
-import AuthenticatedNavigation from '../components/authenticatedNavigation';
+import AuthenticatedNavigation from 'src/app/components/authenticatedNavigation';
 import Link from 'next/link';
 
-interface DashboardClientProps {
+interface KeysClientProps {
   user: User;
 }
 
-export default function DashboardClient({ user }: DashboardClientProps) {
-
+export default function KeysClient({ user }: KeysClientProps) {
 
   return (
     <div className="w-screen px-[5%] min-h-screen flex flex-col items-center bg-white">

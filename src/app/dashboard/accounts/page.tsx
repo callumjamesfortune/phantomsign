@@ -2,8 +2,8 @@
 
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
-import { createClient } from '../../../utils/supabase/server';
-import DashboardClient from './client';
+import { createClient } from '../../../../utils/supabase/server';
+import AccountsClient from './client';
 
 export default async function Dashboard() {
   const supabase = createClient();
@@ -15,5 +15,5 @@ export default async function Dashboard() {
     redirect('/login');
   }
 
-  return <DashboardClient user={data.user} />;
+  return <AccountsClient user={data.user} />;
 }
