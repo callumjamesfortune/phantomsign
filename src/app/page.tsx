@@ -322,7 +322,7 @@ export default function Home() {
             <ul className='flex items-center md:pr-[auto] gap-8 md:gap-16 text-gray-600 font-bold'>
               <li><a href="#about">About</a></li>
               <li><a href="#api">PhantomSign API</a></li>
-              <li className='bg-black text-white px-6 py-2 rounded-lg'><a href="#api">Login</a></li>
+              <li className='bg-black text-white px-6 py-2 rounded-lg'><a href="/dashboard">Login</a></li>
             </ul>
             {/* {!isNotificationEnabled && (
               <button
