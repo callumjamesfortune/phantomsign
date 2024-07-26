@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
+import LogoutButton from '../components/logoutButton';
 import { SparklesIcon, KeyIcon, LogoutIcon } from '@heroicons/react/outline';
 import Image from 'next/image';
 import logo from '../../../public/phantom.svg';
@@ -77,13 +78,7 @@ export default function DashboardClient({ user, initialApiKeys }: DashboardClien
             ))}
           </ul>
         </div>
-        <button
-          onClick={handleLogout}
-          className="flex items-center px-4 py-2 mt-6 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600"
-        >
-          <LogoutIcon className="w-5 h-5 mr-2" />
-          Logout
-        </button>
+        <LogoutButton />
       </div>
     </div>
   );
