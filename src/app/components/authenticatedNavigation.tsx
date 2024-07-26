@@ -9,13 +9,15 @@ export default function AuthenticatedNavigation() {
 
         <div className='w-full flex items-center justify-between pt-2'>
             <div>
-                <Image 
-                src={logo} 
-                alt="PhantomSign Logo" 
-                width={50} 
-                height={50}
-                className=''
-                />
+                <Link href="/">
+                    <Image 
+                    src={logo} 
+                    alt="PhantomSign Logo" 
+                    width={50} 
+                    height={50}
+                    className=''
+                    />
+                </Link>
             </div>
             <ul className='flex items-center md:pr-[auto] gap-6 md:gap-12 text-gray-600 font-bold'>
                 <li><Link href="/dashboard">Dashboard</Link></li>
