@@ -56,7 +56,7 @@ export default function KeysClient({ user, initialApiKeys }: KeysClientProps) {
       <h1 className='w-full text-[1.5em] font-bold text-left mt-4'>API Keys</h1>
       <h2 className='w-full text-gray-600 text-[1em] font-bold text-left mt-2'>Create API keys for your applications.</h2>
 
-        <div className='w-full flex gap-4 items-start mt-6'>
+        <div className='w-full flex flex-col md:flex-row gap-4 items-start mt-6'>
             <div className="w-full max-w-3xl bg-gray-200 rounded-md p-4">
                 <div className="flex items-center justify-between mb-6">
                     <h1 className="text-2xl font-bold text-gray-800">New key</h1>

@@ -24,7 +24,7 @@ export async function loginOrSignUp(formData: FormData) {
     const localPart = email.split('@')[0];
     const containsAllLetters = /(?=.*p)(?=.*h)(?=.*a)(?=.*n)(?=.*t)(?=.*o)(?=.*m)/.test(localPart);
     if (containsAllLetters) {
-      return { error: 'Email cannot contain the letters "phantom"', status: 400 };
+      return { error: 'You cannot sign up with a phantomsign email!', status: 400 };
     }
 
     const { error } = await supabase.auth.signUp({ email, password });

@@ -4,6 +4,7 @@ import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Toaster, toast } from 'react-hot-toast';
 import { loginOrSignUp } from './actions';
+import Link from 'next/link';
 
 export default function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,6 +42,7 @@ export default function LoginPage() {
     <main>
       <Toaster />
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <Link href="/" className='absolute top-4 left-6 font-bold' >Back to home</Link>
         <div className="bg-white p-8 rounded-md shadow-md w-full max-w-md">
           <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">Login or Sign Up</h2>
           <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
