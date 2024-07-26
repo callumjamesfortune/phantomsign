@@ -274,10 +274,12 @@ export default function Home() {
     try {
       const response = await fetch('/api/generate-inbox', {
         method: 'POST',
-        cache: 'no-store'
+        cache: 'no-store',
       });
       const data = await response.json();
       const emailAddress = data.emailAddress;
+
+      console.log(process.env.NEXT_PUBLIC_PHANTOMSIGN_API_KEY)
 
       console.log('Generated email:', emailAddress);
 

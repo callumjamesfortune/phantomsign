@@ -3,7 +3,7 @@ import supabaseServerClient from '../../../lib/supabaseServerClient';
 
 // Function to generate a random alphanumeric string
 function generateEmail(): string {
-  let insideWord = "phantom";
+  const insideWord = "phantom";
   const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
 
@@ -35,6 +35,28 @@ export async function POST(req: NextRequest) {
   if (req.method !== 'POST') {
     console.error(`Method ${req.method} Not Allowed`);
     return NextResponse.json({ error: `Method ${req.method} Not Allowed` }, { status: 405 });
+  }
+
+  const referrer = req.headers.get('referer');
+  const host = req.headers.get('host') || "";
+
+  // Allow requests from the same host or those with a valid API key
+  const apiKey = req.headers.get('x-api-key');
+  if (!referrer?.includes(host) && !apiKey) {
+    return NextResponse.json({ error: 'API key is missing' }, { status: 401 });
+  }
+
+  // Validate the API key if present
+  if (apiKey) {
+    const { data: apiKeyData, error: apiKeyError } = await supabaseServerClient
+      .from('api_keys')
+      .select('*')
+      .eq('api_key', apiKey)
+      .single();
+
+    if (apiKeyError || !apiKeyData) {
+      return NextResponse.json({ error: 'Invalid API key' }, { status: 401 });
+    }
   }
 
   const emailString = generateEmail();
