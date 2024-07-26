@@ -21,6 +21,7 @@ export default function DashboardClient({ user, initialApiKeys }: DashboardClien
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
       },
     });
     const result = await response.json();
@@ -37,6 +38,7 @@ export default function DashboardClient({ user, initialApiKeys }: DashboardClien
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
       },
     });
 
@@ -48,7 +50,7 @@ export default function DashboardClient({ user, initialApiKeys }: DashboardClien
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gray-100 p-6">
+    <div className="min-h-screen flex flex-col items-center bg-gray-200 p-6">
       <div className="w-full max-w-3xl bg-white shadow-md rounded-lg p-6">
         <div className="flex items-center justify-between mb-6">
           <Image src={logo} alt="PhantomSign Logo" width={50} height={50} />

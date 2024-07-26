@@ -7,6 +7,7 @@ import { toast, Toaster } from 'react-hot-toast';
 import Image from 'next/image';
 import logo from '../../public/phantom.svg';
 import NotificationModal from './notificationModal';
+import Link from 'next/link';
 
 const COUNTDOWN_TIME = parseInt(process.env.NEXT_PUBLIC_DELETE_AFTER_MINUTES!, 10) * 60 || 300; // Default to 300 seconds (5 minutes)
 const POLLING_INTERVAL = 5000; // 5 seconds
@@ -322,7 +323,7 @@ export default function Home() {
             <ul className='flex items-center md:pr-[auto] gap-8 md:gap-16 text-gray-600 font-bold'>
               <li><a href="#about">About</a></li>
               <li><a href="#api">PhantomSign API</a></li>
-              <li className='bg-black text-white px-6 py-2 rounded-lg'><a href="/dashboard">Login</a></li>
+              <Link className='bg-black text-white px-4 py-2 rounded-md' href="/dashboard">Login</Link>
             </ul>
             {/* {!isNotificationEnabled && (
               <button

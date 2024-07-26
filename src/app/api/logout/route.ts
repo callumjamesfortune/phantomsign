@@ -12,8 +12,8 @@ export async function POST(request: NextRequest) {
 
   // Clear Supabase session cookies
   const response = NextResponse.json({ message: 'Logged out successfully' });
-//   response.cookies.set('sb-access-token', '', { path: '/', expires: new Date(0) });
-//   response.cookies.set('sb-refresh-token', '', { path: '/', expires: new Date(0) });
+  response.cookies.set('sb-access-token', '', { path: '/', expires: new Date(0) });
+  response.cookies.set('sb-refresh-token', '', { path: '/', expires: new Date(0) });
 
   return response;
 }
