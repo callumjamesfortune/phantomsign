@@ -17,11 +17,11 @@ import Link from "next/link";
 import NotificationModal from "../notificationModal";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
-interface DashboardClientProps {
+interface LandingClientProps {
   user: User | null;
 }
 
-export default function LandingClient({ user }: DashboardClientProps) {
+export default function LandingClient({ user }: LandingClientProps) {
   const COUNTDOWN_TIME =
     parseInt(process.env.NEXT_PUBLIC_DELETE_AFTER_MINUTES!, 10) * 60 || 300; // Default to 300 seconds (5 minutes)
   const POLLING_INTERVAL = 5000; // 5 seconds
@@ -365,7 +365,7 @@ export default function LandingClient({ user }: DashboardClientProps) {
                 height={50}
                 className=""
               />
-              <span>{user?.email}</span>
+              <span className="hidden md:block">{user?.email}</span>
             </div>
             <ul className="flex items-center md:pr-[auto] gap-6 md:gap-12 text-gray-600 font-bold">
               <li>

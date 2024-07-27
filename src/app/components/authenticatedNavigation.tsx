@@ -20,7 +20,7 @@ export default function AuthenticatedNavigation({user}: {user: User}) {
                     className=''
                     />
                 </Link>
-                <span>{user && user.email}</span>
+                <span className="hidden md:block">{user && user.email}</span>
             </div>
             <ul className='flex items-center md:pr-[auto] gap-6 md:gap-12 text-gray-600 font-bold'>
                 <li><Link href="/dashboard">Dashboard</Link></li>

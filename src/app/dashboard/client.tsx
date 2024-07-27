@@ -20,8 +20,9 @@ export default function DashboardClient({ user }: DashboardClientProps) {
     <div className="w-screen px-[5%] min-h-screen flex flex-col items-center bg-white">
       <div className="w-full">
       <AuthenticatedNavigation user={user}/>
+      <h1 className='w-full text-[1.5em] font-bold text-left mt-4'>Dashboard</h1>
+      <h2 className='w-full text-gray-600 text-[1em] font-bold text-left mt-2'>An overview of your usage.</h2>
 
-        <p className="text-gray-700 mb-4 font-bold mt-8">Hello, {user.email?.split("@")[0]}</p>
 
         <div className='bg-gray-200 w-full'></div>
 
