@@ -17,7 +17,7 @@ export default function AccountsClient({ user }: KeysClientProps) {
 
   return (
     <div className="w-screen px-[5%] min-h-screen flex flex-col items-center bg-white">
-      <AuthenticatedNavigation />
+      <AuthenticatedNavigation user={user}/>
 
       <h1 className='w-full text-[1.5em] font-bold text-left mt-4'>Accounts</h1>
       <h2 className='w-full text-gray-600 text-[1em] font-bold text-left mt-2'>All of your saved accounts in one place.</h2>

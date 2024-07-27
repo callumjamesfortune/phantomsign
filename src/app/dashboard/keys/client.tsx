@@ -51,8 +51,7 @@ export default function KeysClient({ user, initialApiKeys }: KeysClientProps) {
 
   return (
     <div className="w-screen px-[5%] min-h-screen flex flex-col items-center bg-white">
-      <AuthenticatedNavigation />
-
+      <AuthenticatedNavigation user={user} />
       <h1 className='w-full text-[1.5em] font-bold text-left mt-4'>API Keys</h1>
       <h2 className='w-full text-gray-600 text-[1em] font-bold text-left mt-2'>Create API keys for your applications.</h2>
 
