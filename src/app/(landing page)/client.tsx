@@ -566,9 +566,9 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
             All API requests require a valid API key, which should be provided as a header:
           </p>
 
-          <div className="w-full flex gap-4 justify-center mb-16">
+          <div className="w-full flex flex-col md:flex-row gap-4 justify-center mb-16">
 
-            <code className="self-start bg-white flex flex-col md:flex-row gap-4 rounded-md border border-gray-400 px-4 py-2">
+            <code className="self-start bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
               <span className="text-gray-600">x-api-key</span>
               <span>[API KEY]</span>
             </code>
