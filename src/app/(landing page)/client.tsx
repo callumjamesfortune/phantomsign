@@ -600,7 +600,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
 
           <div className="w-full flex gap-4 justify-center mb-16">
 
-            <code className="self-start bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
+            <code className="self-start bg-white flex flex-col md:flex-row gap-4 rounded-md border border-gray-400 px-4 py-2">
               <span className="text-gray-600">x-api-key</span>
               <span>[API KEY]</span>
             </code>
@@ -617,6 +617,9 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
           <div className="w-full flex gap-8 flex-col md:flex-row">
 
             <div className="w-full md:w-1/3 flex flex-col gap-2">
+
+              <h1 className="text-[1.4em] font-bold mb-4">Create inbox</h1>
+
               <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
                 <span className="text-green-600">POST</span>
                 <span>/api/generate-inbox</span>
@@ -637,6 +640,9 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
             </div>
 
             <div className="w-full md:w-1/3 flex flex-col gap-2">
+
+              <h1 className="text-[1.4em] font-bold mb-4">Poll inbox</h1>
+
               <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
                 <span className="text-yellow-600">GET</span>
                 <span>/api/poll-inbox?inbox=[email]</span>
@@ -692,6 +698,9 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
             </div>
 
             <div className="w-full md:w-1/3 flex flex-col gap-2">
+
+              <h1 className="text-[1.4em] font-bold mb-4">Delete inbox</h1>
+
               <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
                 <span className="text-red-600">DELETE</span>
                 <span>/api/delete-inbox</span>
