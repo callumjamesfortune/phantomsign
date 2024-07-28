@@ -17,20 +17,21 @@ import NotificationModal from "../notificationModal";
 import Footer from "../components/footer";
 import Confetti from 'react-confetti';
 
-interface LandingClientProps {
-  user: User | null;
+interface EmailStats {
+  generated_emails_count: number | null;
+  codes_found_count: number | null;
+  links_found_count: number | null;
 }
 
-export default function LandingClient({ user }: LandingClientProps) {
+interface LandingClientProps {
+  user: User | null;
+  emailStats: EmailStats | null
+}
+
+export default function LandingClient({ user, emailStats }: LandingClientProps) {
   const COUNTDOWN_TIME =
     parseInt(process.env.NEXT_PUBLIC_DELETE_AFTER_MINUTES!, 10) * 60 || 300; // Default to 300 seconds (5 minutes)
   const POLLING_INTERVAL = 5000; // 5 seconds
-
-  interface EmailStats {
-    generatedEmailsCount: number | null;
-    codesFoundCount: number | null;
-    linksFoundCount: number | null;
-  }
 
   // const supabase = createClientComponentClient();
   const [email, setEmail] = useState<string>("");
@@ -40,11 +41,6 @@ export default function LandingClient({ user }: LandingClientProps) {
   const [loadingInbox, setLoadingInbox] = useState<boolean>(false);
   const [loadingEmail, setLoadingEmail] = useState<boolean>(false);
   const [countdown, setCountdown] = useState<number>(COUNTDOWN_TIME);
-  const [emailStats, setEmailStats] = useState<EmailStats>({
-    generatedEmailsCount: null,
-    codesFoundCount: null,
-    linksFoundCount: null,
-  });
   const [isNotificationEnabled, setIsNotificationEnabled] =
     useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -457,14 +453,14 @@ export default function LandingClient({ user }: LandingClientProps) {
                     style={{ aspectRatio: 1 }}
                   >
                     <h2 className="text-[1em]">Codes found</h2>
-                    {emailStats.codesFoundCount === null ? (
+                    {emailStats?.codes_found_count === null ? (
                       <svg
                         className="animate-spin h-10 w-10 my-8 border-4 border-t-4 border-gray-200 border-t-green-600 rounded-full"
                         viewBox="0 0 24 24"
                       ></svg>
                     ) : (
                       <h2 className="text-[4em] text-gray-600">
-                        {emailStats.codesFoundCount}
+                        {emailStats?.codes_found_count}
                       </h2>
                     )}
                   </div>
@@ -473,14 +469,14 @@ export default function LandingClient({ user }: LandingClientProps) {
                     style={{ aspectRatio: 1, transform: "scale(1.2)" }}
                   >
                     <h2 className="text-[1em]">Emails generated</h2>
-                    {emailStats.generatedEmailsCount === null ? (
+                    {emailStats?.generated_emails_count === null ? (
                       <svg
                         className="animate-spin h-10 w-10 my-8 border-4 border-t-4 border-gray-200 border-t-green-600 rounded-full"
                         viewBox="0 0 24 24"
                       ></svg>
                     ) : (
                       <h2 className="text-[4em] text-gray-600">
-                        {emailStats.generatedEmailsCount}
+                        {emailStats?.generated_emails_count}
                       </h2>
                     )}
                   </div>
@@ -489,14 +485,14 @@ export default function LandingClient({ user }: LandingClientProps) {
                     style={{ aspectRatio: 1 }}
                   >
                     <h2 className="text-[1em]">Links found</h2>
-                    {emailStats.linksFoundCount === null ? (
+                    {emailStats?.links_found_count === null ? (
                       <svg
                         className="animate-spin h-10 w-10 my-8 border-4 border-t-4 border-gray-200 border-t-green-600 rounded-full"
                         viewBox="0 0 24 24"
                       ></svg>
                     ) : (
                       <h2 className="text-[4em] md:text-[4em] text-gray-600">
-                        {emailStats.linksFoundCount}
+                        {emailStats?.links_found_count}
                       </h2>
                     )}
                   </div>
