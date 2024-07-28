@@ -2,11 +2,8 @@
 
 import { useState } from 'react';
 import { User } from '@supabase/supabase-js';
-import Image from 'next/image';
-import logo from '../../../../public/phantom.svg';
 import { Toaster, toast } from 'react-hot-toast';
 import AuthenticatedNavigation from '../../components/authenticatedNavigation';
-import Link from 'next/link';
 import { generateApiKey, deleteApiKey } from './actions'; // Import server actions
 import Footer from 'src/app/components/footer';
 
@@ -14,7 +11,7 @@ interface ApiKey {
   id: string;
   api_key: string;
   description: string;
-  expires_at: string;
+  expires_at: string | null;
 }
 
 interface KeysClientProps {
@@ -40,9 +37,9 @@ export default function KeysClient({ user, initialApiKeys }: KeysClientProps) {
           ...prevKeys,
           {
             id: result.id,
-            api_key: result.apiKey as string,
-            description: result.description as string,
-            expires_at: result.expiresAt as string,
+            api_key: result.apiKey,
+            description: result.description,
+            expires_at: result.expiresAt ? new Date(result.expiresAt).toISOString() : null,
           },
         ]);
         setDescription('');
@@ -110,12 +107,16 @@ export default function KeysClient({ user, initialApiKeys }: KeysClientProps) {
         {apiKeys.length > 0 ?
           <ul className="w-full">
             {apiKeys.map((key) => (
-              <li key={key.id} className="flex items-center justify-between bg-gray-200 px-2 pl-4 py-2 mb-2 rounded-md">
-                <div>
-                  <p className="text-gray-800">{key.api_key}</p>
-                  <p className="text-gray-600 text-sm">{key.description || "No description"}</p>
-                  <p className="text-gray-600 text-sm">Expires At: {key.expires_at}</p>
-                </div>
+              <li key={key.id} className="flex flex-col items-start justify-between bg-gray-200 px-2 pl-4 py-4 mb-4 rounded-md">
+                <div className='flex flex-col gap-4 mb-4'>
+                  <p className="font-bold capitalize">{key.description || "No description"}</p>
+                  <code className="bg-white px-4 py-2 rounded-md">{key.api_key}</code>
+                  <p className="text-gray-600">
+                    {key.expires_at 
+                      ? `Expires: ${new Date(key.expires_at).toLocaleString('en-GB')}` 
+                      : "No expiry"}
+                  </p>
+                  </div>
                 <button onClick={() => handleDeleteApiKey(key.id)} className="flex items-center px-4 py-2 bg-red-500 text-white font-bold rounded-md hover:bg-red-600">
                   Revoke
                 </button>
