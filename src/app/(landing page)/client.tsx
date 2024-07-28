@@ -12,10 +12,8 @@ import {
 import Image from "next/image";
 import logo from "../../../public/phantom.svg";
 import { Toaster, toast } from "react-hot-toast";
-import AuthenticatedNavigation from "../components/authenticatedNavigation";
 import Link from "next/link";
 import NotificationModal from "../notificationModal";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Footer from "../components/footer";
 import Confetti from 'react-confetti';
 
