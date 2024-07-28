@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { User } from "@supabase/supabase-js";
 import {
   SparklesIcon,
-  KeyIcon,
   OfficeBuildingIcon,
   DocumentDuplicateIcon,
   ExternalLinkIcon,
@@ -25,51 +24,25 @@ interface EmailStats {
 
 interface LandingClientProps {
   user: User | null;
-  emailStats: EmailStats | null
+  emailStats: EmailStats | null;
 }
 
 export default function LandingClient({ user, emailStats }: LandingClientProps) {
-  const COUNTDOWN_TIME =
-    parseInt(process.env.NEXT_PUBLIC_DELETE_AFTER_MINUTES!, 10) * 60 || 300; // Default to 300 seconds (5 minutes)
+  const COUNTDOWN_TIME = parseInt(process.env.NEXT_PUBLIC_DELETE_AFTER_MINUTES!, 10) * 60 || 300; // Default to 300 seconds (5 minutes)
   const POLLING_INTERVAL = 5000; // 5 seconds
 
-  // const supabase = createClientComponentClient();
   const [email, setEmail] = useState<string>("");
-  const [verificationData, setVerificationData] = useState<
-    string | JSX.Element
-  >("");
+  const [verificationData, setVerificationData] = useState<string | JSX.Element>("");
   const [loadingInbox, setLoadingInbox] = useState<boolean>(false);
   const [loadingEmail, setLoadingEmail] = useState<boolean>(false);
   const [countdown, setCountdown] = useState<number>(COUNTDOWN_TIME);
-  const [isNotificationEnabled, setIsNotificationEnabled] =
-    useState<boolean>(false);
+  const [isNotificationEnabled, setIsNotificationEnabled] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const currentEmailRef = useRef<string | null>(null);
   const pollingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const endTimeRef = useRef<number | null>(null);
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
   const [confettiOpacity, setConfettiOpacity] = useState<number>(1);
-
-  // useEffect(() => {
-  //   const fetchEmailStats = async () => {
-  //     const { data, error } = await supabase
-  //       .from("email_statistics")
-  //       .select("generated_emails_count, codes_found_count, links_found_count")
-  //       .eq("id", 1)
-  //       .single();
-  //     if (error) {
-  //       console.error("Error fetching email stats:", error);
-  //     } else {
-  //       setEmailStats({
-  //         generatedEmailsCount: data.generated_emails_count,
-  //         codesFoundCount: data.codes_found_count,
-  //         linksFoundCount: data.links_found_count,
-  //       });
-  //     }
-  //   };
-
-  //   fetchEmailStats();
-  // }, [supabase]);
 
   useEffect(() => {
     if (showConfetti) {
@@ -80,7 +53,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
           setConfettiOpacity(1); // Reset opacity for future uses
         }, 1000); // Duration of the fade-out effect
       }, 5000); // Display confetti for 5 seconds before fading
-  
+
       return () => clearTimeout(timeout);
     }
   }, [showConfetti]);
@@ -257,7 +230,6 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
             }
 
             setVerificationData(displayContent);
-            deleteInbox(currentEmailRef.current!);
             setLoadingEmail(false);
 
             if ("Notification" in window && "serviceWorker" in navigator) {
@@ -274,6 +246,11 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
             setShowConfetti(true);
             setTimeout(() => setShowConfetti(false), 5000); // Stop confetti after 5 seconds
           }
+        } else if (response.status === 404) {
+          console.error("Inbox not found");
+          setVerificationData(`Error: Inbox not found`);
+          setLoadingEmail(false);
+          toast.error("Inbox not found");
         }
       } catch (error: any) {
         console.error("Error retrieving verification data:", error.message);
@@ -322,7 +299,6 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
       });
       const data = await response.json();
       const emailAddress = data.inbox;
-
 
       console.log("Generated email:", emailAddress);
 
@@ -396,14 +372,6 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
                 {user ? "Dashboard" : "Login"}
               </Link>
             </ul>
-            {/* {!isNotificationEnabled && (
-              <button
-                className="bg-gray-200 text-gray-600 text-[1em] font-bold py-2 px-2 rounded-md flex items-center justify-center"
-                onClick={() => setShowModal(true)}
-              >
-                <BellIcon className="w-5 h-5" />
-              </button>
-            )} */}
           </div>
           <h1 className="text-green-600 text-[2.5em] md:text-[4em] font-bold relative">
             Phantom<span className="text-gray-600">Sign</span>
@@ -737,7 +705,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
               
             </div>
 
-            </div>
+          </div>
 
           
         </div>
