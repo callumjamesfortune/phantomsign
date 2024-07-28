@@ -154,18 +154,18 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
     }
   };
 
-  const deleteInbox = async (emailAddress: string) => {
+  const deleteInbox = async (inbox: string) => {
     try {
       await fetch("/api/delete-inbox", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ emailAddress }),
+        body: JSON.stringify({ inbox }),
       });
-      console.log(`Inbox for ${emailAddress} deleted.`);
+      console.log(`Inbox for ${inbox} deleted.`);
     } catch (error: any) {
-      console.error(`Error deleting inbox for ${emailAddress}:`, error.message);
+      console.error(`Error deleting inbox for ${inbox}:`, error.message);
     }
   };
 
@@ -179,14 +179,14 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
       console.log(`Polling for email in inbox: ${currentEmailRef.current}`);
       try {
         const response = await fetch(
-          `/api/get-verification-data?inboxId=${currentEmailRef.current}`,
+          `/api/poll-inbox?inbox=${currentEmailRef.current}`,
           { cache: "no-store" }
         );
         if (response.ok) {
           const data = await response.json();
           if (
-            data.message === "No email yet" ||
-            data.message === "No email content found"
+            data.message === "Awaiting email" ||
+            data.message === "Email lacks content"
           ) {
             console.log(data.message);
             return;
@@ -321,7 +321,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
         cache: "no-store",
       });
       const data = await response.json();
-      const emailAddress = data.emailAddress;
+      const emailAddress = data.inbox;
 
 
       console.log("Generated email:", emailAddress);
@@ -543,7 +543,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
         className="bg-white flex flex-col w-full gap-8 px-[5%] py-8"
       >
         <div className="w-full flex items-center">
-          <div className="w-full md:w-1/2 items-center bg-white rounded-md p-4">
+          <div className="w-full md:w-1/2 items-center bg-white rounded-md p-4 text-right">
             <h2 className="text-[1.5em] mb-2">Generate an email</h2>
 
             <p>
@@ -567,13 +567,14 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
         </div>
 
         <div className="w-full flex items-center">
-          <div className="w-full md:w-1/2 items-center bg-white rounded-md p-4">
+          <div className="w-full md:w-1/2 items-center bg-white rounded-md p-4 text-right">
             <h2 className="text-[1.5em] mb-2">Receive code or link</h2>
 
             <p>
               PhantomSign will try to extract the verification code or link from
               the verification email and output it straight to your screen.
             </p>
+
           </div>
           <h1 className="text-gray-200 px-8 text-[4em]">3</h1>
         </div>
@@ -581,147 +582,154 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
 
       <div
         id="api"
-        className="bg-gray-200 min-h-screen w-full flex flex-col items-center gap-8 px-[5%] pt-8"
+        className="bg-gray-200 min-h-screen w-full flex flex-col gap-8 px-[5%] pt-8"
       >
-        <div className="relative flex flex-col p-6 w-full md:w-[60%] text-center text-black">
+        <div className="relative flex flex-col items-center p-6 w-full text-center text-black">
+
           <h1 className="text-[2.5em] md:text-[4em] font-bold mb-6">
             PhantomSign API
           </h1>
-          <p className="text-black mb-4">
+          <p className="text-black text-[1.2em] mb-8">
             PhantomSign offers a simple and effective API to extract
             verification codes and links from temporary email addresses.
           </p>
-          <div className="text-left">
-            <div className="mb-4">
-              <p className="font-bold mb-2 text-[1.5em]">Generate Inbox</p>
-              <p className="mb-2">Generates a new temporary email inbox.</p>
-              <p className="px-4 py-2 border border-gray-400 rounded-md bg-white text-black">
-                <span className="text-green-500 mr-2 font-bold">POST</span>{" "}
-                /api/generate-inbox
-              </p>
-              <p className="mt-2">
-                <strong>Request:</strong>
-              </p>
-              <pre className="bg-gray-100 p-2 rounded">
-                <code>
-                  {`POST /api/generate-inbox
-                    Headers:
-                    Content-Type: application/json
-                    Body: {}
-                    `}
-                </code>
-              </pre>
-              <p className="mt-2">
-                <strong>Response:</strong>
-              </p>
-              <pre className="bg-gray-100 p-2 rounded">
-                <code>
-                  {`{
-                    "emailAddress": "your_generated_email@phantomsign.com"
-                    }`}
-                </code>
-              </pre>
-            </div>
-            <div className="mb-4">
-              <p className="font-bold mb-2 text-[1.5em]">
-                Get Verification Data
-              </p>
-              <p className="mb-2">
-                Checks the inbox for a verification email, returning the link or
-                code if found.
-              </p>
-              <p className="px-4 py-2 border border-gray-400 rounded-md bg-white text-black">
-                <span className="text-green-500 mr-2 font-bold">GET</span>{" "}
-                /api/get-verification-data?inboxId=emailAddress
-              </p>
-              <p className="mt-2">
-                <strong>Request:</strong>
-              </p>
-              <pre className="bg-gray-100 p-2 rounded">
-                <code>
-                  {`GET /api/get-verification-data?inboxId=emailAddress`}
-                </code>
-              </pre>
-              <p className="mt-2">
-                <strong>Response:</strong>
-              </p>
-              <pre className="bg-gray-100 p-2 rounded">
-                <code>
-                  {`// If no email is found
-                    {
-                    "message": "No email yet"
-                    }
 
-                    // If no email content is found
-                    {
-                    "message": "No email content found"
-                    }
+          <p className="text-black mb-8">
+            All API requests require a valid API key, which should be provided as a header:
+          </p>
 
-                    // If a verification code is found
-                    {
-                    "company": "Company Name",
-                    "code": "123456"
-                    }
+          <div className="w-full flex gap-4 justify-center mb-16">
 
-                    // If a verification link is found
-                    {
-                    "company": "Company Name",
-                    "link": "https://verification-link.com"
-                    }
+            <code className="self-start bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
+              <span className="text-gray-600">x-api-key</span>
+              <span>[API KEY]</span>
+            </code>
 
-                    // If there is an error
-                    {
-                    "error": "Error message"
-                    }
-                    `}
-                </code>
-              </pre>
-            </div>
-            <div className="mb-4">
-              <p className="font-bold mb-2 text-[1.5em]">Delete Inbox</p>
-              <p className="mb-2">Deletes a temporary email inbox.</p>
-              <p className="px-4 py-2 border border-gray-400 rounded-md bg-white text-black">
-                <span className="text-red-500 mr-2 font-bold">DELETE</span>{" "}
-                /api/delete-inbox
-              </p>
-              <p className="mt-2">
-                <strong>Request:</strong>
-              </p>
-              <pre className="bg-gray-100 p-2 rounded">
-                <code>
-                    {`DELETE /api/delete-inbox
-                    Headers:
-                    Content-Type: application/json
-                    Body: {
-                    "emailAddress": "your_generated_email@phantomsign.com"
-                    }
-                    `}
-                </code>
-              </pre>
-              <p className="mt-2">
-                <strong>Response:</strong>
-              </p>
-              <pre className="bg-gray-100 p-2 rounded">
-                <code>
-                  {`// If successful
-                    {
-                    "message": "Inbox deleted successfully"
-                    }
+            <Link
+                className="bg-black text-white px-4 py-2 rounded-md"
+                href="/dashboard/keys"
+            >
+              Generate an API key
+            </Link>
 
-                    // If email address is missing
-                    {
-                    "error": "Email address is required"
-                    }
-
-                    // If there is an error
-                    {
-                    "error": "Error message"
-                    }
-                    `}
-                </code>
-              </pre>
-            </div>
           </div>
+
+          <div className="w-full flex gap-8 flex-col md:flex-row">
+
+            <div className="w-full md:w-1/3 flex flex-col gap-2">
+              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
+                <span className="text-green-600">POST</span>
+                <span>/api/generate-inbox</span>
+              </code>
+
+              <h2 className="font-bold">Responses</h2>
+
+              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
+                <span className="text-green-600">200</span>
+                <span>"inbox": [email]</span>
+              </code>
+
+              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
+                <span className="text-red-600">401</span>
+                <span>"error": [API key error]</span>
+              </code>
+
+            </div>
+
+            <div className="w-full md:w-1/3 flex flex-col gap-2">
+              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
+                <span className="text-yellow-600">GET</span>
+                <span>/api/poll-inbox?inbox=[email]</span>
+              </code>
+
+              <h2 className="font-bold">Responses</h2>
+
+              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
+                <span className="text-green-600">200</span>
+                <span>"message": "Awaiting email"</span>
+              </code>
+
+              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
+                <span className="text-green-600">200</span>
+                <div className="flex flex-col items-start">
+                  <span>{"{"}</span>
+                  <span>"code": [Verification code]</span>
+                  <span>"company": [Company name]</span>
+                  <span>{"}"}</span>
+                </div>
+              </code>
+
+              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
+                <span className="text-green-600">200</span>
+                <div className="flex flex-col items-start">
+                  <span>{"{"}</span>
+                  <span>"link": [Verification link]</span>
+                  <span>"company": [Company name]</span>
+                  <span>{"}"}</span>
+                </div>
+              </code>
+
+              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
+                <span className="text-green-600">200</span>
+                <span>"message": "Email lacks content"</span>
+              </code>
+
+              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
+                <span className="text-red-600">400</span>
+                <span>"error": "No inbox provided"</span>
+              </code>
+
+              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
+                <span className="text-red-600">401</span>
+                <span>"error": [API key error]</span>
+              </code>
+
+              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
+                <span className="text-red-600">404</span>
+                <span>"error": "Inbox not found"</span>
+              </code>
+              
+            </div>
+
+            <div className="w-full md:w-1/3 flex flex-col gap-2">
+              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
+                <span className="text-red-600">DELETE</span>
+                <span>/api/delete-inbox</span>
+              </code>
+
+              <h2 className="font-bold">Request</h2>
+
+              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
+                <span className="text-green-600">Body</span>
+                <span>{"{"}"inbox": [email]{"}"}</span>
+              </code>
+
+              <h2 className="font-bold">Responses</h2>
+
+              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
+                <span className="text-green-600">200</span>
+                <span>"message": "Inbox deleted"</span>
+              </code>
+
+              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
+                <span className="text-red-600">400</span>
+                <span>"error": "No inbox provided"</span>
+              </code>
+
+              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
+                <span className="text-red-600">403</span>
+                <span>"error": [API key error]</span>
+              </code>
+
+              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
+                <span className="text-red-600">404</span>
+                <span>"error": "Inbox not found"</span>
+              </code>
+              
+            </div>
+
+          </div>
+          
         </div>
 
         <Footer />

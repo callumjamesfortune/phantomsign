@@ -45,9 +45,9 @@ export async function POST(req: NextRequest) {
   }
 
   const emailString = generateEmail();
-  const emailAddress = `${emailString}@phantomsign.com`;
+  const inbox = `${emailString}@phantomsign.com`;
 
-  console.log(`Generated email address: ${emailAddress}`);
+  console.log(`Generated email address: ${inbox}`);
 
   try {
     const currentTime = Math.floor(Date.now() / 1000); // Use epoch timestamp for the current time
@@ -55,14 +55,14 @@ export async function POST(req: NextRequest) {
 
     const { error: insertError } = await supabaseServerClient
       .from('generated_emails')
-      .insert([{ email: emailAddress, created_at: currentTime, generated_by: apiKeyValidation.user_id }]);
+      .insert([{ email: inbox, created_at: currentTime, generated_by: apiKeyValidation.user_id }]);
 
     if (insertError) {
       console.error(`Insert Error: ${insertError.message}`);
       throw insertError;
     }
 
-    console.log(`Inserted email address: ${emailAddress}`);
+    console.log(`Inserted email address: ${inbox}`);
 
     // Increment the generated_emails_count in the email_statistics table
     const { data, error: selectError } = await supabaseServerClient
@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
 
     console.log(`Updated email_statistics count to: ${newCount}`);
 
-    return NextResponse.json({ emailAddress }, { status: 200 });
+    return NextResponse.json({ inbox }, { status: 200 });
   } catch (error: any) {
     console.error(`Error: ${error.message}`);
     return NextResponse.json({ error: error.message }, { status: 500 });
