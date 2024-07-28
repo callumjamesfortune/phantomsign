@@ -11,7 +11,9 @@ interface ApiKey {
   id: string;
   api_key: string;
   description: string;
-  expires_at: string | null;
+  expires_at: number | null;
+  usage_count: number;
+  last_used: number | null;
 }
 
 interface KeysClientProps {
@@ -39,7 +41,9 @@ export default function KeysClient({ user, initialApiKeys }: KeysClientProps) {
             id: result.id,
             api_key: result.apiKey,
             description: result.description,
-            expires_at: result.expiresAt ? new Date(result.expiresAt).toISOString() : null,
+            expires_at: result.expiresAt ? new Date(result.expiresAt).getTime() / 1000 : null,
+            usage_count: 0,
+            last_used: null,
           },
         ]);
         setDescription('');
@@ -73,7 +77,7 @@ export default function KeysClient({ user, initialApiKeys }: KeysClientProps) {
       <div className='w-full flex flex-grow flex-col md:flex-row gap-4 items-start mt-6'>
         <div className="w-full max-w-3xl bg-gray-200 rounded-md p-4">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold text-gray-800">New key</h1>
+            <h1 className="text-2xl font-bold text-gray-800">Generate new key</h1>
           </div>
           <form onSubmit={handleCreateApiKey} className="flex flex-col">
             <label htmlFor="description" className="block mb-2">Description:</label>
@@ -111,14 +115,20 @@ export default function KeysClient({ user, initialApiKeys }: KeysClientProps) {
                 <div className='flex flex-col gap-4 mb-4'>
                   <p className="font-bold capitalize">{key.description || "No description"}</p>
                   <code className="bg-white px-4 py-2 rounded-md">{key.api_key}</code>
-                  <p className="text-gray-600">
+                  <p className={key.expires_at && new Date(key.expires_at * 1000) < new Date() ? "text-red-600" : "text-gray-600"}>
                     {key.expires_at 
-                      ? `Expires: ${new Date(key.expires_at).toLocaleString('en-GB')}` 
+                      ? `Expires: ${new Date(key.expires_at * 1000).toLocaleString('en-GB')}` 
                       : "No expiry"}
                   </p>
-                  </div>
+                  <p className="text-gray-600">
+                    Usage Count: {key.usage_count}
+                  </p>
+                  <p className="text-gray-600">
+                    Last Used: {key.last_used ? new Date(key.last_used * 1000).toLocaleString('en-GB') : "Never"}
+                  </p>
+                </div>
                 <button onClick={() => handleDeleteApiKey(key.id)} className="flex items-center px-4 py-2 bg-red-500 text-white font-bold rounded-md hover:bg-red-600">
-                  Revoke
+                  {key.expires_at && new Date(key.expires_at * 1000) < new Date() ? "Delete" : "Revoke"}
                 </button>
               </li>
             ))}

@@ -25,6 +25,20 @@ export async function validateApiKey(req: NextRequest): Promise<{ valid: boolean
       return { valid: false, response: NextResponse.json({ error: 'Invalid or expired API key' }, { status: 401 }) };
     }
 
+    // Update the usage_count and last_used fields
+    const { error: updateError } = await supabaseServerClient
+      .from('api_keys')
+      .update({ 
+        usage_count: apiKeyData.usage_count + 1, 
+        last_used: Math.floor(Date.now() / 1000) 
+      })
+      .eq('api_key', apiKey);
+
+    if (updateError) {
+      console.error('Error updating API key usage:', updateError);
+      return { valid: false, response: NextResponse.json({ error: 'Error updating API key usage' }, { status: 500 }) };
+    }
+
     return { valid: true, user_id: apiKeyData.user_id, referrer_valid: referrerValid };
   }
 

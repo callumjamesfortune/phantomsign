@@ -17,7 +17,7 @@ export default async function Dashboard() {
 
   const { data: apiKeys, error: apiKeysError } = await supabase
     .from('api_keys')
-    .select('id, api_key, description, expires_at')
+    .select('id, api_key, description, expires_at, usage_count, last_used')
     .eq('user_id', data.user.id);
 
   if (apiKeysError) {

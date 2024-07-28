@@ -54,7 +54,14 @@ export async function generateApiKey(formData: FormData) {
 
     const { data: insertData, error: insertError } = await supabase
       .from('api_keys')
-      .insert([{ user_id: userId, api_key: apiKey, description: description || null, expires_at: expiresAtEpoch }])
+      .insert([{
+        user_id: userId,
+        api_key: apiKey,
+        description: description || null,
+        expires_at: expiresAtEpoch,
+        usage_count: 0, // Initialize usage count to 0
+        last_used: null // Initialize last used to null
+      }])
       .select();
 
     if (insertError) {
