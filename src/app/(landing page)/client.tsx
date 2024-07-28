@@ -34,7 +34,7 @@ export default function LandingClient({ user }: LandingClientProps) {
     linksFoundCount: number | null;
   }
 
-  const supabase = createClientComponentClient();
+  // const supabase = createClientComponentClient();
   const [email, setEmail] = useState<string>("");
   const [verificationData, setVerificationData] = useState<
     string | JSX.Element
@@ -56,26 +56,26 @@ export default function LandingClient({ user }: LandingClientProps) {
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
   const [confettiOpacity, setConfettiOpacity] = useState<number>(1);
 
-  useEffect(() => {
-    const fetchEmailStats = async () => {
-      const { data, error } = await supabase
-        .from("email_statistics")
-        .select("generated_emails_count, codes_found_count, links_found_count")
-        .eq("id", 1)
-        .single();
-      if (error) {
-        console.error("Error fetching email stats:", error);
-      } else {
-        setEmailStats({
-          generatedEmailsCount: data.generated_emails_count,
-          codesFoundCount: data.codes_found_count,
-          linksFoundCount: data.links_found_count,
-        });
-      }
-    };
+  // useEffect(() => {
+  //   const fetchEmailStats = async () => {
+  //     const { data, error } = await supabase
+  //       .from("email_statistics")
+  //       .select("generated_emails_count, codes_found_count, links_found_count")
+  //       .eq("id", 1)
+  //       .single();
+  //     if (error) {
+  //       console.error("Error fetching email stats:", error);
+  //     } else {
+  //       setEmailStats({
+  //         generatedEmailsCount: data.generated_emails_count,
+  //         codesFoundCount: data.codes_found_count,
+  //         linksFoundCount: data.links_found_count,
+  //       });
+  //     }
+  //   };
 
-    fetchEmailStats();
-  }, [supabase]);
+  //   fetchEmailStats();
+  // }, [supabase]);
 
   useEffect(() => {
     if (showConfetti) {
