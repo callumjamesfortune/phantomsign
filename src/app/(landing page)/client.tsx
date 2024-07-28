@@ -17,6 +17,7 @@ import Link from "next/link";
 import NotificationModal from "../notificationModal";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Footer from "../components/footer";
+import Confetti from 'react-confetti';
 
 interface LandingClientProps {
   user: User | null;
@@ -52,6 +53,8 @@ export default function LandingClient({ user }: LandingClientProps) {
   const currentEmailRef = useRef<string | null>(null);
   const pollingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const endTimeRef = useRef<number | null>(null);
+  const [showConfetti, setShowConfetti] = useState<boolean>(false);
+  const [confettiOpacity, setConfettiOpacity] = useState<number>(1);
 
   useEffect(() => {
     const fetchEmailStats = async () => {
@@ -73,6 +76,20 @@ export default function LandingClient({ user }: LandingClientProps) {
 
     fetchEmailStats();
   }, [supabase]);
+
+  useEffect(() => {
+    if (showConfetti) {
+      const timeout = setTimeout(() => {
+        setConfettiOpacity(0); // Start fading after 5 seconds
+        setTimeout(() => {
+          setShowConfetti(false); // Remove confetti after fade-out
+          setConfettiOpacity(1); // Reset opacity for future uses
+        }, 1000); // Duration of the fade-out effect
+      }, 5000); // Display confetti for 5 seconds before fading
+  
+      return () => clearTimeout(timeout);
+    }
+  }, [showConfetti]);
 
   useEffect(() => {
     const updateCountdown = () => {
@@ -258,6 +275,10 @@ export default function LandingClient({ user }: LandingClientProps) {
                 });
               });
             }
+
+            // Show confetti when verification data is found
+            setShowConfetti(true);
+            setTimeout(() => setShowConfetti(false), 5000); // Stop confetti after 5 seconds
           }
         }
       } catch (error: any) {
@@ -711,6 +732,11 @@ export default function LandingClient({ user }: LandingClientProps) {
 
         <Footer />
       </div>
+      {showConfetti && <Confetti
+        numberOfPieces={500}
+        recycle={false}
+        style={{ opacity: confettiOpacity, transition: "opacity 2s" }} // Add transition for fading effect
+      />}
     </>
   );
 }
