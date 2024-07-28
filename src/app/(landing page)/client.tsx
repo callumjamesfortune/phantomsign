@@ -16,6 +16,7 @@ import AuthenticatedNavigation from "../components/authenticatedNavigation";
 import Link from "next/link";
 import NotificationModal from "../notificationModal";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import Footer from "../components/footer";
 
 interface LandingClientProps {
   user: User | null;
@@ -511,8 +512,8 @@ export default function LandingClient({ user }: LandingClientProps) {
                     className="animate-spin h-5 w-5 mr-3 border-4 border-t-4 border-gray-200 border-t-green-600 rounded-full"
                     viewBox="0 0 24 24"
                   ></svg>
-                  <p className="mt-8">Deleting email in</p>
-                  <p className="mt-2 text-[2em] text-gray-600">
+                  <p className="mt-8">Deleting inbox in</p>
+                  <p className="mt-2 text-[2em] text-gray-600 tabular-nums">
                     {Math.floor(countdown / 60)}:
                     {String(countdown % 60).padStart(2, "0")}
                   </p>
@@ -590,10 +591,10 @@ export default function LandingClient({ user }: LandingClientProps) {
               <pre className="bg-gray-100 p-2 rounded">
                 <code>
                   {`POST /api/generate-inbox
-Headers:
-  Content-Type: application/json
-Body: {}
-`}
+                    Headers:
+                    Content-Type: application/json
+                    Body: {}
+                    `}
                 </code>
               </pre>
               <p className="mt-2">
@@ -602,8 +603,8 @@ Body: {}
               <pre className="bg-gray-100 p-2 rounded">
                 <code>
                   {`{
-  "emailAddress": "your_generated_email@phantomsign.com"
-}`}
+                    "emailAddress": "your_generated_email@phantomsign.com"
+                    }`}
                 </code>
               </pre>
             </div>
@@ -633,32 +634,32 @@ Body: {}
               <pre className="bg-gray-100 p-2 rounded">
                 <code>
                   {`// If no email is found
-{
-  "message": "No email yet"
-}
+                    {
+                    "message": "No email yet"
+                    }
 
-// If no email content is found
-{
-  "message": "No email content found"
-}
+                    // If no email content is found
+                    {
+                    "message": "No email content found"
+                    }
 
-// If a verification code is found
-{
-  "company": "Company Name",
-  "code": "123456"
-}
+                    // If a verification code is found
+                    {
+                    "company": "Company Name",
+                    "code": "123456"
+                    }
 
-// If a verification link is found
-{
-  "company": "Company Name",
-  "link": "https://verification-link.com"
-}
+                    // If a verification link is found
+                    {
+                    "company": "Company Name",
+                    "link": "https://verification-link.com"
+                    }
 
-// If there is an error
-{
-  "error": "Error message"
-}
-`}
+                    // If there is an error
+                    {
+                    "error": "Error message"
+                    }
+                    `}
                 </code>
               </pre>
             </div>
@@ -674,13 +675,13 @@ Body: {}
               </p>
               <pre className="bg-gray-100 p-2 rounded">
                 <code>
-                  {`DELETE /api/delete-inbox
-Headers:
-  Content-Type: application/json
-Body: {
-  "emailAddress": "your_generated_email@phantomsign.com"
-}
-`}
+                    {`DELETE /api/delete-inbox
+                    Headers:
+                    Content-Type: application/json
+                    Body: {
+                    "emailAddress": "your_generated_email@phantomsign.com"
+                    }
+                    `}
                 </code>
               </pre>
               <p className="mt-2">
@@ -689,41 +690,28 @@ Body: {
               <pre className="bg-gray-100 p-2 rounded">
                 <code>
                   {`// If successful
-{
-  "message": "Inbox deleted successfully"
-}
+                    {
+                    "message": "Inbox deleted successfully"
+                    }
 
-// If email address is missing
-{
-  "error": "Email address is required"
-}
+                    // If email address is missing
+                    {
+                    "error": "Email address is required"
+                    }
 
-// If there is an error
-{
-  "error": "Error message"
-}
-`}
+                    // If there is an error
+                    {
+                    "error": "Error message"
+                    }
+                    `}
                 </code>
               </pre>
             </div>
           </div>
         </div>
-      </div>
 
-      <footer className="bg-gray-200 text-gray-600 py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="text-center md:text-left">
-              <p>&copy; 2024 PhantomSign. All rights reserved.</p>
-            </div>
-            <div className="flex gap-4 mt-4 md:mt-0">
-              {/* <a href="#" class='hover:text-gray-400'>Privacy Policy</a>
-              <a href="#" class='hover:text-gray-400'>Terms of Service</a>
-              <a href="#" class='hover:text-gray-400'>Contact Us</a> */}
-            </div>
-          </div>
-        </div>
-      </footer>
+        <Footer />
+      </div>
     </>
   );
 }

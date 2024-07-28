@@ -52,10 +52,11 @@ export async function POST(req: NextRequest) {
       .from('api_keys')
       .select('*')
       .eq('api_key', apiKey)
+      .or(`expires_at.is.null,expires_at.gte.${Math.floor(Date.now() / 1000)}`) // Ensure the key is not expired or has no expiry
       .single();
 
     if (apiKeyError || !apiKeyData) {
-      return NextResponse.json({ error: 'Invalid API key' }, { status: 401 });
+      return NextResponse.json({ error: 'Invalid or expired API key' }, { status: 401 });
     }
   }
 
@@ -65,8 +66,8 @@ export async function POST(req: NextRequest) {
   console.log(`Generated email address: ${emailAddress}`);
 
   try {
-    const currentTime = Date.now(); // Get current time in milliseconds since epoch
-    console.log(`Current Time (ms since epoch): ${currentTime}`);
+    const currentTime = Math.floor(Date.now() / 1000); // Use epoch timestamp for the current time
+    console.log(`Current Time (Epoch): ${currentTime}`);
 
     const { error: insertError } = await supabaseServerClient
       .from('generated_emails')
@@ -94,11 +95,12 @@ export async function POST(req: NextRequest) {
     const newCount = data.generated_emails_count + 1;
     console.log(`New Generated Emails Count: ${newCount}`);
 
+    const updatedAt = new Date().toISOString(); // Convert epoch to ISO string
     const { error: finalUpdateError } = await supabaseServerClient
       .from('email_statistics')
       .update({ 
         generated_emails_count: newCount,
-        updated_at: new Date().toISOString()
+        updated_at: updatedAt
       })
       .eq('id', 1);
 

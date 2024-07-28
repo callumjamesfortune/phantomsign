@@ -7,6 +7,7 @@ import logo from '../../../../public/phantom.svg';
 import { toast } from 'react-hot-toast';
 import AuthenticatedNavigation from '../../components/authenticatedNavigation';
 import Link from 'next/link';
+import Footer from 'src/app/components/footer';
 
 interface KeysClientProps {
   user: User;
@@ -22,10 +23,12 @@ export default function AccountsClient({ user }: KeysClientProps) {
       <h1 className='w-full text-[1.5em] font-bold text-left mt-4'>Accounts</h1>
       <h2 className='w-full text-gray-600 text-[1em] font-bold text-left mt-2'>All of your saved accounts in one place.</h2>
 
-        <div className='w-full flex flex-col md:flex-row gap-4 items-start mt-6'>
+        <div className='w-full flex flex-grow flex-col md:flex-row gap-4 items-start mt-6'>
             
 
         </div>
+
+        <Footer />
 
     </div>
   );
