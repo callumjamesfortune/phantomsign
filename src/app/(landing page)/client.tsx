@@ -626,12 +626,12 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
 
               <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
                 <span className="text-green-600">200</span>
-                <span>"inbox": [email]</span>
+                <span>&quot;inbox&quot;: [email]</span>
               </code>
 
               <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
                 <span className="text-red-600">401</span>
-                <span>"error": [API key error]</span>
+                <span>&quot;error&quot;: [API key error]</span>
               </code>
 
             </div>
@@ -646,47 +646,47 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
 
               <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
                 <span className="text-green-600">200</span>
-                <span>"message": "Awaiting email"</span>
+                <span>&quot;message&quot;: &quot;Awaiting email&quot;</span>
               </code>
 
               <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
                 <span className="text-green-600">200</span>
                 <div className="flex flex-col items-start">
-                  <span>{"{"}</span>
-                  <span>"code": [Verification code]</span>
-                  <span>"company": [Company name]</span>
-                  <span>{"}"}</span>
+                  <span>&#123;</span>
+                  <span>&quot;code&quot;: [Verification code]</span>
+                  <span>&quot;company&quot;: [Company name]</span>
+                  <span>&#125;</span>
                 </div>
               </code>
 
               <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
                 <span className="text-green-600">200</span>
                 <div className="flex flex-col items-start">
-                  <span>{"{"}</span>
-                  <span>"link": [Verification link]</span>
-                  <span>"company": [Company name]</span>
-                  <span>{"}"}</span>
+                  <span>&#123;</span>
+                  <span>&quot;link&quot;: [Verification link]</span>
+                  <span>&quot;company&quot;: [Company name]</span>
+                  <span>&#125;</span>
                 </div>
               </code>
 
               <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
                 <span className="text-green-600">200</span>
-                <span>"message": "Email lacks content"</span>
+                <span>&quot;message&quot;: &quot;Email lacks content&quot;</span>
               </code>
 
               <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
                 <span className="text-red-600">400</span>
-                <span>"error": "No inbox provided"</span>
+                <span>&quot;error&quot;: &quot;No inbox provided&quot;</span>
               </code>
 
               <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
                 <span className="text-red-600">401</span>
-                <span>"error": [API key error]</span>
+                <span>&quot;error&quot;: [API key error]</span>
               </code>
 
               <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
                 <span className="text-red-600">404</span>
-                <span>"error": "Inbox not found"</span>
+                <span>&quot;error&quot;: &quot;Inbox not found&quot;</span>
               </code>
               
             </div>
@@ -701,34 +701,35 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
 
               <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
                 <span className="text-green-600">Body</span>
-                <span>{"{"}"inbox": [email]{"}"}</span>
+                <span>&#123;&quot;inbox&quot;: [email]&#125;</span>
               </code>
 
               <h2 className="font-bold">Responses</h2>
 
               <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
                 <span className="text-green-600">200</span>
-                <span>"message": "Inbox deleted"</span>
+                <span>&quot;message&quot;: &quot;Inbox deleted&quot;</span>
               </code>
 
               <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
                 <span className="text-red-600">400</span>
-                <span>"error": "No inbox provided"</span>
+                <span>&quot;error&quot;: &quot;No inbox provided&quot;</span>
               </code>
 
               <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
                 <span className="text-red-600">403</span>
-                <span>"error": [API key error]</span>
+                <span>&quot;error&quot;: [API key error]</span>
               </code>
 
               <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
                 <span className="text-red-600">404</span>
-                <span>"error": "Inbox not found"</span>
+                <span>&quot;error&quot;: &quot;Inbox not found&quot;</span>
               </code>
               
             </div>
 
-          </div>
+            </div>
+
           
         </div>
 
