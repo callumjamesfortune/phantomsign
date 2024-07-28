@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import supabaseServerClient from '../../../lib/supabaseServerClient';
+import { validateApiKey } from '../../../lib/apiKeyValidator';
 
 // Function to generate a random alphanumeric string
 function generateEmail(): string {
@@ -37,27 +38,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Method ${req.method} Not Allowed` }, { status: 405 });
   }
 
-  const referrer = req.headers.get('referer');
-  const host = req.headers.get('host') || "";
+  const apiKeyValidation = await validateApiKey(req);
 
-  // Allow requests from the same host or those with a valid API key
-  const apiKey = req.headers.get('x-api-key');
-  if (!referrer?.includes(host) && !apiKey) {
-    return NextResponse.json({ error: 'API key is missing' }, { status: 401 });
-  }
-
-  // Validate the API key if present
-  if (apiKey) {
-    const { data: apiKeyData, error: apiKeyError } = await supabaseServerClient
-      .from('api_keys')
-      .select('*')
-      .eq('api_key', apiKey)
-      .or(`expires_at.is.null,expires_at.gte.${Math.floor(Date.now() / 1000)}`) // Ensure the key is not expired or has no expiry
-      .single();
-
-    if (apiKeyError || !apiKeyData) {
-      return NextResponse.json({ error: 'Invalid or expired API key' }, { status: 401 });
-    }
+  if (!apiKeyValidation.valid) {
+    return apiKeyValidation.response;
   }
 
   const emailString = generateEmail();
@@ -71,7 +55,7 @@ export async function POST(req: NextRequest) {
 
     const { error: insertError } = await supabaseServerClient
       .from('generated_emails')
-      .insert([{ email: emailAddress, created_at: currentTime }]);
+      .insert([{ email: emailAddress, created_at: currentTime, generated_by: apiKeyValidation.user_id }]);
 
     if (insertError) {
       console.error(`Insert Error: ${insertError.message}`);

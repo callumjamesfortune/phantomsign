@@ -308,7 +308,6 @@ export default function LandingClient({ user }: LandingClientProps) {
       const data = await response.json();
       const emailAddress = data.emailAddress;
 
-      console.log(process.env.NEXT_PUBLIC_PHANTOMSIGN_API_KEY);
 
       console.log("Generated email:", emailAddress);
 
