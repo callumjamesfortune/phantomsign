@@ -21,9 +21,9 @@ module.exports = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ['your-domain.com'],
+    domains: ['phantomsign.com'],
   },
-  assetPrefix: process.env.NODE_ENV === 'production' ? 'https://your-domain.com' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? 'https://phantomsign.com' : '',
 };
 
 
