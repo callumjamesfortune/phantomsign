@@ -715,7 +715,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
       {showConfetti && <Confetti
         numberOfPieces={500}
         recycle={false}
-        style={{ opacity: confettiOpacity, transition: "opacity 2s" }} // Add transition for fading effect
+        style={{ width: "100vw", opacity: confettiOpacity, transition: "opacity 2s" }} // Add transition for fading effect
       />}
     </>
   );
