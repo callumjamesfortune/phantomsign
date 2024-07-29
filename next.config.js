@@ -1,29 +1,30 @@
-// /** @type {import('next').NextConfig} */
-// const nextConfig = {
-//   reactStrictMode: true,
-//   env: {
-//     GROQ_API_KEY: process.env.GROQ_API_KEY,
-//   },
-// };
-
-// module.exports = nextConfig;
-
-
-// module.exports = {
-//   reactStrictMode: true,
-//   webpack: (config, { isServer }) => {
-//     // Custom webpack configurations (if any)
-//     return config;
-//   },
-// };
-
 module.exports = {
   reactStrictMode: true,
-  swcMinify: true,
   images: {
     domains: ['phantomsign.com'],
   },
-  assetPrefix: process.env.NODE_ENV === 'production' ? 'https://phantomsign.com' : '',
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.output.filename = `static/chunks/[name].[contenthash].js`;
+      config.output.chunkFilename = `static/chunks/[name].[contenthash].js`;
+    }
+    return config;
+  },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store, max-age=0',
+          },
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+        ],
+      },
+    ];
+  },
 };
-
-
