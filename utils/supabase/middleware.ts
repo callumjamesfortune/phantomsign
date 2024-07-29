@@ -2,6 +2,11 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
+
+  if (request.nextUrl.pathname.startsWith("/_next/")) {
+    return true;
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   })
