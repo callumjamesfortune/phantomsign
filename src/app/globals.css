@@ -42,6 +42,25 @@ body, html {
   box-shadow: 0 0 9px #767676;
 }
 
+/* Ensure date input visibility on iOS devices */
+input[type="date"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 0.25rem;
+  width: 100%;
+  background-color: white;
+}
+
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+}
+
 @keyframes float {
   0% {
     transform: translateY(0) translateX(0) rotate(0deg);
