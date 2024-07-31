@@ -7,8 +7,8 @@ import "./globals.css";
 const inter = Red_Hat_Display({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "PhantomSign",
-  description: "F*ck spam, get codes",
+  title: "PhantomSign | throwaway emails",
+  description: "AI powered throwaway email addresses.",
 };
 
 export default function RootLayout({
