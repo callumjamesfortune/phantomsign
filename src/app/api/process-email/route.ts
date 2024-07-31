@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
 
   const snsMessage = await request.json();
 
-  console.log("HI: " + JSON.stringify(snsMessage));
+  console.log("SNS req receievd: " + JSON.stringify(snsMessage));
 
   if (true) {
 
