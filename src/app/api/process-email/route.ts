@@ -34,14 +34,15 @@ export async function POST(request: NextRequest) {
 
   if (messageType === 'SubscriptionConfirmation') {
     try {
-      const subscribeURL = snsMessage.SubscribeURL;
+      const token = snsMessage.Token;
+      const topicArn = snsMessage.TopicArn;
 
-      if (!subscribeURL) {
-        return NextResponse.json({ error: 'Missing SubscribeURL in the SubscriptionConfirmation message' }, { status: 400 });
+      if (!token || !topicArn) {
+        return NextResponse.json({ error: 'Missing Token or TopicArn in the SubscriptionConfirmation message' }, { status: 400 });
       }
 
-      // Confirm the subscription by visiting the SubscribeURL
-      const response = await fetch(subscribeURL);
+      const confirmSubscriptionUrl = `https://sns.us-west-2.amazonaws.com/?Action=ConfirmSubscription&TopicArn=${encodeURIComponent(topicArn)}&Token=${encodeURIComponent(token)}`;
+      const response = await fetch(confirmSubscriptionUrl);
       const text = await response.text();
       console.log('Subscription confirmed:', text);
       return NextResponse.json({ message: 'Subscription confirmed' });
