@@ -24,9 +24,10 @@ async function verifySignature(snsMessage: { [x: string]: any; Signature: any; S
 }
 
 export async function POST(request: NextRequest) {
-  const messageType = request.headers.get('x-amz-sns-message-type');
 
   console.log(request);
+
+  const messageType = request.headers.get('x-amz-sns-message-type');
 
   if (!messageType) {
     return NextResponse.json({ error: 'Missing x-amz-sns-message-type header' }, { status: 400 });
@@ -34,26 +35,7 @@ export async function POST(request: NextRequest) {
 
   const snsMessage = await request.json();
 
-  if (messageType === 'SubscriptionConfirmation') {
-    try {
-      const token = snsMessage.Token;
-      const topicArn = snsMessage.TopicArn;
-
-      if (!token || !topicArn) {
-        return NextResponse.json({ error: 'Missing Token or TopicArn in the SubscriptionConfirmation message' }, { status: 400 });
-      }
-
-      const confirmSubscriptionUrl = `https://sns.us-west-2.amazonaws.com/?Action=ConfirmSubscription&TopicArn=${encodeURIComponent(topicArn)}&Token=${encodeURIComponent(token)}`;
-      console.log(confirmSubscriptionUrl);
-      const response = await fetch(confirmSubscriptionUrl);
-      const text = await response.text();
-      console.log('Subscription confirmed:', text);
-      return NextResponse.json({ message: 'Subscription confirmed' });
-    } catch (error) {
-      console.error('Error confirming subscription:', error);
-      return NextResponse.json({ error: 'Error confirming subscription' }, { status: 500 });
-    }
-  } else if (messageType === 'Notification') {
+  if (messageType === 'Notification') {
     if (!await verifySignature(snsMessage)) {
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
     }
