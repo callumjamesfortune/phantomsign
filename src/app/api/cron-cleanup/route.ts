@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import supabaseServerClient from '../../../lib/supabaseServerClient';
 
 const DELETE_AFTER_MINUTES = parseInt(process.env.NEXT_PUBLIC_DELETE_AFTER_MINUTES!) || 10;
-const SECRET_KEY = process.env.SECRET_KEY; // Set this in your Netlify environment variables
+const CRON_SECRET = process.env.CRON_SECRET; // Set this in your Vercel environment variables
 
 const deleteOldEmails = async () => {
-  const deleteBefore = Date.now() - (DELETE_AFTER_MINUTES * 60000);
+  const deleteBefore = Math.floor(Date.now() / 1000) - (DELETE_AFTER_MINUTES * 60);
 
   try {
     // Delete old generated emails
@@ -36,11 +36,9 @@ const deleteOldEmails = async () => {
   }
 };
 
-export async function POST(req: NextRequest) {
-  const url = new URL(req.url);
-  const key = url.searchParams.get('key');
-
-  if (key !== SECRET_KEY) {
+export async function GET(req: NextRequest) {
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader || authHeader !== `Bearer ${CRON_SECRET}`) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
