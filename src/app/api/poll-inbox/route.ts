@@ -44,6 +44,12 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ message: 'Awaiting email' }, { status: 200 });
         }
 
+        // Check if the email is older than 5 minutes
+        const fiveMinutesAgo = Math.floor(Date.now() / 1000) - Number(process.env.DELETE_AFTER_MINUTES!) * 60;
+        if (latestEmail.created_at < fiveMinutesAgo) {
+            return NextResponse.json({ error: 'Inbox not found' }, { status: 404 });
+        }
+
         const emailBody = latestEmail.body;
         if (!emailBody) {
             return NextResponse.json({ message: 'Email lacks content' }, { status: 200 });
