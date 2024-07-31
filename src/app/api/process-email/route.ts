@@ -6,9 +6,9 @@ import fetch from 'node-fetch';
 
 export async function POST(request: NextRequest) {
 
-  console.log("HI: " + JSON.stringify(request.json()));
-
   const snsMessage = await request.json();
+
+  console.log("HI: " + JSON.stringify(snsMessage));
 
   if (true) {
 
