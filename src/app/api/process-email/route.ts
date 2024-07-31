@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
       }
 
       const confirmSubscriptionUrl = `https://sns.us-west-2.amazonaws.com/?Action=ConfirmSubscription&TopicArn=${encodeURIComponent(topicArn)}&Token=${encodeURIComponent(token)}`;
+      console.log(confirmSubscriptionUrl);
       const response = await fetch(confirmSubscriptionUrl);
       const text = await response.text();
       console.log('Subscription confirmed:', text);
