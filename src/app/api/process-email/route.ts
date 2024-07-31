@@ -4,41 +4,13 @@ import { simpleParser } from 'mailparser';
 import crypto from 'crypto';
 import fetch from 'node-fetch';
 
-async function verifySignature(snsMessage: { [x: string]: any; Signature: any; SigningCertURL: any; }) {
-  const { Signature, SigningCertURL, ...messageWithoutSignature } = snsMessage;
-
-  // Sort the message attributes by name
-  const messageAttributes = Object.entries(messageWithoutSignature).sort(([a], [b]) => a.localeCompare(b));
-
-  // Create the canonical string for signature verification
-  const canonicalString = messageAttributes.map(([key, value]) => `${key}\n${value}`).join('\n') + '\n';
-
-  // Fetch the signing certificate
-  const response = await fetch(SigningCertURL);
-  const cert = await response.text();
-
-  // Verify the signature
-  const verifier = crypto.createVerify('SHA1');
-  verifier.update(canonicalString);
-  return verifier.verify(cert, Signature, 'base64');
-}
-
 export async function POST(request: NextRequest) {
 
-  console.log(request);
-
-  const messageType = request.headers.get('x-amz-sns-message-type');
-
-  if (!messageType) {
-    return NextResponse.json({ error: 'Missing x-amz-sns-message-type header' }, { status: 400 });
-  }
+  console.log("HI: " + request);
 
   const snsMessage = await request.json();
 
-  if (messageType === 'Notification') {
-    if (!await verifySignature(snsMessage)) {
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
-    }
+  if (true) {
 
     const email = JSON.parse(snsMessage.Message);
 
