@@ -25,7 +25,6 @@ export default function AuthenticatedNavigation({user}: {user: User}) {
             <ul className='flex items-center md:pr-[auto] gap-6 md:gap-12 text-gray-600 font-bold'>
                 <li><Link href="/dashboard">Dashboard</Link></li>
                 <li><Link href="/dashboard/keys">Keys</Link></li>
-                <li><Link href="/dashboard/accounts">Accounts</Link></li>
                 <LogoutButton />
             </ul>
         </div>
