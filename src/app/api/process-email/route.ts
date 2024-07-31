@@ -4,7 +4,7 @@ import { simpleParser } from 'mailparser';
 import crypto from 'crypto';
 import fetch from 'node-fetch';
 
-async function verifySignature(snsMessage: any) {
+async function verifySignature(snsMessage: { [x: string]: any; Signature: any; SigningCertURL: any; }) {
   const { Signature, SigningCertURL, ...messageWithoutSignature } = snsMessage;
 
   // Sort the message attributes by name
@@ -34,7 +34,14 @@ export async function POST(request: NextRequest) {
 
   if (messageType === 'SubscriptionConfirmation') {
     try {
-      const response = await fetch(snsMessage.SubscribeURL);
+      const subscribeURL = snsMessage.SubscribeURL;
+
+      if (!subscribeURL) {
+        return NextResponse.json({ error: 'Missing SubscribeURL in the SubscriptionConfirmation message' }, { status: 400 });
+      }
+
+      // Confirm the subscription by visiting the SubscribeURL
+      const response = await fetch(subscribeURL);
       const text = await response.text();
       console.log('Subscription confirmed:', text);
       return NextResponse.json({ message: 'Subscription confirmed' });
