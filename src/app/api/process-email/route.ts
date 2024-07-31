@@ -26,6 +26,8 @@ async function verifySignature(snsMessage: { [x: string]: any; Signature: any; S
 export async function POST(request: NextRequest) {
   const messageType = request.headers.get('x-amz-sns-message-type');
 
+  console.log(request);
+
   if (!messageType) {
     return NextResponse.json({ error: 'Missing x-amz-sns-message-type header' }, { status: 400 });
   }
