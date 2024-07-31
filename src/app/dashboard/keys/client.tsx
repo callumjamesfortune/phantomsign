@@ -111,10 +111,10 @@ export default function KeysClient({ user, initialApiKeys }: KeysClientProps) {
         {apiKeys.length > 0 ?
           <ul className="w-full">
             {apiKeys.map((key) => (
-              <li key={key.id} className="flex flex-col items-start justify-between bg-gray-200 px-2 pl-4 py-4 mb-4 rounded-md">
-                <div className='flex flex-col gap-4 mb-4'>
+              <li key={key.id} className="flex flex-col items-start justify-between bg-gray-200 px-4 py-4 mb-4 rounded-md">
+                <div className='w-full flex flex-col gap-4 mb-4'>
                   <p className="font-bold capitalize">{key.description || "No description"}</p>
-                  <code className="bg-white px-4 py-2 rounded-md">{key.api_key}</code>
+                  <code className="w-full overflow-scroll bg-white px-4 py-2 rounded-md">{key.api_key}</code>
                   <p className={key.expires_at && new Date(key.expires_at * 1000) < new Date() ? "text-red-600" : "text-gray-600"}>
                     {key.expires_at 
                       ? `Expires: ${new Date(key.expires_at * 1000).toLocaleString('en-GB')}` 
