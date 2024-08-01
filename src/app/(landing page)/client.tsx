@@ -198,7 +198,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
             } else if (data.code) {
               displayContent = (
                 <div className="flex flex-col justify-center">
-                  <p className="mt-8 text-center font-bold">Email received 🎉 </p>
+                  <p className="mt-8 text-center font-bold"><span className="text-[1.4em] mr-4">🎉</span> Email received <span className="text-[1.4em] ml-4">🎉</span>  </p>
                   <div className="flex mt-8 gap-4 items-end">
                     {companyInfo}
                     <div
