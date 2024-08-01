@@ -6,7 +6,7 @@ import { validateApiKey } from '../../../lib/apiKeyValidator';
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY as string });
 
-const AI_RETRY_LIMIT = 2; // Limit the number of retries for the AI
+const AI_RETRY_LIMIT = 3; // Limit the number of retries for the AI
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
@@ -120,7 +120,21 @@ async function getGroqChatCompletion(text: string) {
             messages: [
                 {
                     role: "user",
-                    content: `Extract and return only the verification code or magic link from this email body. Specifically look for text and href attributes in <a> tags and ensure that the entire URL is selected if it is a link. Ensure that the email address itself is not mistakenly selected as the verification code. Return the code or link and the company name in the following JSON format: {"code": "your_code_here", "company": "company_name_here"} or {"link": "your_link_here", "company": "company_name_here"}. Do not include any additional text or characters.
+                    content: `
+
+Extract and return only the verification code or magic link from this email body.
+
+Specifically look for text and href attributes in <a> tags and ensure that the entire URL is selected if it is a link.
+
+Ensure that the email address itself is not mistakenly selected as the verification code.
+
+Read the email first and decide if it is likely to contain a verification link or a verification code, then identify whichever you decided.
+
+Return the code or link and the company name in the following JSON format: 
+
+{"code": "your_code_here", "company": "company_name_here"} or {"link": "your_link_here", "company": "company_name_here"}.
+
+Do not include any additional text or characters.
 
 Examples:
 
@@ -193,7 +207,16 @@ async function getVerificationDataWithRetry(text: string, retries: number) {
 function extractJsonFromResponse(responseText: string) {
     const jsonMatch = responseText.match(/{.*}/);
     if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
+
+        let data = JSON.parse(jsonMatch[0]);
+
+        if (data.link && !/^https?:\/\//i.test(data.link)) {
+            throw new Error('A link was returned but it was invalid');
+        }
+
+        return data;
+
+
     }
     throw new Error('Failed to extract JSON from response text');
 }

@@ -182,7 +182,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
             if (data.link) {
               displayContent = (
                 <div className="flex flex-col justify-center">
-                  <p className="mt-8 text-center">Email received</p>
+                  <p className="mt-8 text-center font-bold"><span className="text-[1.4em] mr-4">🎉</span> Email received <span className="text-[1.4em] ml-4">🎉</span> </p>
                   <div className="flex flex-col md:flex-row mt-8 gap-4 items-center">
                     {companyInfo}
                     <button
@@ -197,24 +197,23 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
               );
             } else if (data.code) {
               displayContent = (
-                <div className="flex mt-8 gap-4 items-end">
-                  {companyInfo}
-                  <div
-                    onClick={() => {
-                      navigator.clipboard.writeText(data.code);
-                      toast.success("Copied to clipboard");
-                    }}
-                    className="relative px-4 py-2 border border-gray-400 rounded-md bg-white hover:scale-[1.05] duration-75 cursor-pointer"
-                  >
-                    {data.code}
-                    <div className="p-1 rounded-md bg-white text-gray-600 absolute top-0 right-0 translate-y-[-50%] translate-x-[50%]">
+                <div className="flex flex-col justify-center">
+                  <p className="mt-8 text-center font-bold">Email received 🎉 </p>
+                  <div className="flex mt-8 gap-4 items-end">
+                    {companyInfo}
+                    <div
+                      onClick={() => {
+                        navigator.clipboard.writeText(data.code);
+                        toast.success("Copied to clipboard");
+                      }}
+                      className="relative flex items-stretch border border-gray-400 rounded-md bg-white hover:scale-[1.05] duration-75 cursor-pointer"
+                    >
+                      <div className="px-4 py-2">{data.code}</div>
+                      <div className="px-2 md:px-4 grid place-content-center flex-grow rounded-r-md bg-gray-100 border-l border-gray-400 text-gray-600">
                       <DocumentDuplicateIcon
                         className="w-5 h-5 cursor-pointer"
-                        onClick={() => {
-                          navigator.clipboard.writeText(data.code);
-                          toast.success("Copied to clipboard");
-                        }}
                       />
+                    </div>
                     </div>
                   </div>
                 </div>
@@ -473,16 +472,12 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
                       navigator.clipboard.writeText(email);
                       toast.success("Copied to clipboard");
                     }}
-                    className="relative text-[1em] md:text-[1.4em] mt-4 px-4 py-2 border rounded-md bg-white border border-gray-400 hover:scale-[1.05] duration-75 cursor-pointer self-end"
+                    className="relative flex items-stretch text-[1em] md:text-[1.4em] mt-4 border rounded-md bg-white border border-gray-400 hover:scale-[1.05] duration-75 cursor-pointer self-end"
                   >
-                    {email}
-                    <div className="p-1 rounded-md bg-white text-gray-600 absolute top-0 right-0 translate-y-[-50%] translate-x-[50%]">
+                    <div className="px-4 py-2">{email}</div>
+                    <div className="px-2 md:px-4 grid place-content-center flex-grow rounded-r-md bg-gray-100 border-l border-gray-400 text-gray-600">
                       <DocumentDuplicateIcon
                         className="w-5 h-5 cursor-pointer"
-                        onClick={() => {
-                          navigator.clipboard.writeText(email);
-                          toast.success("Copied to clipboard");
-                        }}
                       />
                     </div>
                   </div>

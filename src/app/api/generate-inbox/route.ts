@@ -4,30 +4,15 @@ import { validateApiKey } from '../../../lib/apiKeyValidator';
 
 // Function to generate a random alphanumeric string
 function generateEmail(): string {
-  const insideWord = "phantom";
   const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
 
   // Generate 8 random characters
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 10; i++) {
     result += characters.charAt(Math.floor(Math.random() * characters.length));
   }
 
-  // Intersperse letters of 'phantom' between the random characters
-  let finalResult = '';
-  for (let i = 0; i < 8; i++) {
-    finalResult += result[i];
-    if (i < insideWord.length) {
-      finalResult += insideWord[i];
-    }
-  }
-
-  // Add the remaining letters of 'phantom' if there are any
-  if (insideWord.length > 8) {
-    finalResult += insideWord.slice(8);
-  }
-
-  return finalResult;
+  return result;
 }
 
 export async function POST(req: NextRequest) {
@@ -55,7 +40,7 @@ export async function POST(req: NextRequest) {
 
     const { error: insertError } = await supabaseServerClient
       .from('generated_emails')
-      .insert([{ email: inbox, created_at: currentTime, generated_by: apiKeyValidation.user_id }]);
+      .insert([{ email: inbox, created_at: currentTime, generated_by: apiKeyValidation.user_id || "Web client" }]);
 
     if (insertError) {
       console.error(`Insert Error: ${insertError.message}`);
