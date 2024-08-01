@@ -466,7 +466,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
                   </div>
                 </div>
               )}
-              {email && (
+              {(email && !loadingInbox) && (
                 <div className="flex flex-col">
                   <div
                     onClick={() => {
@@ -489,12 +489,13 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
                 </div>
               )}
               {loadingEmail && (
-                <div className="flex flex-col items-center mt-6">
+                <div className="flex flex-col items-center mt-8">
                   <svg
-                    className="animate-spin h-5 w-5 mr-3 border-4 border-t-4 border-gray-200 border-t-green-600 rounded-full"
+                    className="animate-spin h-8 w-8 mr-3 border-4 border-t-4 border-gray-200 border-t-gray-400 rounded-full"
                     viewBox="0 0 24 24"
                   ></svg>
-                  <p className="mt-8">Deleting inbox in</p>
+                  
+                  <p className="mt-8">Awaiting an email...</p>
                   <p className="mt-2 text-[2em] text-gray-600 tabular-nums">
                     {Math.floor(countdown / 60)}:
                     {String(countdown % 60).padStart(2, "0")}

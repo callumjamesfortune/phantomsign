@@ -141,6 +141,12 @@ Unacceptable Responses:
 - Email address itself is selected as the verification code.
 - Only part of the URL is selected as the code.
 
+Acceptable Responses:
+- {"code": "ABCD-1234", "company": "ExampleCorp"}
+- {"code": "8735", "company": "Uber"}
+- {"link": "https://verify-email.mcdonalds.com", "company": "McDonalds"}
+- {"link": "https://confirm-email.examplecompany.co.uk?verifycode=154346", "company": "acoolcompany.com"}
+
 Given Email Body: ${text}
 
 Return only the extracted verification code or link and the company name in the specified JSON format.
