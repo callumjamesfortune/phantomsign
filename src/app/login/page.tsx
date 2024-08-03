@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { Toaster, toast } from 'react-hot-toast';
 import { loginOrSignUp } from './actions';
 import Link from 'next/link';
+import logo from "../../../public/phantom.svg"
+import Image from 'next/image';
 
 export default function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,9 +44,23 @@ export default function LoginPage() {
     <main>
       <Toaster />
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <Link href="/" className='absolute top-4 left-6 font-bold' >Back to home</Link>
-        <div className="bg-white p-8 rounded-md shadow-md w-full max-w-md">
+
+        <Link href="/" className='absolute top-4 left-6 font-bold' >Back</Link>
+
+        <div className="bg-white p-8 rounded-md w-full max-w-md">
+
+          <div className='w-full flex items-center justify-center mb-8'>
+            <Image
+                  src={logo}
+                  alt="PhantomSign Logo"
+                  width={50}
+                  height={50}
+                  className=""
+            />
+          </div>
+
           <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">Login or Sign Up</h2>
+          <h3 className="mb-6 text-gray-600 text-center">Don&apos;t even try to use a PhantomSign email.</h3>
           <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
             <div>
               <label htmlFor="email" className="block text-gray-700">Email:</label>

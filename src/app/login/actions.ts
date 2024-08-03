@@ -21,10 +21,10 @@ export async function loginOrSignUp(formData: FormData) {
       return { error: 'Login failed', status: 400 };
     }
   } else if (action === 'signup') {
-    const localPart = email.split('@')[0];
+    const localPart = email.split('@')[1];
     const containsAllLetters = /(?=.*p)(?=.*h)(?=.*a)(?=.*n)(?=.*t)(?=.*o)(?=.*m)/.test(localPart);
     if (containsAllLetters) {
-      return { error: 'You cannot sign up with a phantomsign email!', status: 400 };
+      return { error: 'Please use your real email!', status: 400 };
     }
 
     const { error } = await supabase.auth.signUp({ email, password });

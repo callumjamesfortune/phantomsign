@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     try {
       const parsedEmail = await simpleParser(decodedContent);
       const plainTextBody = parsedEmail.text || '';
-      const receivedAtEpoch = Date.now();
+      const receivedAtEpoch = Math.floor(Date.now() / 1000);
 
       const { data: generatedEmails, error: queryError } = await supabaseServerClient
         .from('generated_emails')

@@ -414,10 +414,9 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
             <div className="w-full flex flex-col items-center">
               {!email && !loadingInbox && <></>}
               {!email && !loadingInbox && (
-                <div className="flex flex-col md:flex-row gap-12 py-12 pb-8">
+                <div className="flex flex-col md:flex-row gap-12 md:gap-[60px] py-12 pb-8">
                   <div
-                    className="flex flex-col items-center bg-white rounded-md simple-shadow p-4 w-[180px]"
-                    style={{ aspectRatio: 1 }}
+                    className="flex flex-col items-center bg-white rounded-md simple-shadow p-4 w-[180px] aspect-square"
                   >
                     <h2 className="text-[1em]">Codes found</h2>
                     {emailStats?.codes_found_count === null ? (
@@ -432,8 +431,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
                     )}
                   </div>
                   <div
-                    className="flex flex-col items-center bg-white rounded-md simple-shadow p-4 w-[180px]"
-                    style={{ aspectRatio: 1, transform: "scale(1.2)" }}
+                    className="flex flex-col items-center bg-white rounded-md simple-shadow p-4 w-[180px] scale-[1.4] aspect-square"
                   >
                     <h2 className="text-[1em]">Emails generated</h2>
                     {emailStats?.generated_emails_count === null ? (
@@ -448,8 +446,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
                     )}
                   </div>
                   <div
-                    className="flex flex-col items-center bg-white rounded-md simple-shadow p-4 w-[180px]"
-                    style={{ aspectRatio: 1 }}
+                    className="flex flex-col items-center bg-white rounded-md simple-shadow p-4 w-[180px] aspect-square"
                   >
                     <h2 className="text-[1em]">Links found</h2>
                     {emailStats?.links_found_count === null ? (
@@ -472,7 +469,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
                       navigator.clipboard.writeText(email);
                       toast.success("Copied to clipboard");
                     }}
-                    className="relative flex items-stretch text-[1em] md:text-[1.4em] mt-4 border rounded-md bg-white border border-gray-400 hover:scale-[1.05] duration-75 cursor-pointer self-end"
+                    className="relative flex items-stretch text-[1.2em] md:text-[1.8em] mt-4 border rounded-md bg-white border border-gray-400 hover:scale-[1.05] duration-75 cursor-pointer self-end"
                   >
                     <div className="px-4 py-2">{email}</div>
                     <div className="px-2 md:px-4 grid place-content-center flex-grow rounded-r-md bg-gray-100 border-l border-gray-400 text-gray-600">
@@ -490,8 +487,8 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
                     viewBox="0 0 24 24"
                   ></svg>
                   
-                  <p className="mt-8">Awaiting an email...</p>
-                  <p className="mt-2 text-[2em] text-gray-600 tabular-nums">
+                  <p className="mt-8 text-[1.2em]">Awaiting an email...</p>
+                  <p className="mt-2 text-[3em] text-gray-600 tabular-nums">
                     {Math.floor(countdown / 60)}:
                     {String(countdown % 60).padStart(2, "0")}
                   </p>
