@@ -188,7 +188,6 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
             if (data.link) {
               displayContent = (
                 <div className="flex flex-col justify-center">
-                  <p className="mt-8 text-center font-bold"><span className="text-[1.4em] mr-4"></span> Email received <span className="text-[1.4em] ml-4"></span> </p>
                   <div className="flex flex-col md:flex-row mt-8 gap-4 items-center">
                     {companyInfo}
                     <button
@@ -204,7 +203,6 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
             } else if (data.code) {
               displayContent = (
                 <div className="flex flex-col justify-center">
-                  <p className="mt-8 text-center font-bold"><span className="text-[1.4em] mr-4"></span> Email received <span className="text-[1.4em] ml-4"></span>  </p>
                   <div className="flex mt-8 gap-4 items-end">
                     {companyInfo}
                     <div
@@ -374,7 +372,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
                 className="bg-black text-white px-4 py-2 rounded-md"
                 href="/dashboard"
               >
-                {user ? "Dashboard" : "Login"}
+                {user ? "Dashboard" : "Developers"}
               </Link>
             </ul>
           </div>
@@ -382,7 +380,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
             Phantom<span className="text-gray-600">Sign</span>
           </h1>
         </div>
-        <div className="relative flex flex-col items-center bg-gray-200 flex-grow">
+        <div className="relative flex flex-col items-center bg-gray-100 px-[5%] border-t border-b border-gray-300 flex-grow">
           <div className="absolute">
             <div className="w-full flex justify-center float-animation absolute -translate-y-[50%] -top-[80px]">
               <Image
@@ -394,7 +392,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
               />
             </div>
             <button
-              className="shimmery-button z-[1000] simple-shadow absolute -translate-y-[50%] text-white text-[1.5em] font-bold py-2 px-6 rounded-md flex items-center justify-center"
+              className="shimmery-button z-[1000] border border-blue-600 simple-shadow absolute -translate-y-[50%] text-white text-[1.5em] font-bold py-2 px-6 rounded-md flex items-center justify-center"
               onClick={generateEmail}
               disabled={loadingInbox}
             >
@@ -407,10 +405,10 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
                   Generating...
                 </>
               ) : email ? (
-                "Regenerate Email"
+                "Regenerate inbox"
               ) : (
                 <span className="flex items-center">
-                  Generate Email
+                  Generate inbox
                   <SparklesIcon className="w-5 h-5 ml-4 scale-[1.2]" />
                 </span>
               )}
@@ -418,7 +416,6 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
           </div>
           <div className="relative w-full flex-grow flex flex-col items-center justify-center">
             <div className="w-full flex flex-col items-center">
-              {!email && !loadingInbox && <></>}
               {!email && !loadingInbox && (
                 <div className="flex flex-col md:flex-row gap-12 md:gap-[60px] py-12 pb-8">
                   <div
@@ -493,7 +490,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
                     viewBox="0 0 24 24"
                   ></svg>
                   
-                  <p className="mt-8 text-[1em]">Awaiting an email...</p>
+                  <p className="mt-8 text-[1em]">Waiting for a verification email...</p>
                   <p className="mt-2 text-[2.4em] text-gray-600 tabular-nums">
                     {Math.floor(countdown / 60)}:
                     {String(countdown % 60).padStart(2, "0")}
@@ -549,7 +546,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
 
       <div
         id="api"
-        className="bg-gray-200 min-h-screen w-full flex flex-col gap-8 px-[5%] pt-8"
+        className="bg-gray-100 border-t border-gray-300 min-h-screen w-full flex flex-col gap-8 px-[5%] pt-8"
       >
         <div className="relative flex flex-col items-center p-6 w-full text-center text-black">
 
