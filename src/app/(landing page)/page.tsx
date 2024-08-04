@@ -1,13 +1,7 @@
 'use server'
 
-import { Metadata } from 'next';
 import { createClient } from '../../../utils/supabase/server';
 import LandingClient from './client';
-
-export const metadata: Metadata = {
-  title: "PhantomSign | Throwaway emails",
-  description: "AI powered throwaway email addresses.",
-};
 
 export default async function Landing() {
   const supabase = createClient();

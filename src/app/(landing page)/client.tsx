@@ -15,6 +15,12 @@ import Link from "next/link";
 import NotificationModal from "../notificationModal";
 import Footer from "../components/footer";
 import Confetti from 'react-confetti';
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "PhantomSign | Throwaway emails",
+  description: "AI powered throwaway email addresses.",
+};
 
 interface EmailStats {
   generated_emails_count: number | null;
