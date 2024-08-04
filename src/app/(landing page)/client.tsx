@@ -188,7 +188,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
             if (data.link) {
               displayContent = (
                 <div className="flex flex-col justify-center">
-                  <p className="mt-8 text-center font-bold"><span className="text-[1.4em] mr-4">🎉</span> Email received <span className="text-[1.4em] ml-4">🎉</span> </p>
+                  <p className="mt-8 text-center font-bold"><span className="text-[1.4em] mr-4"></span> Email received <span className="text-[1.4em] ml-4"></span> </p>
                   <div className="flex flex-col md:flex-row mt-8 gap-4 items-center">
                     {companyInfo}
                     <button
@@ -204,7 +204,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
             } else if (data.code) {
               displayContent = (
                 <div className="flex flex-col justify-center">
-                  <p className="mt-8 text-center font-bold"><span className="text-[1.4em] mr-4">🎉</span> Email received <span className="text-[1.4em] ml-4">🎉</span>  </p>
+                  <p className="mt-8 text-center font-bold"><span className="text-[1.4em] mr-4"></span> Email received <span className="text-[1.4em] ml-4"></span>  </p>
                   <div className="flex mt-8 gap-4 items-end">
                     {companyInfo}
                     <div
@@ -437,7 +437,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
                     )}
                   </div>
                   <div
-                    className="flex flex-col items-center bg-white rounded-md simple-shadow p-4 w-[180px] scale-[1.4] aspect-square"
+                    className="flex flex-col items-center bg-white rounded-md simple-shadow p-4 w-[180px] scale-[1.25] aspect-square"
                   >
                     <h2 className="text-[1em]">Emails generated</h2>
                     {emailStats?.generated_emails_count === null ? (
