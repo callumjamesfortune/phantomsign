@@ -295,8 +295,6 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
     console.log("Generating email...");
     setLoadingInbox(true);
     setVerificationData("");
-    setCountdown(COUNTDOWN_TIME); // Reset the countdown timer
-    endTimeRef.current = Date.now() + COUNTDOWN_TIME * 1000; // Update the end time reference
 
     try {
       const response = await fetch("/api/generate-inbox", {
@@ -316,9 +314,11 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
       currentEmailRef.current = emailAddress;
       setLoadingInbox(false);
       setLoadingEmail(true);
-      toast.success("Email generated successfully!");
+      setCountdown(COUNTDOWN_TIME); // Reset the countdown timer
+      endTimeRef.current = Date.now() + (COUNTDOWN_TIME+1) * 1000; // Update the end time reference
+      toast.success("Inbox created!");
     } catch (error: any) {
-      console.error("Error generating email:", error.message);
+      console.error("Error generating inbox:", error.message);
       setVerificationData(`Error: ${error.message}`);
       setLoadingInbox(false);
       setLoadingEmail(false);
