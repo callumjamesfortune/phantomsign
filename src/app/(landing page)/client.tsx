@@ -19,7 +19,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "PhantomSign | Throwaway emails",
-  description: "AI powered throwaway email addresses.",
+  description: "AI powered throwaway email addresses. Perfect for sign-up forms and quick verifications.",
 };
 
 interface EmailStats {
@@ -363,10 +363,10 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
             </div>
             <ul className="flex items-center md:pr-[auto] gap-6 md:gap-12 text-gray-600 font-bold">
               <li>
-                <a href="#about">About</a>
+                <span className="cursor-pointer" onClick={() => {document.getElementById("about")?.scrollIntoView()}}>About</span>
               </li>
               <li>
-                <a href="#api">API</a>
+                <span className="cursor-pointer" onClick={() => {document.getElementById("api")?.scrollIntoView()}}>API</span>
               </li>
               <Link
                 className="bg-black text-white px-4 py-2 rounded-md"
