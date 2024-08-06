@@ -51,6 +51,9 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
   const [confettiOpacity, setConfettiOpacity] = useState<number>(1);
 
   useEffect(() => {
+
+    window.scrollTo(0,0);
+
     if (showConfetti) {
       const timeout = setTimeout(() => {
         setConfettiOpacity(0); // Start fading after 5 seconds
