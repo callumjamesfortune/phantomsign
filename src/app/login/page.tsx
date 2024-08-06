@@ -27,7 +27,7 @@ export default function LoginPage() {
           toast.error(response.error || 'An error occurred');
         } else {
           toast.success(action === 'login' ? 'Logged in successfully!' : 'Signed up successfully!');
-          router.push('/dashboard');
+          router.push('/dashboard/keys');
         }
       } catch (error: any) {
         toast.error(error.message || 'An error occurred');

@@ -373,9 +373,9 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
               </li>
               <Link
                 className="bg-black text-white px-4 py-2 rounded-md"
-                href="/dashboard"
+                href="/dashboard/keys"
               >
-                {user ? "Dashboard" : "Developers"}
+                Developers
               </Link>
             </ul>
           </div>

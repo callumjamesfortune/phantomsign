@@ -33,6 +33,6 @@ export async function loginOrSignUp(formData: FormData) {
     }
   }
 
-  revalidatePath('/dashboard');
+  revalidatePath('/dashboard/keys');
   return { success: true, status: 200 };
 }

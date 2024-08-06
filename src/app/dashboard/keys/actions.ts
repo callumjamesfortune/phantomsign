@@ -71,7 +71,7 @@ export async function generateApiKey(formData: FormData) {
 
     console.log('Inserted API Key:', insertData[0]);
 
-    revalidatePath('/dashboard');
+    revalidatePath('/dashboard/keys');
     return { id: insertData[0].id, apiKey, description, expiresAt };
   } catch (error: any) {
     console.error('Error generating API key:', error);
@@ -96,7 +96,7 @@ export async function deleteApiKey(apiKeyId: string) {
     throw new Error('Error deleting API key');
   }
 
-  revalidatePath('/dashboard');
+  revalidatePath('/dashboard/keys');
 }
 
 // Helper function to generate a random alphanumeric string

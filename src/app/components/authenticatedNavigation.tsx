@@ -23,8 +23,8 @@ export default function AuthenticatedNavigation({user}: {user: User}) {
                 <span className="hidden md:block">{user && user.email}</span>
             </div>
             <ul className='flex items-center md:pr-[auto] gap-6 md:gap-12 text-gray-600 font-bold'>
-                <li><Link href="/dashboard">Dashboard</Link></li>
-                <li><Link href="/dashboard/keys">Keys</Link></li>
+                {/* <li><Link href="/dashboard">Dashboard</Link></li> */}
+                <li><Link href="/dashboard/keys">API Keys</Link></li>
                 <LogoutButton />
             </ul>
         </div>
