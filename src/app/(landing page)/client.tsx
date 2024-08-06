@@ -436,7 +436,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
                   <div
                     className="flex flex-col items-center bg-white rounded-md border border-gray-300 p-4 w-[180px] scale-[1.25] aspect-square"
                   >
-                    <h2 className="text-[1em]">Emails generated</h2>
+                    <h2 className="text-[1em]">Inboxes generated</h2>
                     {emailStats?.generated_emails_count === null ? (
                       <svg
                         className="animate-spin h-10 w-10 my-8 border-4 border-t-4 border-gray-200 border-t-green-600 rounded-full"
