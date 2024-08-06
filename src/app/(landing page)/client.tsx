@@ -419,7 +419,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
               {!email && !loadingInbox && (
                 <div className="flex flex-col md:flex-row gap-12 md:gap-[60px] py-12 pb-8">
                   <div
-                    className="flex flex-col items-center bg-white rounded-md simple-shadow p-4 w-[180px] aspect-square"
+                    className="flex flex-col items-center bg-white rounded-md border border-gray-300 p-4 w-[180px] aspect-square"
                   >
                     <h2 className="text-[1em]">Codes found</h2>
                     {emailStats?.codes_found_count === null ? (
@@ -434,7 +434,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
                     )}
                   </div>
                   <div
-                    className="flex flex-col items-center bg-white rounded-md simple-shadow p-4 w-[180px] scale-[1.25] aspect-square"
+                    className="flex flex-col items-center bg-white rounded-md border border-gray-300 p-4 w-[180px] scale-[1.25] aspect-square"
                   >
                     <h2 className="text-[1em]">Emails generated</h2>
                     {emailStats?.generated_emails_count === null ? (
@@ -449,7 +449,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
                     )}
                   </div>
                   <div
-                    className="flex flex-col items-center bg-white rounded-md simple-shadow p-4 w-[180px] aspect-square"
+                    className="flex flex-col items-center bg-white rounded-md border border-gray-300 p-4 w-[180px] aspect-square"
                   >
                     <h2 className="text-[1em]">Links found</h2>
                     {emailStats?.links_found_count === null ? (
