@@ -470,7 +470,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
                       ></svg>
                     ) : (
                       <h2 className="text-[4em] text-gray-600">
-                        {`${(Math.floor(emailStats!.generated_inboxes_count/100)/10).toFixed(1)}k`}
+                        {`${(Math.floor(emailStats!.generated_inboxes_count/100)/10)}K`}
                       </h2>
                     )}
                   </div>
