@@ -82,27 +82,6 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
       }
     };
 
-    // Load email from localStorage
-    const savedEmail = localStorage.getItem("email");
-    if (savedEmail) {
-      setEmail(savedEmail);
-      currentEmailRef.current = savedEmail;
-      setLoadingEmail(true);
-      const savedEndTime = localStorage.getItem("endTime");
-      if (savedEndTime) {
-        endTimeRef.current = parseInt(savedEndTime, 10);
-        const remainingTime = Math.max(0, endTimeRef.current - Date.now());
-        setCountdown(Math.floor(remainingTime / 1000));
-        if (remainingTime > 0) {
-          requestAnimationFrame(updateCountdown);
-        } else {
-          deleteInbox(savedEmail);
-          localStorage.removeItem("email");
-          localStorage.removeItem("endTime");
-        }
-      }
-    }
-
     if (loadingEmail) {
       endTimeRef.current = Date.now() + countdown * 1000;
       requestAnimationFrame(updateCountdown);
@@ -337,8 +316,6 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
       setLoadingEmail(true);
       setCountdown(COUNTDOWN_TIME); // Reset the countdown timer
       endTimeRef.current = Date.now() + (COUNTDOWN_TIME+1) * 1000; // Update the end time reference
-      localStorage.setItem("email", emailAddress); // Save to localStorage
-      localStorage.setItem("endTime", endTimeRef.current.toString()); // Save end time to localStorage
       toast.success("Inbox created!");
     } catch (error: any) {
       console.error("Error generating inbox:", error.message);
@@ -470,7 +447,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
                       ></svg>
                     ) : (
                       <h2 className="text-[4em] text-gray-600">
-                        {`${(Math.floor(emailStats!.generated_inboxes_count/100)/10)}K`}
+                        {emailStats?.generated_inboxes_count}
                       </h2>
                     )}
                   </div>
