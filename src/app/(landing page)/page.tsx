@@ -12,7 +12,7 @@ export default async function Landing() {
 
   const { data: generatedEmail, error: emailError } = await supabase
         .from("email_statistics")
-        .select("generated_emails_count, codes_found_count, links_found_count")
+        .select("generated_inboxes_count, codes_found_count, links_found_count")
         .eq("id", 1)
         .single();
 

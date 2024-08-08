@@ -17,7 +17,7 @@ export async function DELETE(req: NextRequest) {
 
     // Fetch the generated email details
     const { data: generatedEmail, error: emailError } = await supabaseServerClient
-      .from('generated_emails')
+      .from('generated_inboxes')
       .select('generated_by')
       .eq('email', inbox)
       .single();
@@ -31,9 +31,9 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    // Delete the email from the generated_emails table
+    // Delete the email from the generated_inboxes table
     const { error: deleteGeneratedError } = await supabaseServerClient
-      .from('generated_emails')
+      .from('generated_inboxes')
       .delete()
       .eq('email', inbox);
 

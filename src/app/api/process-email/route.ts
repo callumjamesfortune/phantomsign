@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       const receivedAtEpoch = Math.floor(Date.now() / 1000);
 
       const { data: generatedEmails, error: queryError } = await supabaseServerClient
-        .from('generated_emails')
+        .from('generated_inboxes')
         .select('*')
         .eq('email', recipient);
 

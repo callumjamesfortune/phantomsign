@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     try {
         // Fetch the generated email details
         const { data: generatedEmail, error: emailError } = await supabaseServerClient
-            .from('generated_emails')
+            .from('generated_inboxes')
             .select('generated_by')
             .eq('email', inbox)
             .single();

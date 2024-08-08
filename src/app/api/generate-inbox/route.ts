@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     console.log(`Current Time (Epoch): ${currentTime}`);
 
     const { error: insertError } = await supabaseServerClient
-      .from('generated_emails')
+      .from('generated_inboxes')
       .insert([{ email: inbox, created_at: currentTime, generated_by: apiKeyValidation.user_id || "Web client" }]);
 
     if (insertError) {
@@ -49,10 +49,10 @@ export async function POST(req: NextRequest) {
 
     console.log(`Inserted email address: ${inbox}`);
 
-    // Increment the generated_emails_count in the email_statistics table
+    // Increment the generated_inboxes_count in the email_statistics table
     const { data, error: selectError } = await supabaseServerClient
       .from('email_statistics')
-      .select('generated_emails_count')
+      .select('generated_inboxes_count')
       .eq('id', 1)
       .single();
 
@@ -61,14 +61,14 @@ export async function POST(req: NextRequest) {
       throw selectError;
     }
 
-    const newCount = data.generated_emails_count + 1;
+    const newCount = data.generated_inboxes_count + 1;
     console.log(`New Generated Emails Count: ${newCount}`);
 
     const updatedAt = new Date().toISOString(); // Convert epoch to ISO string
     const { error: finalUpdateError } = await supabaseServerClient
       .from('email_statistics')
       .update({ 
-        generated_emails_count: newCount,
+        generated_inboxes_count: newCount,
         updated_at: updatedAt
       })
       .eq('id', 1);

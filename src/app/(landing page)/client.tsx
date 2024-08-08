@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 };
 
 interface EmailStats {
-  generated_emails_count: number | null;
+  generated_inboxes_count: number | null;
   codes_found_count: number | null;
   links_found_count: number | null;
 }
@@ -440,14 +440,14 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
                     className="flex flex-col items-center bg-white rounded-md border border-gray-300 p-4 w-[180px] scale-[1.25] aspect-square"
                   >
                     <h2 className="text-[1em]">Inboxes generated</h2>
-                    {emailStats?.generated_emails_count === null ? (
+                    {emailStats?.generated_inboxes_count === null ? (
                       <svg
                         className="animate-spin h-10 w-10 my-8 border-4 border-t-4 border-gray-200 border-t-green-600 rounded-full"
                         viewBox="0 0 24 24"
                       ></svg>
                     ) : (
                       <h2 className="text-[4em] text-gray-600">
-                        {emailStats?.generated_emails_count}
+                        {emailStats?.generated_inboxes_count}
                       </h2>
                     )}
                   </div>

@@ -10,7 +10,7 @@ const deleteOldEmails = async () => {
   try {
     // Delete old generated emails
     let { error: generatedEmailsError } = await supabaseServerClient
-      .from('generated_emails')
+      .from('generated_inboxes')
       .delete()
       .lt('created_at', deleteBefore);
 
