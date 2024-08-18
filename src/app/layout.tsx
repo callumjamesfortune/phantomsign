@@ -9,6 +9,9 @@ const inter = Red_Hat_Display({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "PhantomSign | Throwaway emails",
   description: "AI powered throwaway email addresses. Perfect for sign-up forms and quick verifications.",
+  alternates: {
+    canonical: 'https://www.phantomsign.com/',
+  },
 };
 
 export default function RootLayout({
