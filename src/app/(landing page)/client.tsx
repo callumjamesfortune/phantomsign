@@ -563,7 +563,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
 
       <div
         id="api"
-        className="bg-gray-100 border-t border-gray-300 min-h-screen w-full flex flex-col gap-8 px-[5%] pt-8"
+        className="bg-gray-100 border-t border-gray-300 min-h-screen w-full flex flex-col gap-8 px-[5%] py-8"
       >
         <div className="relative flex flex-col items-center p-6 w-full text-center text-black">
 
@@ -722,9 +722,8 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
 
           
         </div>
-
-        <Footer />
       </div>
+      <Footer />
       {showConfetti && <Confetti
         numberOfPieces={500}
         recycle={false}
