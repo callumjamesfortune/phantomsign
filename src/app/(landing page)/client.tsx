@@ -38,7 +38,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
   const POLLING_INTERVAL = 5000; // 5 seconds
 
   const [email, setEmail] = useState<string>("");
-  const [verificationData, setVerificationData] = useState<string | JSX.Element>("");
+  const [verificationData, setVerificationData] = useState<string | JSX.Element | null>("");
   const [loadingInbox, setLoadingInbox] = useState<boolean>(false);
   const [loadingEmail, setLoadingEmail] = useState<boolean>(false);
   const [countdown, setCountdown] = useState<number>(COUNTDOWN_TIME);
@@ -254,13 +254,27 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
           }
         } else if (response.status === 404) {
           console.error("Inbox not found");
-          setVerificationData(`Error: Inbox not found`);
+          let displayContent = (
+            <div className="flex mt-8 gap-4 items-center">
+              <span className="px-4 py-2 rounded-md bg-red-600 text-center font-bold text-white">
+                Something went wrong
+              </span>
+            </div>
+          );
+          setVerificationData(displayContent);
           setLoadingEmail(false);
           toast.error("Inbox not found");
         }
       } catch (error: any) {
         console.error("Error retrieving verification data:", error.message);
-        setVerificationData(`Error: ${error.message}`);
+        let displayContent = (
+          <div className="flex mt-8 gap-4 items-center">
+            <span className="px-4 py-2 rounded-md bg-red-600 text-center font-bold text-white">
+              Something went wrong
+            </span>
+          </div>
+        );
+        setVerificationData(displayContent);
         setLoadingEmail(false);
         toast.error(`Error retrieving verification data: ${error.message}`);
       }
