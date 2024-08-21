@@ -217,7 +217,8 @@ async function extractJsonFromResponse(responseText: string, inbox: string) {
         const { error: finalUpdateError } = await supabaseServerClient
         .from('incoming_emails')
         .update({ 
-            value_found: JSON.stringify(data),
+            value: data.link || data.code,
+            company: data.company
         })
         .eq('email', inbox);
 
