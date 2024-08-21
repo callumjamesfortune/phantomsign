@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
 
     try {
       const parsedEmail = await simpleParser(decodedContent);
+      const subject = parsedEmail.subject || 'No Subject'; // Extracting the subject, default to 'No Subject' if missing
       const plainTextBody = parsedEmail.text || '';
 
       // Check if the recipient is "enquiries@phantomsign.com"
@@ -37,6 +38,7 @@ export async function POST(request: NextRequest) {
           .insert([{
             created_at: formattedDate, // Formatted date
             sender: sender, // The sender's email address
+            subject: subject,
             content: plainTextBody, // The plain text body of the email
           }]);
 
