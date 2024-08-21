@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
         const cleanedEmailContent = cleanEmailContent(emailBody);
         console.log("LATEST EMAIL: " + cleanedEmailContent);
 
-        let verificationData = await getVerificationDataWithRetry(cleanedEmailContent, AI_RETRY_LIMIT);
+        let verificationData = await getVerificationDataWithRetry(cleanedEmailContent, AI_RETRY_LIMIT, inbox);
 
         if (verificationData) {
             await updateStatistics(verificationData);
@@ -179,7 +179,7 @@ Before returning a link, ensure that it is a valid http or https link that can b
     }
 }
 
-async function getVerificationDataWithRetry(text: string, retries: number) {
+async function getVerificationDataWithRetry(text: string, retries: number, inbox: string) {
     let attempts = 0;
     let verificationData = null;
 
@@ -188,7 +188,7 @@ async function getVerificationDataWithRetry(text: string, retries: number) {
         console.log(`Attempt ${attempts} to get verification data from AI`);
         try {
             const response = await getGroqChatCompletion(text);
-            verificationData = response != null ? extractJsonFromResponse(response) : null;
+            verificationData = response != null ? extractJsonFromResponse(response, inbox) : null;
         } catch (error: any) {
             console.error(`Error on attempt ${attempts}: ${error.message}`);
             if (attempts >= retries) {
@@ -204,7 +204,7 @@ async function getVerificationDataWithRetry(text: string, retries: number) {
     return verificationData;
 }
 
-function extractJsonFromResponse(responseText: string) {
+async function extractJsonFromResponse(responseText: string, inbox: string) {
     const jsonMatch = responseText.match(/{.*}/);
     if (jsonMatch) {
 
@@ -213,6 +213,13 @@ function extractJsonFromResponse(responseText: string) {
         if (data.link && !/^https?:\/\//i.test(data.link)) {
             throw new Error('A link was returned but it was invalid');
         }
+
+        const { error: finalUpdateError } = await supabaseServerClient
+        .from('incoming_emails')
+        .update({ 
+            value_found: JSON.stringify(data),
+        })
+        .eq('email', inbox);
 
         return data;
 
