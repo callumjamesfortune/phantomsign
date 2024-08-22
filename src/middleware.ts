@@ -17,11 +17,13 @@ const ratelimit = new Ratelimit({
 
 export async function middleware(request: NextRequest, event: NextFetchEvent) {
   const ip = request.ip ?? "localhost:3000";
-  const rateLimitResponse = await ratelimit.limit(ip);
+  if(ip != "localhost:3000") {
+    const rateLimitResponse = await ratelimit.limit(ip);
 
-  // Ensure the rate limiting works correctly
-  if (!rateLimitResponse.success) {
-    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+     // Ensure the rate limiting works correctly
+    if (!rateLimitResponse.success) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+    }
   }
 
   const logger = new Logger({ source: 'middleware' });

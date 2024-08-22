@@ -7,6 +7,7 @@ import {
   OfficeBuildingIcon,
   DocumentDuplicateIcon,
   ExternalLinkIcon,
+  TrashIcon
 } from "@heroicons/react/outline";
 import Image from "next/image";
 import logo from "../../../public/phantom.svg";
@@ -16,6 +17,7 @@ import NotificationModal from "../notificationModal";
 import Footer from "../components/footer";
 import Confetti from 'react-confetti';
 import { Metadata } from "next";
+import { IoReload, IoCopyOutline } from "react-icons/io5";
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 export const metadata: Metadata = {
@@ -412,7 +414,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
           </h1>
         </div>
         <div className="relative flex flex-col items-center bg-gray-100 px-[5%] border-t border-b border-gray-300 flex-grow">
-          <div className="absolute">
+          <div className="absolute w-full">
             <div className="w-full flex justify-center float-animation absolute -translate-y-[50%] -top-[80px]">
               <Image
                 src={logo}
@@ -422,7 +424,17 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                 className=""
               />
             </div>
-            <button
+
+
+
+
+
+
+
+
+
+
+            {/* <button
               className="shimmery-button z-[1000] border border-blue-600 simple-shadow absolute -translate-y-[50%] text-white text-[1.5em] font-bold py-2 px-6 rounded-md flex items-center justify-center"
               onClick={generateEmail}
               disabled={loadingInbox}
@@ -443,11 +455,44 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                   <SparklesIcon className="w-5 h-5 ml-4 scale-[1.2]" />
                 </span>
               )}
-            </button>
+            </button> */}
+
+
+
+
+
+              <div
+                onClick={() => {
+                  navigator.clipboard.writeText(email);
+                  toast.success("Copied to clipboard");
+                }}
+                className="z-[1000] absolute left-[50%] -translate-y-[50%] -translate-x-[50%] flex gap-4 items-stretch text-[1.2em] md:text-[1.4em] rounded-md cursor-pointer self-end"
+              >
+                <div className="px-3 py-2 bg-blue-500 text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]"><IoReload className="w-[30px]"/></div>
+                <div className="px-4 py-2 border border-gray-400 bg-white rounded-md duration-75 hover:scale-[1.05]">{email}</div>
+                {/* <div className="px-2 md:px-4 grid place-content-center flex-grow rounded-r-md bg-gray-100 border-l border-gray-400 text-gray-600">
+                  <DocumentDuplicateIcon
+                    className="w-5 h-5 cursor-pointer"
+                  />
+                </div> */}
+                <div className="px-3 py-2 bg-gray-400 text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]"><IoCopyOutline className="w-[30px]"/></div>
+              </div>
+
+
+
+
+
+
+
+
+
+
+
+
           </div>
           <div className="relative w-full flex-grow flex flex-col items-center justify-center">
             <div className="w-full flex flex-col items-center">
-              {!inboxFromCookie && !email && !loadingInbox && (
+              {(JSON.parse(inboxFromCookie!) == null || JSON.parse(inboxFromCookie!).expiry < Date.now() / 1000) && !email && !loadingInbox && (
                 <div className="flex flex-col md:flex-row gap-12 md:gap-[60px] py-12 pb-8">
                   <div
                     className="flex flex-col items-center bg-white rounded-md border border-gray-300 p-4 w-[180px] aspect-square"
@@ -496,39 +541,101 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                   </div>
                 </div>
               )}
-              {(email && !loadingInbox) && (
-                <div className="flex flex-col">
-                  <div
-                    onClick={() => {
-                      navigator.clipboard.writeText(email);
-                      toast.success("Copied to clipboard");
-                    }}
-                    className="relative flex items-stretch text-[1.2em] md:text-[1.4em] mt-4 border rounded-md bg-white border border-gray-400 hover:scale-[1.05] duration-75 cursor-pointer self-end"
-                  >
-                    <div className="px-4 py-2">{email}</div>
-                    <div className="px-2 md:px-4 grid place-content-center flex-grow rounded-r-md bg-gray-100 border-l border-gray-400 text-gray-600">
-                      <DocumentDuplicateIcon
-                        className="w-5 h-5 cursor-pointer"
-                      />
+
+
+
+
+              <div className="w-full flex gap-16">
+
+                <div className="w-1/2">
+
+                  <div className="bg-white rounded-md p-8">
+
+                    <div className="w-full flex gap-2">
+                      <span className="bg-gray-100 px-4 py-2 rounded-md">Expires after</span>
+                      <input type="number" className="outline-none border border-gray-400 rounded-md px-4"></input>
                     </div>
+
+                    <button
+                      className="w-full mt-8 shimmery-button border border-blue-600 text-white font-bold py-2 px-6 rounded-md flex items-center justify-center"
+                      onClick={generateEmail}
+                      disabled={loadingInbox}
+                    >
+                      {loadingInbox ? (
+                        <>
+                          <svg
+                            className="animate-spin h-5 w-5 mr-3 border-4 border-t-4 border-gray-200 border-t-white rounded-full"
+                            viewBox="0 0 24 24"
+                          ></svg>
+                          Generating...
+                        </>
+                      ) : <span className="flex items-center">
+                          Generate with choices
+                        </span>
+                      }
+                    </button>
+
+
                   </div>
+
                 </div>
-              )}
-              {loadingEmail && (
-                <div className="flex flex-col items-center mt-8">
-                  <svg
-                    className="animate-spin h-8 w-8 mr-3 border-4 border-t-4 border-gray-200 border-t-gray-400 rounded-full"
-                    viewBox="0 0 24 24"
-                  ></svg>
+
+                <div className="w-1/2">
+
+                  {/* {(email && !loadingInbox) && (
+                    <div className="flex flex-col">
+                      <div
+                        onClick={() => {
+                          navigator.clipboard.writeText(email);
+                          toast.success("Copied to clipboard");
+                        }}
+                        className="relative flex items-stretch text-[1.2em] md:text-[1.4em] mt-4 border rounded-md bg-white border border-gray-400 hover:scale-[1.05] duration-75 cursor-pointer self-end"
+                      >
+                        <div className="px-4 py-2">{email}</div>
+                        <div className="px-2 md:px-4 grid place-content-center flex-grow rounded-r-md bg-gray-100 border-l border-gray-400 text-gray-600">
+                          <DocumentDuplicateIcon
+                            className="w-5 h-5 cursor-pointer"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )} */}
+
                   
-                  <p className="mt-8 text-[1em]">Waiting for a verification email...</p>
-                  <p className="mt-2 text-[2.4em] text-gray-600 tabular-nums">
-                    {Math.floor(countdown / 60)}:
-                    {String(countdown % 60).padStart(2, "0")}
-                  </p>
-                </div>
-              )}
-              {verificationData}
+                    <div className="flex flex-col items-center bg-white border border-gray-400 rounded-md">
+
+                    <div className="w-full p-4 bg-gray-200 rounded-t-md">
+                      Inbox
+                    </div>
+
+
+                    {loadingEmail ? (<div className="w-full p-8">
+                      
+                      <svg
+                        className="animate-spin h-8 w-8 mr-3 border-4 border-t-4 border-gray-200 border-t-gray-400 rounded-full"
+                        viewBox="0 0 24 24"
+                      ></svg>
+                      
+                      <p className="mt-8 text-[1em]">Waiting for a verification email...</p>
+                      <p className="mt-2 text-[2.4em] text-gray-600 tabular-nums">
+                        {Math.floor(countdown / 60)}:
+                        {String(countdown % 60).padStart(2, "0")}
+                      </p>
+
+                    </div>
+                    ) :
+                    <div>{verificationData}</div>
+                    }
+
+                    </div>
+
+                  </div>
+
+              </div>
+
+
+
+
             </div>
           </div>
         </div>

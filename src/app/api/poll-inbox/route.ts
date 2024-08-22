@@ -8,6 +8,14 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY as string });
 
 const AI_RETRY_LIMIT = 3; // Limit the number of retries for the AI
 
+interface Email {
+    sender: string,
+    subject: string,
+    body: string
+}
+
+let emailData: Email;
+
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const inbox = searchParams.get('inbox');
@@ -97,6 +105,7 @@ async function fetchLatestEmail(inbox: string) {
 
         if (emails && emails.length > 0) {
             const email = emails[0];
+            emailData = email;
             return email;
         } else {
             return null;
@@ -204,6 +213,10 @@ async function extractJsonFromResponse(responseText: string, inbox: string) {
         if (data.link && !/^https?:\/\//i.test(data.link)) {
             throw new Error('A link was returned but it was invalid');
         }
+
+        data.sender = emailData.sender
+        data.subject = emailData.subject
+        data.body = emailData.body
 
         const { error: finalUpdateError } = await supabaseServerClient
         .from('incoming_emails')

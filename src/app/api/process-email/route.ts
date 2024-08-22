@@ -61,19 +61,20 @@ export async function POST(request: NextRequest) {
           .from('incoming_emails')
           .insert([{
             email: recipient,
+            sender: sender, // Insert the sender's email address
+            subject: subject, // Insert the email subject
             body: plainTextBody,
             created_at: receivedAtEpoch
           }]);
-
+    
         if (insertError) {
           console.error('Error inserting email into incoming_emails:', insertError);
           return NextResponse.json({ error: 'Error inserting email into incoming_emails' }, { status: 500 });
         }
-
+    
         return NextResponse.json({ message: 'Email processed successfully' });
-      } else {
-        return NextResponse.json({ message: 'Recipient not found' }, { status: 404 });
-      }
+    }
+    
     } catch (error) {
       return NextResponse.json({ error: 'Error parsing email' }, { status: 500 });
     }
