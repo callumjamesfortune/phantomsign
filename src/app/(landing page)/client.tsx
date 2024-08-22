@@ -19,6 +19,8 @@ import Footer from "../components/footer";
 import Confetti from 'react-confetti';
 import { Metadata } from "next";
 import { IoReload, IoCopyOutline } from "react-icons/io5";
+import { RxOpenInNewWindow } from "react-icons/rx"
+import { BiCopy } from "react-icons/bi"
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 export const metadata: Metadata = {
@@ -181,11 +183,14 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                 <h2 className="w-full text-gray-600 mb-4">{data.subject}</h2>
                 
                 {data.code && (
-                  <div className="bg-gray-200 px-4 py-1 rounded-md self-start">{data.code}</div>
+                  <div className="cursor-pointer bg-gray-200 px-4 py-1 rounded-md self-start flex gap-2 items-center" onClick={() => {
+                    navigator.clipboard.writeText(data.code);
+                    toast.success("Copied to clipboard");
+                  }}>{data.code} <BiCopy /></div>
                 )}
 
                 {data.link && (
-                  <a href={data.link} target="_blank" className="bg-gray-200 px-4 py-1 rounded-md self-start">Verify link</a>
+                  <a href={data.link} target="_blank" className="bg-gray-200 px-4 py-1 rounded-md self-start flex gap-2 items-center">Verify link <RxOpenInNewWindow /></a>
                 )}
 
               </div>
@@ -414,16 +419,15 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
 
               <div
-                onClick={() => {
-                  navigator.clipboard.writeText(email);
-                  toast.success("Copied to clipboard");
-                }}
                 className="z-[1000] absolute left-[50%] -translate-y-[50%] -translate-x-[50%] flex gap-4 items-stretch text-[1.2em] md:text-[1.4em] rounded-md cursor-pointer self-end"
               >
-                <button className="hidden md:block px-3 py-2 bg-blue-500 text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]" onClick={generateEmail}><IoReload className="w-[30px]"/></button>
-                <div className="px-4 py-2 border border-gray-400 bg-white rounded-md duration-75 hover:scale-[1.05]">{email || "Generating..."}</div>
+                <button className="hidden md:block px-3 py-2 bg-green-600 border border-green-700 text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]" onClick={generateEmail}><IoReload className="w-[30px]"/></button>
+                <div className="px-4 py-2 border border-gray-400 bg-white rounded-md duration-75 hover:scale-[1.05]" onClick={() => {
+                  navigator.clipboard.writeText(email);
+                  toast.success("Copied to clipboard");
+                }}>{email || "Generating..."}</div>
 
-                <div className="px-3 py-2 bg-black text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]"><IoCopyOutline className="w-[30px]"/></div>
+                <div className="px-3 py-2 bg-gray-700 border border-black text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]"><IoCopyOutline className="w-[30px]"/></div>
               </div>
 
 
@@ -563,7 +567,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                         viewBox="0 0 24 24"
                       ></svg>
                       
-                      <p className="mt-8 text-[1em] text-gray-400">Waiting for a verification email...</p>
+                      <p className="mt-8 text-[1em] text-gray-600">Waiting for a verification email...</p>
                       
 
                     </div>
