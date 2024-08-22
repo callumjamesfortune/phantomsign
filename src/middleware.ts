@@ -21,7 +21,7 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
 
   // Ensure the rate limiting works correctly
   if (!rateLimitResponse.success) {
-    return NextResponse.redirect(new URL("/blocked", request.url));
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
 
   const logger = new Logger({ source: 'middleware' });
