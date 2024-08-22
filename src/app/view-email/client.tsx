@@ -7,8 +7,6 @@ interface Email {
 }
 
 export default function ViewFullEmailClient({ emailContent }: { emailContent: Email | null }) {
-  // Sanitize the HTML content
-  const sanitizedHTML = emailContent ? DOMPurify.sanitize(emailContent.body) : '';
 
   return (
     <div className="break-words p-4">

@@ -14,7 +14,5 @@ export default async function ViewEmail({ searchParams }: { searchParams: { emai
         .eq("id", searchParams.emailId)
         .single();
 
-  console.log(emailContent)
-
   return <ViewEmailClient emailContent={emailContent} />;
 }

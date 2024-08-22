@@ -176,7 +176,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
             let displayContent = (
               <div className="flex flex-col text-left p-4">
-                <h1 className="w-full flex justify-between"><span className="font-bold">From: {data.company}</span><a href="" className="underline text-gray-600">View full email</a></h1>
+                <h1 className="w-full flex justify-between"><span className="font-bold">From: {data.company}</span><a href={`/view-email?emailId=${data.id}`} className="underline text-gray-600">View full email</a></h1>
                 <h2 className="w-full text-gray-600 mb-4">{data.subject}</h2>
                 
                 {data.code && (
@@ -184,7 +184,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                 )}
 
                 {data.link && (
-                  <a href={`/view-email?emailId=${data.id}`} target="_blank" className="bg-gray-200 px-4 py-1 rounded-md self-start">Verify link</a>
+                  <a href={data.link} target="_blank" className="bg-gray-200 px-4 py-1 rounded-md self-start">Verify link</a>
                 )}
 
               </div>
@@ -425,7 +425,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
           </div>
           <div className="relative w-full flex-grow flex flex-col items-center justify-center">
             <div className="w-full flex flex-col items-center">
-              {(JSON.parse(inboxFromCookie!) == null || JSON.parse(inboxFromCookie!).expiry < Date.now() / 1000) && !email && !loadingInbox && (
+              {/* {(JSON.parse(inboxFromCookie!) == null || JSON.parse(inboxFromCookie!).expiry < Date.now() / 1000) && !email && !loadingInbox && (
                 <div className="flex flex-col md:flex-row gap-12 md:gap-[60px] py-12 pb-8">
                   <div
                     className="flex flex-col items-center bg-white rounded-md border border-gray-300 p-4 w-[180px] aspect-square"
@@ -473,7 +473,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                     )}
                   </div>
                 </div>
-              )}
+              )} */}
 
 
 
@@ -482,34 +482,50 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
                 <div className="w-1/2">
 
-                  <div className="bg-white rounded-md p-8">
+                <div className="bg-white rounded-md p-8">
 
-                    <div className="w-full flex gap-2">
-                      <span className="bg-gray-100 px-4 py-2 rounded-md">Expires after</span>
-                      <input type="number" className="outline-none border border-gray-400 rounded-md px-4"></input>
-                    </div>
+                  <div className="w-full flex gap-2 mb-4">
+                    <span className="bg-gray-100 px-4 py-2 rounded-md">Alias</span>
+                    <input type="text" placeholder="Optional" className="outline-none border border-gray-400 rounded-md px-4 w-full"></input>
+                  </div>
 
-                    <button
-                      className="w-full mt-8 shimmery-button border border-blue-600 text-white font-bold py-2 px-6 rounded-md flex items-center justify-center"
-                      onClick={generateEmail}
-                      disabled={loadingInbox}
-                    >
-                      {loadingInbox ? (
-                        <>
-                          <svg
-                            className="animate-spin h-5 w-5 mr-3 border-4 border-t-4 border-gray-200 border-t-white rounded-full"
-                            viewBox="0 0 24 24"
-                          ></svg>
-                          Generating...
-                        </>
-                      ) : <span className="flex items-center">
-                          Generate with choices
-                        </span>
-                      }
-                    </button>
+                  <div className="w-full flex gap-2 mb-4">
+                    <span className="bg-gray-100 px-4 py-2 rounded-md">Expires after</span>
+                    <input type="number" className="outline-none border border-gray-400 rounded-md px-4"></input>
+                    <span className="bg-gray-100 px-4 py-2 rounded-md">Minutes</span>
+                  </div>
 
+                  <div className="w-full flex gap-2 mb-4">
+                    <input type="checkbox" id="autoForward" className="mr-2"/>
+                    <label htmlFor="autoForward" className="bg-gray-100 px-4 py-2 rounded-md w-full">Auto-forward to my email</label>
+                  </div>
+
+                  <div className="w-full flex gap-2 mb-4">
+                    <input type="checkbox" id="notifications" className="mr-2"/>
+                    <label htmlFor="notifications" className="bg-gray-100 px-4 py-2 rounded-md w-full">Enable email notifications</label>
+                  </div>
+
+                  <button
+                    className="w-full mt-8 shimmery-button border border-blue-600 text-white font-bold py-2 px-6 rounded-md flex items-center justify-center"
+                    onClick={generateEmail}
+                    disabled={loadingInbox}
+                  >
+                    {loadingInbox ? (
+                      <>
+                        <svg
+                          className="animate-spin h-5 w-5 mr-3 border-4 border-t-4 border-gray-200 border-t-white rounded-full"
+                          viewBox="0 0 24 24"
+                        ></svg>
+                        Generating...
+                      </>
+                    ) : <span className="flex items-center">
+                        Generate with choices
+                      </span>
+                    }
+                  </button>
 
                   </div>
+
 
                 </div>
 
@@ -517,23 +533,24 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
       
                     <div className="flex flex-col items-center bg-white border border-gray-400 rounded-md">
 
-                    <div className="w-full p-4 bg-gray-200 rounded-t-md">
-                      Inbox <span className="text-gray-600">&lt;{JSON.parse(inboxFromCookie!).inbox || ""}&gt;</span>
+                    <div className="w-full p-4 bg-gray-200 rounded-t-md flex justify-between">
+                      <span>Inbox <span className="text-gray-600">&lt;{email || ""}&gt;</span></span>
+                      <span>
+                          {Math.floor(countdown / 60)}:
+                          {String(countdown % 60).padStart(2, "0")}
+                      </span>
                     </div>
 
 
-                    {loadingEmail ? (<div className="w-full p-4">
+                    {loadingEmail ? (<div className="w-full p-8 flex flex-col items-center">
                       
                       <svg
                         className="animate-spin h-8 w-8 mr-3 border-4 border-t-4 border-gray-200 border-t-gray-400 rounded-full"
                         viewBox="0 0 24 24"
                       ></svg>
                       
-                      <p className="mt-8 text-[1em]">Waiting for a verification email...</p>
-                      <p className="mt-2 text-[2.4em] text-gray-600 tabular-nums">
-                        {Math.floor(countdown / 60)}:
-                        {String(countdown % 60).padStart(2, "0")}
-                      </p>
+                      <p className="mt-8 text-[1em] text-gray-400">Waiting for a verification email...</p>
+                      
 
                     </div>
                     ) :
