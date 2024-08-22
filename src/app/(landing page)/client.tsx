@@ -173,64 +173,22 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
           }
 
           if (data) {
-            let displayContent;
-            const companyInfo = data.company ? (
-              <div className="flex items-center gap-2 px-4 py-2 rounded-md bg-white text-center font-bold">
-                <OfficeBuildingIcon className="w-5 h-5" />
-                {data.company}
-              </div>
-            ) : (
-              <span className="px-4 py-2 rounded-md bg-red-100 text-center font-bold">
-                Company information unavailable
-              </span>
-            );
 
-            if (data.link) {
-              displayContent = (
-                <div className="flex flex-col justify-center">
-                  <div className="flex flex-col md:flex-row mt-8 gap-4 items-center">
-                    {companyInfo}
-                    <button
-                      className="w-full md:w-[auto] bg-blue-500 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center"
-                      onClick={() => window.open(data.link, "_blank")}
-                    >
-                      Verify Link
-                      <ExternalLinkIcon className="w-5 h-5 ml-2" />
-                    </button>
-                  </div>
-                </div>
-              );
-            } else if (data.code) {
-              displayContent = (
-                <div className="flex flex-col justify-center">
-                  <div className="flex mt-8 gap-4 items-end">
-                    {companyInfo}
-                    <div
-                      onClick={() => {
-                        navigator.clipboard.writeText(data.code);
-                        toast.success("Copied to clipboard");
-                      }}
-                      className="relative flex items-stretch border border-gray-400 rounded-md bg-white hover:scale-[1.05] duration-75 cursor-pointer"
-                    >
-                      <div className="px-4 py-2">{data.code}</div>
-                      <div className="px-2 md:px-4 grid place-content-center flex-grow rounded-r-md bg-gray-100 border-l border-gray-400 text-gray-600">
-                      <DocumentDuplicateIcon
-                        className="w-5 h-5 cursor-pointer"
-                      />
-                    </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            } else {
-              displayContent = (
-                <div className="flex mt-8 gap-4 items-center">
-                  <span className="px-4 py-2 rounded-md bg-gray-100 text-center font-bold">
-                    No verification code or link found
-                  </span>
-                </div>
-              );
-            }
+            let displayContent = (
+              <div className="flex flex-col text-left p-4">
+                <h1 className="w-full flex justify-between"><span className="font-bold">From: {data.company}</span><a href="" className="underline text-gray-600">View full email</a></h1>
+                <h2 className="w-full text-gray-600 mb-4">{data.subject}</h2>
+                
+                {data.code && (
+                  <div className="bg-gray-200 px-4 py-1 rounded-md self-start">{data.code}</div>
+                )}
+
+                {data.link && (
+                  <a href={`/view-email?emailId=${data.id}`} target="_blank" className="bg-gray-200 px-4 py-1 rounded-md self-start">Verify link</a>
+                )}
+
+              </div>
+            )
 
             setVerificationData(displayContent);
             setLoadingEmail(false);
@@ -434,28 +392,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
 
 
-            {/* <button
-              className="shimmery-button z-[1000] border border-blue-600 simple-shadow absolute -translate-y-[50%] text-white text-[1.5em] font-bold py-2 px-6 rounded-md flex items-center justify-center"
-              onClick={generateEmail}
-              disabled={loadingInbox}
-            >
-              {loadingInbox ? (
-                <>
-                  <svg
-                    className="animate-spin h-5 w-5 mr-3 border-4 border-t-4 border-gray-200 border-t-white rounded-full"
-                    viewBox="0 0 24 24"
-                  ></svg>
-                  Generating...
-                </>
-              ) : email ? (
-                "Regenerate inbox"
-              ) : (
-                <span className="flex items-center">
-                  Generate inbox
-                  <SparklesIcon className="w-5 h-5 ml-4 scale-[1.2]" />
-                </span>
-              )}
-            </button> */}
+
 
 
 
@@ -470,11 +407,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
               >
                 <div className="px-3 py-2 bg-blue-500 text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]"><IoReload className="w-[30px]"/></div>
                 <div className="px-4 py-2 border border-gray-400 bg-white rounded-md duration-75 hover:scale-[1.05]">{email}</div>
-                {/* <div className="px-2 md:px-4 grid place-content-center flex-grow rounded-r-md bg-gray-100 border-l border-gray-400 text-gray-600">
-                  <DocumentDuplicateIcon
-                    className="w-5 h-5 cursor-pointer"
-                  />
-                </div> */}
+
                 <div className="px-3 py-2 bg-gray-400 text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]"><IoCopyOutline className="w-[30px]"/></div>
               </div>
 
@@ -581,35 +514,15 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                 </div>
 
                 <div className="w-1/2">
-
-                  {/* {(email && !loadingInbox) && (
-                    <div className="flex flex-col">
-                      <div
-                        onClick={() => {
-                          navigator.clipboard.writeText(email);
-                          toast.success("Copied to clipboard");
-                        }}
-                        className="relative flex items-stretch text-[1.2em] md:text-[1.4em] mt-4 border rounded-md bg-white border border-gray-400 hover:scale-[1.05] duration-75 cursor-pointer self-end"
-                      >
-                        <div className="px-4 py-2">{email}</div>
-                        <div className="px-2 md:px-4 grid place-content-center flex-grow rounded-r-md bg-gray-100 border-l border-gray-400 text-gray-600">
-                          <DocumentDuplicateIcon
-                            className="w-5 h-5 cursor-pointer"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )} */}
-
-                  
+      
                     <div className="flex flex-col items-center bg-white border border-gray-400 rounded-md">
 
                     <div className="w-full p-4 bg-gray-200 rounded-t-md">
-                      Inbox
+                      Inbox <span className="text-gray-600">&lt;{JSON.parse(inboxFromCookie!).inbox || ""}&gt;</span>
                     </div>
 
 
-                    {loadingEmail ? (<div className="w-full p-8">
+                    {loadingEmail ? (<div className="w-full p-4">
                       
                       <svg
                         className="animate-spin h-8 w-8 mr-3 border-4 border-t-4 border-gray-200 border-t-gray-400 rounded-full"
@@ -624,7 +537,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
                     </div>
                     ) :
-                    <div>{verificationData}</div>
+                    <div className="w-full">{verificationData}</div>
                     }
 
                     </div>

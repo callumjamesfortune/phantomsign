@@ -11,7 +11,8 @@ const AI_RETRY_LIMIT = 3; // Limit the number of retries for the AI
 interface Email {
     sender: string,
     subject: string,
-    body: string
+    body: string,
+    id: string
 }
 
 let emailData: Email;
@@ -217,6 +218,7 @@ async function extractJsonFromResponse(responseText: string, inbox: string) {
         data.sender = emailData.sender
         data.subject = emailData.subject
         data.body = emailData.body
+        data.id = emailData.id
 
         const { error: finalUpdateError } = await supabaseServerClient
         .from('incoming_emails')
