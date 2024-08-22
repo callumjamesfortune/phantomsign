@@ -12,11 +12,11 @@ const redis = new Redis({
 
 const ratelimit = new Ratelimit({
   redis: redis,
-  limiter: Ratelimit.slidingWindow(5, "10 s"),
+  limiter: Ratelimit.slidingWindow(20, "60 s"),
 });
 
 export async function middleware(request: NextRequest, event: NextFetchEvent) {
-  const ip = request.ip ?? "127.0.0.1";
+  const ip = request.ip ?? "localhost:3000";
   const rateLimitResponse = await ratelimit.limit(ip);
 
   // Ensure the rate limiting works correctly
