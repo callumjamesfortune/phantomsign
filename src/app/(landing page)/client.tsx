@@ -2,14 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { User } from "@supabase/supabase-js";
-import {
-  SparklesIcon,
-  OfficeBuildingIcon,
-  DocumentDuplicateIcon,
-  ExternalLinkIcon,
-  TrashIcon,
-  CheckIcon
-} from "@heroicons/react/outline";
+import { CheckIcon } from "@heroicons/react/outline";
 import Image from "next/image";
 import logo from "../../../public/phantom.svg";
 import { Toaster, toast } from "react-hot-toast";
@@ -399,22 +392,6 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                 className=""
               />
             </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
               <div
                 className="z-[1000] absolute left-[50%] -translate-y-[50%] -translate-x-[50%] flex gap-4 items-stretch text-[1.1em] md:text-[1.4em] rounded-md cursor-pointer self-end"
               >
@@ -426,73 +403,9 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
                 <div className="px-3 py-2 bg-gray-700 border border-black text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]"><IoCopyOutline className="w-[30px]"/></div>
               </div>
-
-
-
-
-
-
-
-
-
-
-
-
           </div>
           <div className="relative w-full flex-grow flex flex-col items-center justify-center">
             <div className="w-full flex flex-col items-center">
-              {/* {(JSON.parse(inboxFromCookie!) == null || JSON.parse(inboxFromCookie!).expiry < Date.now() / 1000) && !email && !loadingInbox && (
-                <div className="flex flex-col md:flex-row gap-12 md:gap-[60px] py-12 pb-8">
-                  <div
-                    className="flex flex-col items-center bg-white rounded-md border border-gray-300 p-4 w-[180px] aspect-square"
-                  >
-                    <h2 className="text-[1em]">Codes found</h2>
-                    {emailStats?.codes_found_count === null ? (
-                      <svg
-                        className="animate-spin h-10 w-10 my-8 border-4 border-t-4 border-gray-200 border-t-green-600 rounded-full"
-                        viewBox="0 0 24 24"
-                      ></svg>
-                    ) : (
-                      <h2 className="text-[4em] text-gray-600">
-                        {emailStats?.codes_found_count}
-                      </h2>
-                    )}
-                  </div>
-                  <div
-                    className="flex flex-col items-center bg-white rounded-md border border-gray-300 p-4 w-[180px] scale-[1.25] aspect-square"
-                  >
-                    <h2 className="text-[1em]">Inboxes generated</h2>
-                    {emailStats?.generated_inboxes_count === null ? (
-                      <svg
-                        className="animate-spin h-10 w-10 my-8 border-4 border-t-4 border-gray-200 border-t-green-600 rounded-full"
-                        viewBox="0 0 24 24"
-                      ></svg>
-                    ) : (
-                      <h2 className="text-[4em] text-gray-600">
-                        {emailStats?.generated_inboxes_count}
-                      </h2>
-                    )}
-                  </div>
-                  <div
-                    className="flex flex-col items-center bg-white rounded-md border border-gray-300 p-4 w-[180px] aspect-square"
-                  >
-                    <h2 className="text-[1em]">Links found</h2>
-                    {emailStats?.links_found_count === null ? (
-                      <svg
-                        className="animate-spin h-10 w-10 my-8 border-4 border-t-4 border-gray-200 border-t-green-600 rounded-full"
-                        viewBox="0 0 24 24"
-                      ></svg>
-                    ) : (
-                      <h2 className="text-[4em] md:text-[4em] text-gray-600">
-                        {emailStats?.links_found_count}
-                      </h2>
-                    )}
-                  </div>
-                </div>
-              )} */}
-
-
-
 
               <div className="w-full flex flex-col-reverse md:flex-row justify-center gap-16 py-[60px] md:py-[auto]">
 

@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import supabaseServerClient from '../../../lib/supabaseServerClient';
 import { validateApiKey } from '../../../lib/apiKeyValidator';
 import { cookies } from 'next/headers';
+import { Logger } from 'next-axiom';
+
+const log = new Logger();
 
 // Function to generate a random alphanumeric string
 function generateEmail(): string {
@@ -75,6 +78,8 @@ export async function POST(req: NextRequest) {
       console.error(`Final Update Error: ${finalUpdateError.message}`);
       throw finalUpdateError;
     }
+
+    log.info('An inbox was generated.', { inbox: inbox });
 
     return NextResponse.json({ inbox }, { status: 200 });
   } catch (error: any) {

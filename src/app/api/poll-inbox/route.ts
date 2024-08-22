@@ -3,6 +3,9 @@ import supabaseServerClient from '../../../lib/supabaseServerClient';
 import Groq from 'groq-sdk';
 import sanitizeHtml from 'sanitize-html';
 import { validateApiKey } from '../../../lib/apiKeyValidator';
+import { Logger } from 'next-axiom';
+
+const log = new Logger();
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY as string });
 
@@ -18,6 +21,7 @@ interface Email {
 let emailData: Email;
 
 export async function GET(request: NextRequest) {
+
     const { searchParams } = new URL(request.url);
     const inbox = searchParams.get('inbox');
 
@@ -227,6 +231,8 @@ async function extractJsonFromResponse(responseText: string, inbox: string) {
             company: data.company
         })
         .eq('email', inbox);
+
+        log.info('Verification data was located.', { data: data });
 
         return data;
 
