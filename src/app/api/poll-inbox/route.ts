@@ -232,7 +232,7 @@ async function extractJsonFromResponse(responseText: string, inbox: string) {
 
 
     }
-    throw new Error('Failed to extract JSON from response text');
+    return null;
 }
 
 async function updateStatistics(verificationData: any) {

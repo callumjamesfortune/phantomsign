@@ -7,7 +7,8 @@ import {
   OfficeBuildingIcon,
   DocumentDuplicateIcon,
   ExternalLinkIcon,
-  TrashIcon
+  TrashIcon,
+  CheckIcon
 } from "@heroicons/react/outline";
 import Image from "next/image";
 import logo from "../../../public/phantom.svg";
@@ -232,6 +233,9 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
         setLoadingEmail(false);
         toast.error(`Error retrieving verification data: ${error.message}`);
       }
+
+      setLoadingEmail(false);
+
     };
 
     const startPolling = () => {
@@ -281,6 +285,8 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
       }
 
+    } else {
+      generateEmail();
     }
 
   }, [])
@@ -344,7 +350,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
       )}
       <div className="relative flex flex-col min-h-[100svh]">
         <Toaster />
-        <div className="w-screen h-[300px] bg-white flex flex-col items-center justify-center px-[5%] py-2">
+        <div className="w-screen h-[350px] bg-white flex flex-col items-center justify-center px-[5%] py-2">
           <div className="absolute top-0 left-0 w-screen flex items-center justify-between px-[5%] pt-2">
             <div className="flex items-center gap-4 text-gray-600 font-bold">
               <Image
@@ -374,6 +380,11 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
           <h1 className="text-green-600 text-[2.5em] md:text-[4em] font-bold relative">
             Phantom<span className="text-gray-600">Sign</span>
           </h1>
+
+          <h3 className="flex gap-4">
+            <span className="flex gap-4 text-gray-600"><CheckIcon className="w-[20px] text-green-600"/>{emailStats?.generated_inboxes_count} inboxes created</span>
+            <span className="flex gap-4 text-gray-600"><CheckIcon className="w-[20px] text-green-600"/>{(emailStats?.codes_found_count || 0) + (emailStats?.links_found_count || 0)} codes found</span>
+          </h3>
         </div>
         <div className="relative flex flex-col items-center bg-gray-100 px-[5%] border-t border-b border-gray-300 flex-grow">
           <div className="absolute w-full">
@@ -409,7 +420,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                 }}
                 className="z-[1000] absolute left-[50%] -translate-y-[50%] -translate-x-[50%] flex gap-4 items-stretch text-[1.2em] md:text-[1.4em] rounded-md cursor-pointer self-end"
               >
-                <button className="px-3 py-2 bg-blue-500 text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]" onClick={generateEmail}><IoReload className="w-[30px]"/></button>
+                <button className="hidden md:block px-3 py-2 bg-blue-500 text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]" onClick={generateEmail}><IoReload className="w-[30px]"/></button>
                 <div className="px-4 py-2 border border-gray-400 bg-white rounded-md duration-75 hover:scale-[1.05]">{email || "Generating..."}</div>
 
                 <div className="px-3 py-2 bg-black text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]"><IoCopyOutline className="w-[30px]"/></div>
@@ -482,9 +493,9 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
 
 
-              <div className="w-full flex gap-16">
+              <div className="w-full flex flex-col-reverse md:flex-row justify-center gap-16 py-[60px] md:py-[auto]">
 
-                <div className="w-1/2">
+                {/* <div className="w-full md:w-1/2">
 
                 <div className="bg-white rounded-md p-8">
 
@@ -494,9 +505,8 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                   </div>
 
                   <div className="w-full flex gap-2 mb-4">
-                    <span className="bg-gray-100 px-4 py-2 rounded-md">Expires after</span>
-                    <input type="number" className="outline-none border border-gray-400 rounded-md px-4"></input>
-                    <span className="bg-gray-100 px-4 py-2 rounded-md">Minutes</span>
+                    <span className="min-w-[100px] bg-gray-100 px-4 py-2 rounded-md">Expires after</span>
+                    <input type="number" className="flex-grow outline-none border border-gray-400 rounded-md px-4"></input>
                   </div>
 
                   <div className="w-full flex gap-2 mb-4">
@@ -531,9 +541,9 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                   </div>
 
 
-                </div>
+                </div> */}
 
-                <div className="w-1/2">
+                <div className="w-full md:w-1/2">
       
                     <div className="flex flex-col items-center bg-white border border-gray-400 rounded-md">
 
@@ -632,6 +642,10 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
           <p className="text-black mb-8">
             All API requests require a valid API key, which should be provided as a header:
+          </p>
+
+          <p className="text-black mb-8">
+            All endpoints are rate-limited to 20 requests/minute per IP
           </p>
 
           <div className="w-full flex flex-col md:flex-row items-center gap-4 justify-center mb-16">
