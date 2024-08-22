@@ -275,6 +275,10 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
         setCountdown(expiry - (Date.now()/1000)); // Reset the countdown timer
         endTimeRef.current = (expiry * 1000); // Update the end time reference
 
+      } else {
+
+        generateEmail();
+
       }
 
     }
@@ -405,10 +409,10 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                 }}
                 className="z-[1000] absolute left-[50%] -translate-y-[50%] -translate-x-[50%] flex gap-4 items-stretch text-[1.2em] md:text-[1.4em] rounded-md cursor-pointer self-end"
               >
-                <div className="px-3 py-2 bg-blue-500 text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]"><IoReload className="w-[30px]"/></div>
-                <div className="px-4 py-2 border border-gray-400 bg-white rounded-md duration-75 hover:scale-[1.05]">{email}</div>
+                <button className="px-3 py-2 bg-blue-500 text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]" onClick={generateEmail}><IoReload className="w-[30px]"/></button>
+                <div className="px-4 py-2 border border-gray-400 bg-white rounded-md duration-75 hover:scale-[1.05]">{email || "Generating..."}</div>
 
-                <div className="px-3 py-2 bg-gray-400 text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]"><IoCopyOutline className="w-[30px]"/></div>
+                <div className="px-3 py-2 bg-black text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]"><IoCopyOutline className="w-[30px]"/></div>
               </div>
 
 
