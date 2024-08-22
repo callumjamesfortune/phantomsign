@@ -6,7 +6,7 @@ import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
 const redis = new Redis({
-  url: "inspired-camel-42383.upstash.io",
+  url: "https://inspired-camel-42383.upstash.io",
   token: "AaWPAAIjcDE5MmJlNzFjMjBiMGE0NDBmYTc0M2VkZjliYTJkMDE0YnAxMA",
 });
 
