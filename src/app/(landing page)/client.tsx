@@ -16,6 +16,7 @@ import NotificationModal from "../notificationModal";
 import Footer from "../components/footer";
 import Confetti from 'react-confetti';
 import { Metadata } from "next";
+import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 export const metadata: Metadata = {
   title: "PhantomSign | Throwaway emails",
@@ -31,9 +32,10 @@ interface EmailStats {
 interface LandingClientProps {
   user: User | null;
   emailStats: EmailStats | null;
+  inboxFromCookie: string | null;
 }
 
-export default function LandingClient({ user, emailStats }: LandingClientProps) {
+export default function LandingClient({ user, emailStats, inboxFromCookie }: LandingClientProps) {
   const COUNTDOWN_TIME = parseInt(process.env.NEXT_PUBLIC_DELETE_AFTER_MINUTES!, 10) * 60 || 300; // Default to 300 seconds (5 minutes)
   const POLLING_INTERVAL = 5000; // 5 seconds
 
@@ -305,6 +307,28 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
     };
   }, [email, loadingEmail]);
 
+  useEffect(() => {
+
+    if(inboxFromCookie) {
+
+      let expiry = JSON.parse(inboxFromCookie).expiry;
+      let inbox = JSON.parse(inboxFromCookie).inbox;
+
+      if(expiry > (Date.now() / 1000)) {
+
+        setEmail(inbox);
+        currentEmailRef.current = inbox;
+        setLoadingInbox(false);
+        setLoadingEmail(true);
+        setCountdown(expiry - (Date.now()/1000)); // Reset the countdown timer
+        endTimeRef.current = (expiry * 1000); // Update the end time reference
+
+      }
+
+    }
+
+  }, [])
+
   const generateEmail = async () => {
     console.log("Generating email...");
     setLoadingInbox(true);
@@ -433,7 +457,7 @@ export default function LandingClient({ user, emailStats }: LandingClientProps) 
           </div>
           <div className="relative w-full flex-grow flex flex-col items-center justify-center">
             <div className="w-full flex flex-col items-center">
-              {!email && !loadingInbox && (
+              {!inboxFromCookie && !email && !loadingInbox && (
                 <div className="flex flex-col md:flex-row gap-12 md:gap-[60px] py-12 pb-8">
                   <div
                     className="flex flex-col items-center bg-white rounded-md border border-gray-300 p-4 w-[180px] aspect-square"

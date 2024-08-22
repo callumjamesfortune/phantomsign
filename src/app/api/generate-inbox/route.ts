@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import supabaseServerClient from '../../../lib/supabaseServerClient';
 import { validateApiKey } from '../../../lib/apiKeyValidator';
+import { cookies } from 'next/headers';
 
 // Function to generate a random alphanumeric string
 function generateEmail(): string {
@@ -36,16 +37,20 @@ export async function POST(req: NextRequest) {
 
   try {
     const currentTime = Math.floor(Date.now() / 1000); // Use epoch timestamp for the current time
+    const expiryTime = currentTime + (60 * 5)
     console.log(`Current Time (Epoch): ${currentTime}`);
 
     const { error: insertError } = await supabaseServerClient
       .from('generated_inboxes')
-      .insert([{ email: inbox, created_at: currentTime, generated_by: apiKeyValidation.user_id || "Web client" }]);
+      .insert([{ email: inbox, created_at: currentTime, expires_at: expiryTime, generated_by: apiKeyValidation.user_id || "Web client" }]);
 
     if (insertError) {
       console.error(`Insert Error: ${insertError.message}`);
       throw insertError;
     }
+
+    const cookieStore = cookies();
+    cookieStore.set({name: 'phantomsign-inbox', value: JSON.stringify({inbox: inbox, expiry: expiryTime})});
 
     console.log(`Inserted email address: ${inbox}`);
 
