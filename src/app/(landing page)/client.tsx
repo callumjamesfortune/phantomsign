@@ -180,7 +180,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
             let displayContent = (
               <div className="flex flex-col text-left p-4">
                 <h1 className="w-full flex justify-between"><span className="font-bold">From: {data.company}</span><a href={`/view-email?emailId=${data.id}`} className="underline text-gray-600">View full email</a></h1>
-                <h2 className="w-full text-gray-600 mb-4">{data.subject}</h2>
+                <h2 className="w-full text-gray-600 mb-4">Subject: {data.subject}</h2>
                 
                 {data.code && (
                   <div className="cursor-pointer bg-gray-200 px-4 py-1 rounded-md self-start flex gap-2 items-center" onClick={() => {
@@ -226,17 +226,14 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
           toast.error("Inbox not found");
         }
       } catch (error: any) {
-        console.error("Error retrieving verification data:", error.message);
         let displayContent = (
-          <div className="flex mt-8 gap-4 items-center">
+          <div className="flex gap-4 items-center">
             <span className="px-4 py-2 rounded-md bg-red-600 text-center font-bold text-white">
               Something went wrong
             </span>
           </div>
         );
         setVerificationData(displayContent);
-        setLoadingEmail(false);
-        toast.error(`Error retrieving verification data: ${error.message}`);
       }
 
       setLoadingEmail(false);
@@ -419,7 +416,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
 
               <div
-                className="z-[1000] absolute left-[50%] -translate-y-[50%] -translate-x-[50%] flex gap-4 items-stretch text-[1.2em] md:text-[1.4em] rounded-md cursor-pointer self-end"
+                className="z-[1000] absolute left-[50%] -translate-y-[50%] -translate-x-[50%] flex gap-4 items-stretch text-[1.1em] md:text-[1.4em] rounded-md cursor-pointer self-end"
               >
                 <button className="hidden md:block px-3 py-2 bg-green-600 border border-green-700 text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]" onClick={generateEmail}><IoReload className="w-[30px]"/></button>
                 <div className="px-4 py-2 border border-gray-400 bg-white rounded-md duration-75 hover:scale-[1.05]" onClick={() => {
