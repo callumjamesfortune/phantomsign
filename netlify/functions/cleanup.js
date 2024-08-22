@@ -17,14 +17,11 @@ export const handler = schedule('*/5 * * * *', async (event, context) => {
       throw new Error(`Error: ${data.message}`);
     }
 
-    console.log('Cleanup task triggered successfully', data);
-
     return {
       statusCode: 200,
       body: JSON.stringify({ message: 'Cleanup task triggered successfully' }),
     };
   } catch (error) {
-    console.error('Error triggering cleanup task:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: error.message }),

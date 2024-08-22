@@ -20,11 +20,6 @@ export async function generateApiKey(formData: FormData) {
   const userId = data.user.id;
   const apiKey = generateRandomString(36); // Generate a unique and secure API key
 
-  console.log('Generated API Key:', apiKey);
-  console.log('User ID:', userId);
-  console.log('Description:', description);
-  console.log('Expires At:', expiresAt);
-
   let expiresAtEpoch: number | null = null;
   if (expiresAt) {
     const expiresAtDate = new Date(expiresAt);
@@ -68,8 +63,6 @@ export async function generateApiKey(formData: FormData) {
       console.error('Error inserting API key:', insertError);
       throw insertError;
     }
-
-    console.log('Inserted API Key:', insertData[0]);
 
     revalidatePath('/dashboard/keys');
     return { id: insertData[0].id, apiKey, description, expiresAt };

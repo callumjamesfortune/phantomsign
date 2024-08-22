@@ -110,7 +110,6 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
       if (permission === "granted") {
         try {
           const registration = await navigator.serviceWorker.register("/sw.js");
-          console.log("Service Worker registered:", registration);
 
           const sw = await navigator.serviceWorker.ready;
           const subscription = await sw.pushManager.subscribe({
@@ -128,7 +127,6 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
             body: JSON.stringify({ subscription }),
           });
 
-          console.log("Push subscription successful:", subscription);
           setIsNotificationEnabled(true);
           setShowModal(false);
         } catch (error) {
@@ -147,7 +145,6 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
         },
         body: JSON.stringify({ inbox }),
       });
-      console.log(`Inbox for ${inbox} deleted.`);
     } catch (error: any) {
       console.error(`Error deleting inbox for ${inbox}:`, error.message);
     }
@@ -156,11 +153,9 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
   useEffect(() => {
     const poll = async () => {
       if (!currentEmailRef.current || !loadingEmail) {
-        console.log("No current email to poll for or polling stopped.");
         return;
       }
 
-      console.log(`Polling for email in inbox: ${currentEmailRef.current}`);
       try {
         const response = await fetch(
           `/api/poll-inbox?inbox=${currentEmailRef.current}`,
@@ -172,12 +167,10 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
             data.message === "Awaiting email" ||
             data.message === "Email lacks content"
           ) {
-            console.log(data.message);
             return;
           }
 
           if (data) {
-            console.log("Data found:", data);
             let displayContent;
             const companyInfo = data.company ? (
               <div className="flex items-center gap-2 px-4 py-2 rounded-md bg-white text-center font-bold">
@@ -242,7 +235,6 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
             if ("Notification" in window && "serviceWorker" in navigator) {
               navigator.serviceWorker.ready.then((registration) => {
-                console.log("SHOULD SEND HERE");
                 registration.showNotification("New Email Received", {
                   body: "We received an email to your temporary address.",
                   icon: "/phantom.svg",
@@ -330,7 +322,6 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
   }, [])
 
   const generateEmail = async () => {
-    console.log("Generating email...");
     setLoadingInbox(true);
     setVerificationData("");
 
@@ -342,7 +333,6 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
       const data = await response.json();
       const emailAddress = data.inbox;
 
-      console.log("Generated email:", emailAddress);
 
       if (!emailAddress) {
         throw new Error("Failed to generate email");

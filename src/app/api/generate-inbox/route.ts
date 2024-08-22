@@ -17,7 +17,6 @@ function generateEmail(): string {
 }
 
 export async function POST(req: NextRequest) {
-  console.log('Received request:', req.method);
 
   if (req.method !== 'POST') {
     console.error(`Method ${req.method} Not Allowed`);
@@ -33,12 +32,9 @@ export async function POST(req: NextRequest) {
   const emailString = generateEmail();
   const inbox = `${emailString}@phantomsign.com`;
 
-  console.log(`Generated email address: ${inbox}`);
-
   try {
     const currentTime = Math.floor(Date.now() / 1000); // Use epoch timestamp for the current time
     const expiryTime = currentTime + (60 * 5)
-    console.log(`Current Time (Epoch): ${currentTime}`);
 
     const { error: insertError } = await supabaseServerClient
       .from('generated_inboxes')
@@ -51,8 +47,6 @@ export async function POST(req: NextRequest) {
 
     const cookieStore = cookies();
     cookieStore.set({name: 'phantomsign-inbox', value: JSON.stringify({inbox: inbox, expiry: expiryTime})});
-
-    console.log(`Inserted email address: ${inbox}`);
 
     // Increment the generated_inboxes_count in the email_statistics table
     const { data, error: selectError } = await supabaseServerClient
@@ -67,7 +61,6 @@ export async function POST(req: NextRequest) {
     }
 
     const newCount = data.generated_inboxes_count + 1;
-    console.log(`New Generated Emails Count: ${newCount}`);
 
     const updatedAt = new Date().toISOString(); // Convert epoch to ISO string
     const { error: finalUpdateError } = await supabaseServerClient
@@ -82,8 +75,6 @@ export async function POST(req: NextRequest) {
       console.error(`Final Update Error: ${finalUpdateError.message}`);
       throw finalUpdateError;
     }
-
-    console.log(`Updated email_statistics count to: ${newCount}`);
 
     return NextResponse.json({ inbox }, { status: 200 });
   } catch (error: any) {

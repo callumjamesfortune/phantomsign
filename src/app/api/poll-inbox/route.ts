@@ -68,7 +68,6 @@ export async function GET(request: NextRequest) {
         };
 
         const cleanedEmailContent = cleanEmailContent(emailBody);
-        console.log("LATEST EMAIL: " + cleanedEmailContent);
 
         let verificationData = await getVerificationDataWithRetry(cleanedEmailContent, AI_RETRY_LIMIT, inbox);
 
@@ -76,7 +75,6 @@ export async function GET(request: NextRequest) {
             await updateStatistics(verificationData);
         }
 
-        console.log("verificationData: " + JSON.stringify(verificationData));
         return NextResponse.json(verificationData);
     } catch (error: any) {
         console.error("Error in poll-inbox endpoint:", error);
@@ -86,7 +84,6 @@ export async function GET(request: NextRequest) {
 
 async function fetchLatestEmail(inbox: string) {
     try {
-        console.log(`Fetching latest email in inbox: ${inbox}`);
         const { data: emails, error } = await supabaseServerClient
             .from('incoming_emails')
             .select('*')
@@ -100,10 +97,8 @@ async function fetchLatestEmail(inbox: string) {
 
         if (emails && emails.length > 0) {
             const email = emails[0];
-            console.log('Email found:', email);
             return email;
         } else {
-            console.log('No email found.');
             return null;
         }
     } catch (error: any) {
@@ -113,7 +108,6 @@ async function fetchLatestEmail(inbox: string) {
 }
 
 async function getGroqChatCompletion(text: string) {
-    console.log(text);
 
     try {
         const response = await groq.chat.completions.create({
@@ -171,8 +165,6 @@ Before returning a link, ensure that it is a valid http or https link that can b
             model: "llama3-8b-8192",
         });
 
-        console.log("GROQ OUTPUT: " + JSON.stringify(response));
-
         return response.choices[0].message.content?.trim();
     } catch (error: any) {
         throw new Error(`Failed to get verification data from Groq: ${error.message}`);
@@ -185,7 +177,6 @@ async function getVerificationDataWithRetry(text: string, retries: number, inbox
 
     while (attempts < retries && !verificationData) {
         attempts++;
-        console.log(`Attempt ${attempts} to get verification data from AI`);
         try {
             const response = await getGroqChatCompletion(text);
             verificationData = response != null ? extractJsonFromResponse(response, inbox) : null;
@@ -259,7 +250,6 @@ async function updateStatistics(verificationData: any) {
 
         if (updateError) throw updateError;
 
-        console.log("Statistics updated successfully");
     } catch (error: any) {
         console.error("Error updating statistics:", error);
     }

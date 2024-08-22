@@ -8,13 +8,9 @@ export async function POST(request: NextRequest) {
 
   const snsMessage = await request.json();
 
-  console.log("SNS request received: " + JSON.stringify(snsMessage));
-
   if (true) {
 
     const email = JSON.parse(snsMessage.Message);
-
-    console.log('Received email:', email);
 
     const recipient = email.mail.destination[0];
     const sender = email.mail.source; // Assuming this is where the sender's email is stored
@@ -46,8 +42,6 @@ export async function POST(request: NextRequest) {
           console.error('Error inserting email into admin_emails:', adminInsertError);
           return NextResponse.json({ error: 'Error inserting email into admin_emails' }, { status: 500 });
         }
-
-        console.log('Admin email processed successfully');
       }
 
       // Continue with processing for the generated_inboxes table
@@ -76,14 +70,11 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: 'Error inserting email into incoming_emails' }, { status: 500 });
         }
 
-        console.log('Email processed successfully');
         return NextResponse.json({ message: 'Email processed successfully' });
       } else {
-        console.log('Recipient does not exist in the database');
         return NextResponse.json({ message: 'Recipient not found' }, { status: 404 });
       }
     } catch (error) {
-      console.error('Error parsing email:', error);
       return NextResponse.json({ error: 'Error parsing email' }, { status: 500 });
     }
   } else {
