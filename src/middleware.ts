@@ -46,6 +46,7 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
   return NextResponse.next();
 }
 
+// Exclude the `/` route from the matcher
 export const config = {
-  matcher: '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|css|js|ico)$).*)',
+  matcher: '/((?!^/$|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|css|js|ico)$).*)',
 };
