@@ -401,7 +401,10 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                   toast.success("Copied to clipboard");
                 }}>{email || "Generating..."}</div>
 
-                <div className="px-3 py-2 bg-gray-700 border border-black text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]"><IoCopyOutline className="w-[30px]"/></div>
+                <div className="px-3 py-2 bg-gray-700 border border-black text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]" onClick={() => {
+                  navigator.clipboard.writeText(email);
+                  toast.success("Copied to clipboard");
+                }}><IoCopyOutline className="w-[30px]"/></div>
               </div>
           </div>
           <div className="relative w-full flex-grow flex flex-col items-center justify-center">
