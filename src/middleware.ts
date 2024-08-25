@@ -11,10 +11,16 @@ const redis = new Redis({
   token: "AaWPAAIjcDE5MmJlNzFjMjBiMGE0NDBmYTc0M2VkZjliYTJkMDE0YnAxMA",
 });
 
-// Initialize the rate limiter with sliding window algorithm
+// // Initialize the rate limiter with sliding window algorithm
+// const ratelimit = new Ratelimit({
+//   redis: redis,
+//   limiter: Ratelimit.slidingWindow(parseInt(process.env.NEXT_PUBLIC_RATE_LIMIT!), "60 s"),
+// });\
+
+// Initialize the rate limiter with fixed window algorithm
 const ratelimit = new Ratelimit({
   redis: redis,
-  limiter: Ratelimit.slidingWindow(parseInt(process.env.NEXT_PUBLIC_RATE_LIMIT!), "60 s"),
+  limiter: Ratelimit.fixedWindow(parseInt(process.env.NEXT_PUBLIC_RATE_LIMIT!), "60 s"),
 });
 
 export async function middleware(request: NextRequest, event: NextFetchEvent) {
