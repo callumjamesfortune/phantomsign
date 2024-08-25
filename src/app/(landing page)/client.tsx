@@ -365,7 +365,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                 <span className="cursor-pointer" onClick={() => {document.getElementById("api")?.scrollIntoView()}}>API</span>
               </li>
               <Link
-                className="bg-black text-white px-4 py-2 rounded-md"
+                className="bg-gray-700 border border-black text-white px-4 py-2 rounded-md"
                 href="/dashboard/keys"
               >
                 Developers
@@ -409,61 +409,13 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
               <div className="w-full flex flex-col-reverse md:flex-row justify-center gap-16 py-[60px] md:py-[auto]">
 
-                {/* <div className="w-full md:w-1/2">
-
-                <div className="bg-white rounded-md p-8">
-
-                  <div className="w-full flex gap-2 mb-4">
-                    <span className="bg-gray-100 px-4 py-2 rounded-md">Alias</span>
-                    <input type="text" placeholder="Optional" className="outline-none border border-gray-400 rounded-md px-4 w-full"></input>
-                  </div>
-
-                  <div className="w-full flex gap-2 mb-4">
-                    <span className="min-w-[100px] bg-gray-100 px-4 py-2 rounded-md">Expires after</span>
-                    <input type="number" className="flex-grow outline-none border border-gray-400 rounded-md px-4"></input>
-                  </div>
-
-                  <div className="w-full flex gap-2 mb-4">
-                    <input type="checkbox" id="autoForward" className="mr-2"/>
-                    <label htmlFor="autoForward" className="bg-gray-100 px-4 py-2 rounded-md w-full">Auto-forward to my email</label>
-                  </div>
-
-                  <div className="w-full flex gap-2 mb-4">
-                    <input type="checkbox" id="notifications" className="mr-2"/>
-                    <label htmlFor="notifications" className="bg-gray-100 px-4 py-2 rounded-md w-full">Enable email notifications</label>
-                  </div>
-
-                  <button
-                    className="w-full mt-8 shimmery-button border border-blue-600 text-white font-bold py-2 px-6 rounded-md flex items-center justify-center"
-                    onClick={generateEmail}
-                    disabled={loadingInbox}
-                  >
-                    {loadingInbox ? (
-                      <>
-                        <svg
-                          className="animate-spin h-5 w-5 mr-3 border-4 border-t-4 border-gray-200 border-t-white rounded-full"
-                          viewBox="0 0 24 24"
-                        ></svg>
-                        Generating...
-                      </>
-                    ) : <span className="flex items-center">
-                        Generate with choices
-                      </span>
-                    }
-                  </button>
-
-                  </div>
-
-
-                </div> */}
-
                 <div className="w-full md:w-1/2">
       
                     <div className="flex flex-col items-center bg-white border border-gray-400 rounded-md">
 
                     <div className="w-full p-4 bg-gray-200 rounded-t-md flex justify-between">
                       <span>Inbox <span className="text-gray-600">&lt;{email || ""}&gt;</span></span>
-                      <span>
+                      <span className="tabular-nums">
                           {Math.floor(countdown / 60)}:
                           {String(countdown % 60).padStart(2, "0")}
                       </span>
