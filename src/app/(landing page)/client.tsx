@@ -432,7 +432,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                         viewBox="0 0 24 24"
                       ></svg>
                       
-                      <p className="mt-8 text-[1em] text-gray-600">Waiting for a verification email...</p>
+                      <p className="mt-8 text-[1em] text-gray-600">Awaiting a verification email...</p>
                       
 
                     </div>
