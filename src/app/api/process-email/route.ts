@@ -58,6 +58,7 @@ export async function POST(request: NextRequest) {
             email: recipient,
             sender: sender,
             subject: subject,
+            rawEmail: email,
             body: htmlBody, // Prefer HTML, fallback to plain text
             created_at: receivedAtEpoch
           }]);
