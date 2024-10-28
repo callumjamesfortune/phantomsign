@@ -165,6 +165,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Error parsing email' }, { status: 500 });
     }
   }
+
+  return NextResponse.json({ message: 'Email processed' }, { status: 200 });
 }
 
 async function getGroqChatCompletion(sender: string, subject: string, body: string) {
