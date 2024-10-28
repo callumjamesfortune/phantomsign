@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Error querying Supabase' }, { status: 500 });
       }
 
-      getGroqChatCompletion(sender, subject, htmlBody)
+      await getGroqChatCompletion(sender, subject, htmlBody)
       .then((response) => async () => {
 
         console.log('Groq Response:', response);
