@@ -67,16 +67,19 @@ export async function POST(request: NextRequest) {
       console.log('Groq response:', response);
       const jsonMatch = response.match(/{.*}/);
       if (jsonMatch) {
-        const data = JSON.parse(jsonMatch[0]);
-        console.log(JSON.stringify(data));
-        if (data.isVerificationEmail) {
-          validateVerificationData(data.verificationData);
-          console.log('Verification data located.', { data });
-          processedEmail.isVerificationEmail = true;
-          processedEmail.verificationData = data.verificationData;
+        try {
+          const data = JSON.parse(jsonMatch[0]);
+          console.log("Parsed data:", JSON.stringify(data));  // New log for clarity
+          if (data.isVerificationEmail) {
+            validateVerificationData(data.verificationData);
+            console.log('Verification data located.', { data });
+            processedEmail.isVerificationEmail = true;
+            processedEmail.verificationData = data.verificationData;
+          }
+          await insertProcessedEmail(processedEmail, recipient, email);
+        } catch (error) {
+          console.error("Error parsing JSON from Groq response:", error);
         }
-
-        await insertProcessedEmail(processedEmail, recipient, email);
       }
     }
   } catch (error) {
