@@ -161,7 +161,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
         );
         if (response.ok) {
           const data = await response.json();
-          if (data.length === 0) {
+          if (data.message && data.message === "Awaiting email" || data.length === 0) {
         return;
           }
 
