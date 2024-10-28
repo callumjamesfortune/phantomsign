@@ -64,6 +64,7 @@ export async function POST(request: NextRequest) {
 
     const response = await getGroqChatCompletion(sender, processedEmail.subject, processedEmail.body);
     if (response) {
+      console.log('Groq response:', response);
       const jsonMatch = response.match(/{.*}/);
       if (jsonMatch) {
         const data = JSON.parse(jsonMatch[0]);
