@@ -172,7 +172,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
         displayContent = (
           <div className="flex flex-col text-left p-4">
             <h1 className="w-full flex justify-between">
-          <span className="font-bold">From: {emailData.sender}</span>
+          <span className="font-bold">From: {emailData.company || emailData.sender}</span>
           <a href={`/view-email?emailId=${data[0].id}`} className="underline text-gray-600">View full email</a>
             </h1>
             <h2 className="w-full text-gray-600 mb-4">Subject: {emailData.subject}</h2>
@@ -197,7 +197,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
         displayContent = (
           <div className="flex flex-col text-left p-4">
             <h1 className="w-full flex justify-between">
-          <span className="font-bold">From: {emailData.sender}</span>
+          <span className="font-bold">From: {emailData.company || emailData.sender}</span>
           <a href={`/view-email?emailId=${data[0].id}`} className="underline text-gray-600">View full email</a>
             </h1>
             <h2 className="w-full text-gray-600 mb-4">Subject: {emailData.subject}</h2>
