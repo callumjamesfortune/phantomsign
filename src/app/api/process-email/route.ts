@@ -157,7 +157,7 @@ async function insertProcessedEmail(processedEmail: CompleteEmailData, recipient
       subject: processedEmail.subject,
       body: processedEmail.body,
       created_at: new Date().toISOString(),
-      processed_email: JSON.stringify(processedEmail),
+      processed_email: JSON.stringify(processedEmail.verificationData),
       raw_email: JSON.stringify(rawEmail)
     });
 
