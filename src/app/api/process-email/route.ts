@@ -26,6 +26,7 @@ interface CompleteEmailData {
   body: string;
   isVerificationEmail: boolean;
   verificationData: VerificationData | null;
+  company: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -43,7 +44,8 @@ export async function POST(request: NextRequest) {
     subject: '',
     body: '',
     isVerificationEmail: false,
-    verificationData: null
+    verificationData: null,
+    company: '',
   };
 
   try {
@@ -75,6 +77,9 @@ export async function POST(request: NextRequest) {
             console.log('Verification data located.', { data });
             processedEmail.isVerificationEmail = true;
             processedEmail.verificationData = data.verificationData;
+          }
+          if (data.company) {
+            processedEmail.company = data.company;
           }
           await insertProcessedEmail(processedEmail, recipient, email);
         } catch (error) {
