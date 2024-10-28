@@ -151,6 +151,7 @@ async function insertProcessedEmail(processedEmail: CompleteEmailData, recipient
   const { error } = await supabaseServerClient
     .from('incoming_emails')
     .insert({
+      id: randomUUID().toString(),
       email: recipient,
       sender: processedEmail.sender,
       subject: processedEmail.subject,
