@@ -161,78 +161,74 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
         );
         if (response.ok) {
           const data = await response.json();
-          if (
-            data.message === "Awaiting email" ||
-            data.message === "Email lacks content"
-          ) {
-            return;
+          if (data.length === 0) {
+        return;
           }
 
-          if (data.processed_email) {
+          const emailData = JSON.parse(data[0].processed_email);
 
-            let displayContent;
-            if (data.processed_email.verificationData) {
-              displayContent = (
-              <div className="flex flex-col text-left p-4">
-                <h1 className="w-full flex justify-between">
-                <span className="font-bold">From: {data.processed_email.verificationData.company}</span>
-                <a href={`/view-email?emailId=${data.processed_email.id}`} className="underline text-gray-600">View full email</a>
-                </h1>
-                <h2 className="w-full text-gray-600 mb-4">Subject: {data.processed_email.subject}</h2>
-                
-                {data.verificationData.code && (
-                <div className="cursor-pointer bg-gray-200 px-4 py-1 rounded-md self-start flex gap-2 items-center" onClick={() => {
-                  navigator.clipboard.writeText(data.processed_email.verificationData.code);
-                  toast.success("Copied to clipboard");
-                }}>
-                  {data.processed_email.verificationData.code} <BiCopy />
-                </div>
-                )}
+          let displayContent;
+          if (emailData.isVerificationEmail && emailData.verificationData) {
+        displayContent = (
+          <div className="flex flex-col text-left p-4">
+            <h1 className="w-full flex justify-between">
+          <span className="font-bold">From: {emailData.sender}</span>
+          <a href={`/view-email?emailId=${data[0].id}`} className="underline text-gray-600">View full email</a>
+            </h1>
+            <h2 className="w-full text-gray-600 mb-4">Subject: {emailData.subject}</h2>
+            
+            {emailData.verificationData.type === "code" && (
+          <div className="cursor-pointer bg-gray-200 px-4 py-1 rounded-md self-start flex gap-2 items-center" onClick={() => {
+            navigator.clipboard.writeText(emailData.verificationData.value);
+            toast.success("Copied to clipboard");
+          }}>
+            {emailData.verificationData.value} <BiCopy />
+          </div>
+            )}
 
-                {data.processed_email.verificationData.link && (
-                <a href={data.processed_email.verificationData.link} target="_blank" className="bg-gray-200 px-4 py-1 rounded-md self-start flex gap-2 items-center">
-                  Verify link <RxOpenInNewWindow />
-                </a>
-                )}
-              </div>
-              );
-            } else {
-              displayContent = (
-              <div className="flex flex-col text-left p-4">
-                <h1 className="w-full flex justify-between">
-                <span className="font-bold">From: {data.processed_email.from}</span>
-                <a href={`/view-email?emailId=${data.processed_email.id}`} className="underline text-gray-600">View full email</a>
-                </h1>
-                <h2 className="w-full text-gray-600 mb-4">Subject: {data.processed_email.subject}</h2>
-                <p>{data.processed_email.body}</p>
-              </div>
-              );
-            }
-
-            setVerificationData(displayContent);
-            setLoadingEmail(false);
-
-            if ("Notification" in window && "serviceWorker" in navigator) {
-              navigator.serviceWorker.ready.then((registration) => {
-                registration.showNotification("New Email Received", {
-                  body: "We received an email to your temporary address.",
-                  icon: "/phantom.svg",
-                });
-              });
-            }
-
-            // Show confetti when verification data is found
-            // setShowConfetti(true);
-            // setTimeout(() => setShowConfetti(false), 5000); // Stop confetti after 5 seconds
+            {emailData.verificationData.type === "link" && (
+          <a href={emailData.verificationData.value} target="_blank" className="bg-gray-200 px-4 py-1 rounded-md self-start flex gap-2 items-center">
+            Verify link <RxOpenInNewWindow />
+          </a>
+            )}
+          </div>
+        );
+          } else {
+        displayContent = (
+          <div className="flex flex-col text-left p-4">
+            <h1 className="w-full flex justify-between">
+          <span className="font-bold">From: {emailData.sender}</span>
+          <a href={`/view-email?emailId=${data[0].id}`} className="underline text-gray-600">View full email</a>
+            </h1>
+            <h2 className="w-full text-gray-600 mb-4">Subject: {emailData.subject}</h2>
+            <p dangerouslySetInnerHTML={{ __html: emailData.body }}></p>
+          </div>
+        );
           }
+
+          setVerificationData(displayContent);
+          setLoadingEmail(false);
+
+          if ("Notification" in window && "serviceWorker" in navigator) {
+        navigator.serviceWorker.ready.then((registration) => {
+          registration.showNotification("New Email Received", {
+            body: "We received an email to your temporary address.",
+            icon: "/phantom.svg",
+          });
+        });
+          }
+
+          // Show confetti when verification data is found
+          // setShowConfetti(true);
+          // setTimeout(() => setShowConfetti(false), 5000); // Stop confetti after 5 seconds
         } else if (response.status === 404) {
           console.error("Inbox not found");
           let displayContent = (
-            <div className="flex mt-8 gap-4 items-center">
-              <span className="px-4 py-2 rounded-md bg-red-600 text-center font-bold text-white">
-                Something went wrong
-              </span>
-            </div>
+        <div className="flex mt-8 gap-4 items-center">
+          <span className="px-4 py-2 rounded-md bg-red-600 text-center font-bold text-white">
+            Something went wrong
+          </span>
+        </div>
           );
           setVerificationData(displayContent);
           setLoadingEmail(false);
@@ -241,9 +237,9 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
       } catch (error: any) {
         let displayContent = (
           <div className="flex gap-4 items-center">
-            <span className="px-4 py-2 rounded-md bg-red-600 text-center font-bold text-white">
-              Something went wrong
-            </span>
+        <span className="px-4 py-2 rounded-md bg-red-600 text-center font-bold text-white">
+          Something went wrong
+        </span>
           </div>
         );
         setVerificationData(displayContent);
