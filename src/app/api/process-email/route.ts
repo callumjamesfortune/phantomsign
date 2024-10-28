@@ -148,17 +148,15 @@ function validateVerificationData(verificationData: VerificationData) {
 }
 
 async function insertProcessedEmail(processedEmail: CompleteEmailData, recipient: string, rawEmail: any) {
+
   const { error } = await supabaseServerClient
     .from('incoming_emails')
-    .insert({
-      email: recipient,
-      sender: processedEmail.sender,
-      subject: processedEmail.subject,
-      body: processedEmail.body,
-      created_at: new Date(),
-      processed_email: JSON.stringify(processedEmail),
-      raw_email: JSON.stringify(rawEmail)
-    });
+    .insert([{ email: recipient, sender: processedEmail.sender, subject: processedEmail.subject, body: processedEmail.body, created_at: Date.now(), processed_email: JSON.stringify(processedEmail), raw_email: JSON.stringify(rawEmail) }]);
+  
+  if (error) {
+    console.error(`Insert Error: ${error.message}`);
+    throw error;
+  }
 
   if (error) throw new Error('Error inserting processed email into incoming_emails');
 }
