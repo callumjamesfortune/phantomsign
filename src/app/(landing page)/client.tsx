@@ -170,24 +170,44 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
           if (data) {
 
-            let displayContent = (
+            let displayContent;
+            if (data.verificationData) {
+              displayContent = (
               <div className="flex flex-col text-left p-4">
-                <h1 className="w-full flex justify-between"><span className="font-bold">From: {data.company}</span><a href={`/view-email?emailId=${data.id}`} className="underline text-gray-600">View full email</a></h1>
+                <h1 className="w-full flex justify-between">
+                <span className="font-bold">From: {data.verificationData.company}</span>
+                <a href={`/view-email?emailId=${data.id}`} className="underline text-gray-600">View full email</a>
+                </h1>
                 <h2 className="w-full text-gray-600 mb-4">Subject: {data.subject}</h2>
                 
-                {data.code && (
-                  <div className="cursor-pointer bg-gray-200 px-4 py-1 rounded-md self-start flex gap-2 items-center" onClick={() => {
-                    navigator.clipboard.writeText(data.code);
-                    toast.success("Copied to clipboard");
-                  }}>{data.code} <BiCopy /></div>
+                {data.verificationData.code && (
+                <div className="cursor-pointer bg-gray-200 px-4 py-1 rounded-md self-start flex gap-2 items-center" onClick={() => {
+                  navigator.clipboard.writeText(data.verificationData.code);
+                  toast.success("Copied to clipboard");
+                }}>
+                  {data.verificationData.code} <BiCopy />
+                </div>
                 )}
 
-                {data.link && (
-                  <a href={data.link} target="_blank" className="bg-gray-200 px-4 py-1 rounded-md self-start flex gap-2 items-center">Verify link <RxOpenInNewWindow /></a>
+                {data.verificationData.link && (
+                <a href={data.verificationData.link} target="_blank" className="bg-gray-200 px-4 py-1 rounded-md self-start flex gap-2 items-center">
+                  Verify link <RxOpenInNewWindow />
+                </a>
                 )}
-
               </div>
-            )
+              );
+            } else {
+              displayContent = (
+              <div className="flex flex-col text-left p-4">
+                <h1 className="w-full flex justify-between">
+                <span className="font-bold">From: {data.from}</span>
+                <a href={`/view-email?emailId=${data.id}`} className="underline text-gray-600">View full email</a>
+                </h1>
+                <h2 className="w-full text-gray-600 mb-4">Subject: {data.subject}</h2>
+                <p>{data.body}</p>
+              </div>
+              );
+            }
 
             setVerificationData(displayContent);
             setLoadingEmail(false);
