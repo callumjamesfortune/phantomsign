@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
       const jsonMatch = response.match(/{.*}/);
       if (jsonMatch) {
         const data = JSON.parse(jsonMatch[0]);
-
+        console.log(JSON.stringify(data));
         if (data.isVerificationEmail) {
           validateVerificationData(data.verificationData);
           console.log('Verification data located.', { data });
