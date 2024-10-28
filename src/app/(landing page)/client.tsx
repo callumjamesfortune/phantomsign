@@ -168,29 +168,29 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
             return;
           }
 
-          if (data) {
+          if (data.processed_email) {
 
             let displayContent;
-            if (data.verificationData) {
+            if (data.processed_email.verificationData) {
               displayContent = (
               <div className="flex flex-col text-left p-4">
                 <h1 className="w-full flex justify-between">
-                <span className="font-bold">From: {data.verificationData.company}</span>
-                <a href={`/view-email?emailId=${data.id}`} className="underline text-gray-600">View full email</a>
+                <span className="font-bold">From: {data.processed_email.verificationData.company}</span>
+                <a href={`/view-email?emailId=${data.processed_email.id}`} className="underline text-gray-600">View full email</a>
                 </h1>
-                <h2 className="w-full text-gray-600 mb-4">Subject: {data.subject}</h2>
+                <h2 className="w-full text-gray-600 mb-4">Subject: {data.processed_email.subject}</h2>
                 
                 {data.verificationData.code && (
                 <div className="cursor-pointer bg-gray-200 px-4 py-1 rounded-md self-start flex gap-2 items-center" onClick={() => {
-                  navigator.clipboard.writeText(data.verificationData.code);
+                  navigator.clipboard.writeText(data.processed_email.verificationData.code);
                   toast.success("Copied to clipboard");
                 }}>
-                  {data.verificationData.code} <BiCopy />
+                  {data.processed_email.verificationData.code} <BiCopy />
                 </div>
                 )}
 
-                {data.verificationData.link && (
-                <a href={data.verificationData.link} target="_blank" className="bg-gray-200 px-4 py-1 rounded-md self-start flex gap-2 items-center">
+                {data.processed_email.verificationData.link && (
+                <a href={data.processed_email.verificationData.link} target="_blank" className="bg-gray-200 px-4 py-1 rounded-md self-start flex gap-2 items-center">
                   Verify link <RxOpenInNewWindow />
                 </a>
                 )}
@@ -200,11 +200,11 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
               displayContent = (
               <div className="flex flex-col text-left p-4">
                 <h1 className="w-full flex justify-between">
-                <span className="font-bold">From: {data.from}</span>
-                <a href={`/view-email?emailId=${data.id}`} className="underline text-gray-600">View full email</a>
+                <span className="font-bold">From: {data.processed_email.from}</span>
+                <a href={`/view-email?emailId=${data.processed_email.id}`} className="underline text-gray-600">View full email</a>
                 </h1>
-                <h2 className="w-full text-gray-600 mb-4">Subject: {data.subject}</h2>
-                <p>{data.body}</p>
+                <h2 className="w-full text-gray-600 mb-4">Subject: {data.processed_email.subject}</h2>
+                <p>{data.processed_email.body}</p>
               </div>
               );
             }
