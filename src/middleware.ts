@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
   const ip = request.ip ?? "localhost:3000";
 
   try {
-    if (ip !== "localhost:3000") {
+    if (ip !== "localhost:3000" && process.env.NEXT_PUBLIC_RATE_LIMIT_ENABLED === "true") {
       const rateLimitResponse = await ratelimit.limit(ip);
 
       // Ensure the rate limiting works correctly
