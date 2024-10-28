@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
 
         if (data.isVerificationEmail) {
           validateVerificationData(data.verificationData);
-          log.info('Verification data located.', { data });
+          console.log('Verification data located.', { data });
           processedEmail.isVerificationEmail = true;
           processedEmail.verificationData = data.verificationData;
         }
