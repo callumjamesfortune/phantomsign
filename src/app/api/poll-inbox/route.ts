@@ -130,7 +130,7 @@ async function getGroqChatCompletion(text: string) {
                     role: "user",
                     content: `
 
-Extract and return only the verification code or magic link from this email body.
+Extract and return only the verification code or magic link from this email body as well as the company that sent it.
 
 Specifically look for text and href attributes in <a> tags and ensure that the entire URL is selected if it is a link.
 
@@ -162,6 +162,7 @@ Unacceptable Responses:
 - The code is 1234 from ExampleCorp.
 - Email address itself is selected as the verification code.
 - Only part of the URL is selected as the code.
+- the response does not contain the company name.
 
 Acceptable Responses:
 - {"code": "ABCD-1234", "company": "ExampleCorp"}
@@ -171,7 +172,7 @@ Acceptable Responses:
 
 Given Email Body: ${text}
 
-Return only the extracted verification code or link and the company name in the specified JSON format.
+Return only the extracted verification code or link as well as the company name in the specified JSON format.
 
 Before returning a link, ensure that it is a valid http or https link that can be followed`,
                 },

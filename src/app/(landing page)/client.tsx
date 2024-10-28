@@ -202,8 +202,8 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
             }
 
             // Show confetti when verification data is found
-            setShowConfetti(true);
-            setTimeout(() => setShowConfetti(false), 5000); // Stop confetti after 5 seconds
+            // setShowConfetti(true);
+            // setTimeout(() => setShowConfetti(false), 5000); // Stop confetti after 5 seconds
           }
         } else if (response.status === 404) {
           console.error("Inbox not found");
