@@ -18,6 +18,19 @@ interface Email {
     id: string
 }
 
+interface verificationData {
+    type: "code" | "link",
+    value: string
+  }
+  
+  interface completeEmailData {
+    sender: string,
+    subject: string,
+    body: string,
+    isVerificationEmail: boolean,
+    verificationData: verificationData | null
+  }
+
 let emailData: Email;
 
 export async function GET(request: NextRequest) {
@@ -52,21 +65,16 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const latestEmail = await fetchLatestEmail(inbox);
-        if (!latestEmail) {
+        const latestEmails = await fetchAllEmails(inbox);
+        if (!latestEmails) {
             return NextResponse.json({ message: 'Awaiting email' }, { status: 200 });
         }
 
         // Check if the email is older than 5 minutes
-        const fiveMinutesAgo = Math.floor(Date.now() / 1000) - Number(process.env.DELETE_AFTER_MINUTES!) * 60;
-        if (latestEmail.created_at < fiveMinutesAgo) {
-            return NextResponse.json({ error: 'Inbox not found' }, { status: 404 });
-        }
-
-        const emailBody = latestEmail.body;
-        if (!emailBody) {
-            return NextResponse.json({ message: 'Email lacks content' }, { status: 200 });
-        }
+        // const fiveMinutesAgo = Math.floor(Date.now() / 1000) - Number(process.env.DELETE_AFTER_MINUTES!) * 60;
+        // if (latestEmail.created_at < fiveMinutesAgo) {
+        //     return NextResponse.json({ error: 'Inbox not found' }, { status: 404 });
+        // }
 
         const cleanEmailContent = (str: string) => {
             return sanitizeHtml(str, {
@@ -80,26 +88,21 @@ export async function GET(request: NextRequest) {
             }).replace(/\s+/g, ' ').trim();
         };
 
-        const cleanedEmailContent = cleanEmailContent(emailBody);
+        // const cleanedEmailContent = cleanEmailContent(emailBody);
 
-        let verificationData = await getVerificationDataWithRetry(cleanedEmailContent, AI_RETRY_LIMIT, inbox);
-
-        if (verificationData) {
-            await updateStatistics(verificationData);
-        }
-
-        return NextResponse.json(verificationData);
+        return NextResponse.json(latestEmails);
     } catch (error: any) {
         console.error("Error in poll-inbox endpoint:", error);
         return NextResponse.json({ error: `Error fetching email: ${error.message}` }, { status: 500 });
     }
 }
 
-async function fetchLatestEmail(inbox: string) {
+async function fetchAllEmails(inbox: string) {
+
     try {
         const { data: emails, error } = await supabaseServerClient
             .from('incoming_emails')
-            .select('*')
+            .select('processed_email')
             .eq('email', inbox)
             .order('created_at', { ascending: false })
             .limit(1);
@@ -109,170 +112,14 @@ async function fetchLatestEmail(inbox: string) {
         }
 
         if (emails && emails.length > 0) {
-            const email = emails[0];
-            emailData = email;
-            return email;
+            return emails;
         } else {
             return null;
         }
+
     } catch (error: any) {
         console.error('Error while fetching email:', error.message);
         throw error;
     }
-}
-
-async function getGroqChatCompletion(text: string) {
-
-    try {
-        const response = await groq.chat.completions.create({
-            messages: [
-                {
-                    role: "user",
-                    content: `
-
-Extract and return only the verification code or magic link from this email body as well as the company that sent it.
-
-Specifically look for text and href attributes in <a> tags and ensure that the entire URL is selected if it is a link.
-
-Ensure that the email address itself is not mistakenly selected as the verification code.
-
-Read the email first and decide if it is likely to contain a verification link or a verification code, then identify whichever you decided.
-
-Return the code or link and the company name in the following JSON format: 
-
-{"code": "your_code_here", "company": "company_name_here"} or {"link": "your_link_here", "company": "company_name_here"}.
-
-Do not include any additional text or characters.
-
-Examples:
-
-1. Email Body: Verification code: 7108 from ExampleCorp
-   Output: {"code": "7108", "company": "ExampleCorp"}
-
-2. Email Body: Click the following link to verify your account: <a href="https://example.com/verify?token=abcd1234">Verify</a>. Sent by ExampleCorp.
-   Output: {"link": "https://example.com/verify?token=abcd1234", "company": "ExampleCorp"}
-
-3. Email Body: Use code ABCD-1234 to continue. From ExampleCorp.
-   Output: {"code": "ABCD-1234", "company": "ExampleCorp"}
-
-Unacceptable Responses:
-- The verification code is: 7108 from ExampleCorp
-- Here is your verification code: 5678. Sent by ExampleCorp.
-- Click the following link to verify your account: https://example.com/verify?token=abcd1234. From ExampleCorp
-- The code is 1234 from ExampleCorp.
-- Email address itself is selected as the verification code.
-- Only part of the URL is selected as the code.
-- the response does not contain the company name.
-
-Acceptable Responses:
-- {"code": "ABCD-1234", "company": "ExampleCorp"}
-- {"code": "8735", "company": "Uber"}
-- {"link": "https://verify-email.mcdonalds.com", "company": "McDonalds"}
-- {"link": "https://confirm-email.examplecompany.co.uk?verifycode=154346", "company": "acoolcompany.com"}
-
-Given Email Body: ${text}
-
-Return only the extracted verification code or link as well as the company name in the specified JSON format.
-
-Before returning a link, ensure that it is a valid http or https link that can be followed`,
-                },
-            ],
-            model: "llama3-8b-8192",
-        });
-
-        return response.choices[0].message.content?.trim();
-    } catch (error: any) {
-        throw new Error(`Failed to get verification data from Groq: ${error.message}`);
-    }
-}
-
-async function getVerificationDataWithRetry(text: string, retries: number, inbox: string) {
-    let attempts = 0;
-    let verificationData = null;
-
-    while (attempts < retries && !verificationData) {
-        attempts++;
-        try {
-            const response = await getGroqChatCompletion(text);
-            verificationData = response != null ? extractJsonFromResponse(response, inbox) : null;
-        } catch (error: any) {
-            console.error(`Error on attempt ${attempts}: ${error.message}`);
-            if (attempts >= retries) {
-                throw new Error('Max retry attempts reached.');
-            }
-        }
-    }
-
-    if (!verificationData) {
-        throw new Error('Failed to extract verification data after multiple attempts.');
-    }
-
-    return verificationData;
-}
-
-async function extractJsonFromResponse(responseText: string, inbox: string) {
-    const jsonMatch = responseText.match(/{.*}/);
-    if (jsonMatch) {
-
-        let data = JSON.parse(jsonMatch[0]);
-
-        if (data.link && !/^https?:\/\//i.test(data.link)) {
-            throw new Error('A link was returned but it was invalid');
-        }
-
-        data.sender = emailData.sender
-        data.subject = emailData.subject
-        data.body = emailData.body
-        data.id = emailData.id
-
-        const { error: finalUpdateError } = await supabaseServerClient
-        .from('incoming_emails')
-        .update({ 
-            value: data.link || data.code,
-            company: data.company
-        })
-        .eq('email', inbox);
-
-        log.info('Verification data was located.', { data: data });
-
-        return data;
-
-
-    }
-    return null;
-}
-
-async function updateStatistics(verificationData: any) {
-    try {
-        const { data, error: selectError } = await supabaseServerClient
-            .from('email_statistics')
-            .select('*')
-            .eq('id', 1)
-            .single();
-
-        if (selectError) throw selectError;
-
-        let newCodesFoundCount = data.codes_found_count;
-        let newLinksFoundCount = data.links_found_count;
-
-        if (verificationData.code) {
-            newCodesFoundCount += 1;
-        } else if (verificationData.link) {
-            newLinksFoundCount += 1;
-        }
-
-        const { error: updateError } = await supabaseServerClient
-            .from('email_statistics')
-            .update({ 
-                codes_found_count: newCodesFoundCount,
-                links_found_count: newLinksFoundCount,
-                updated_at: new Date().toISOString()
-            })
-            .eq('id', 1);
-
-        if (updateError) throw updateError;
-
-    } catch (error: any) {
-        console.error("Error updating statistics:", error);
-    }
+    
 }
