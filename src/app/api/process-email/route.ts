@@ -95,7 +95,9 @@ export async function POST(request: NextRequest) {
       }
 
       getGroqChatCompletion(sender, subject, htmlBody)
-      .then((response) => async() => {
+      .then((response) => async () => {
+
+        console.log('Groq Response:', response);
 
         const jsonMatch = response?.match(/{.*}/);
         if (jsonMatch) {
