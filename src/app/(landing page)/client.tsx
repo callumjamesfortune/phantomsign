@@ -14,7 +14,9 @@ import { Metadata } from "next";
 import { IoReload, IoCopyOutline } from "react-icons/io5";
 import { RxOpenInNewWindow } from "react-icons/rx"
 import { BiCopy } from "react-icons/bi"
-import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
+import CountUp from 'react-countup';
+import { motion } from 'framer-motion';
+import * as Switch from "@radix-ui/react-switch";
 
 export const metadata: Metadata = {
   title: "PhantomSign | Throwaway emails",
@@ -49,6 +51,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
   const endTimeRef = useRef<number | null>(null);
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
   const [confettiOpacity, setConfettiOpacity] = useState<number>(1);
+  const [isCountFinished, setIsCountFinished] = useState(false);
 
   useEffect(() => {
 
@@ -362,7 +365,14 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
       )}
       <div className="relative flex flex-col min-h-[100svh]">
         <Toaster />
-        <div className="w-screen h-[350px] bg-white flex flex-col items-center justify-center px-[5%] py-2">
+
+        <div
+  className="w-screen h-[350px] bg-white flex flex-col items-center justify-center px-[5%] py-2"
+  style={{
+    backgroundImage: `radial-gradient(lightgray 10%, transparent 11%)`,
+    backgroundSize: "15px 15px",
+  }}
+>
           <div className="absolute top-0 left-0 w-screen flex items-center justify-between px-[5%] pt-2">
             <div className="flex items-center gap-4 text-gray-600 font-bold">
               <Image
@@ -393,10 +403,34 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
             Phantom<span className="text-gray-600">Sign</span>
           </h1>
 
-          <h3 className="flex gap-4">
-            <span className="flex gap-4 text-gray-600"><CheckIcon className="w-[20px] text-green-600"/>{emailStats?.generated_inboxes_count} inboxes created</span>
-            <span className="flex gap-4 text-gray-600"><CheckIcon className="w-[20px] text-green-600"/>{(emailStats?.codes_found_count || 0) + (emailStats?.links_found_count || 0)} codes found</span>
-          </h3>
+          <h3 className="flex gap-4 items-center">
+          
+          <div className="flex items-center justify-center">
+            <span className="flex transition-[0.5s] gap-4 text-gray-600 font-bold text-[2em]">
+              {emailStats?.generated_inboxes_count && (
+                <CountUp
+                className="transition-[0.5s]"
+                  end={emailStats.generated_inboxes_count}
+                  onEnd={() => setIsCountFinished(true)} // Trigger on count completion
+                />
+              )}
+              
+              {/* The motion span will animate into view */}
+              <motion.span
+                className={`text-gray-600 flex items-center font-semibold text-[0.8em]`}
+                initial={{ x: 50, opacity: 0 }}
+                animate={{ 
+                  x: isCountFinished ? 0 : 80,
+                  opacity: isCountFinished ? 1 : 0
+                }}
+                transition={{ duration: 0.5 }}
+              >
+                {isCountFinished && "Inboxes created"}
+              </motion.span>
+            </span>
+          </div>
+
+    </h3>
         </div>
         <div className="relative flex flex-col items-center bg-gray-100 px-[5%] border-t border-b border-gray-300 flex-grow">
           <div className="absolute w-full">
@@ -412,18 +446,29 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
               <div
                 className="z-[1000] absolute left-[50%] -translate-y-[50%] -translate-x-[50%] flex gap-4 items-stretch text-[1.1em] md:text-[1.4em] rounded-md cursor-pointer self-end"
               >
-                <button className="hidden md:block px-3 py-2 bg-green-600 border border-green-700 text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]" onClick={generateEmail}><IoReload className="w-[30px]"/></button>
+                <button className="hidden md:flex px-3 py-2 bg-green-600 border border-green-700 text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]" onClick={generateEmail}><IoReload className="w-[30px]"/></button>
                 <div className="px-4 py-2 border border-gray-400 bg-white rounded-md duration-75 hover:scale-[1.05]" onClick={() => {
                   navigator.clipboard.writeText(email);
                   toast.success("Copied to clipboard");
                 }}>{email || "Generating..."}</div>
 
-                <div className="px-3 py-2 bg-gray-700 border border-black text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]" onClick={() => {
+                <div className="hidden md:flex px-3 py-2 bg-gray-700 border border-black text-white flex items-center justify-center rounded-md duration-75 hover:scale-[1.05]" onClick={() => {
                   navigator.clipboard.writeText(email);
                   toast.success("Copied to clipboard");
                 }}><IoCopyOutline className="w-[30px]"/></div>
               </div>
           </div>
+
+          <div className="mt-[50px] flex justify-center items-center z-10 w-full">
+            <div className="flex items-center gap-2">
+              <Switch.Root className="SwitchRoot" id="airplane-mode">
+                <Switch.Thumb className="SwitchThumb" />
+              </Switch.Root>
+              <label>Hello</label>
+            </div>
+            
+          </div>
+
           <div className="relative w-full flex-grow flex flex-col items-center justify-center">
             <div className="w-full flex flex-col items-center">
 

@@ -89,3 +89,38 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 code {
   overflow: scroll;
 }
+
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}
+
+
+.SwitchRoot {
+	width: 40px;
+	height: 25px;
+	background-color: var(--black-a9);
+	border-radius: 5px;
+	position: relative;
+	box-shadow: 0 2px 10px var(--black-a7);
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  border: 2px solid rgb(55, 65, 81);
+  padding:2px;
+}
+
+.SwitchThumb {
+	display: block;
+	width: 17px;
+	height: 17px;
+	background-color: rgb(55, 65, 81);
+	border-radius: 4px;
+	box-shadow: 0 2px 2px var(--black-a7);
+	transition: transform 100ms;
+	transform: translateX(0px);
+	will-change: transform;
+	&[data-state="checked"] {
+		transform: translateX(15px);
+	}
+}
