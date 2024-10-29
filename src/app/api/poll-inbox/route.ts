@@ -102,7 +102,7 @@ async function fetchAllEmails(inbox: string) {
     try {
         const { data: emails, error } = await supabaseServerClient
             .from('incoming_emails')
-            .select('processed_email')
+            .select('id, processed_email')
             .eq('email', inbox)
             .order('created_at', { ascending: false })
             .limit(1);

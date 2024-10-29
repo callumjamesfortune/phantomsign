@@ -166,6 +166,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
           }
 
           const emailData = JSON.parse(data[0].processed_email);
+          const emailId = data[0].id;
 
           let displayContent;
           if (emailData.isVerificationEmail && emailData.verificationData) {
@@ -173,7 +174,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
           <div className="flex flex-col text-left p-4">
             <h1 className="w-full flex justify-between">
           <span className="font-bold">From: {emailData.company || emailData.sender}</span>
-          <a href={`/view-email?emailId=${data[0].id}`} className="underline text-gray-600">View full email</a>
+          <a href={`/view-email?emailId=${emailId}`} className="underline text-gray-600">View full email</a>
             </h1>
             <h2 className="w-full text-gray-600 mb-4">Subject: {emailData.subject}</h2>
             
@@ -198,7 +199,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
           <div className="flex flex-col text-left p-4">
             <h1 className="w-full flex justify-between">
           <span className="font-bold">From: {emailData.company || emailData.sender}</span>
-          <a href={`/view-email?emailId=${data[0].id}`} className="underline text-gray-600">View full email</a>
+          <a href={`/view-email?emailId=${emailId}`} className="underline text-gray-600">View full email</a>
             </h1>
             <h2 className="w-full text-gray-600 mb-4">Subject: {emailData.subject}</h2>
             <p dangerouslySetInnerHTML={{ __html: emailData.body }}></p>
