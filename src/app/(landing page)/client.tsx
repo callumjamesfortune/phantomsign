@@ -52,6 +52,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
   const [confettiOpacity, setConfettiOpacity] = useState<number>(1);
   const [isCountFinished, setIsCountFinished] = useState(false);
+  const [deleteAfter, setDeleteAfter] = useState<boolean>(false);
 
   useEffect(() => {
 
@@ -75,7 +76,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
       if (endTimeRef.current !== null) {
         const remainingTime = Math.max(0, endTimeRef.current - Date.now());
         setCountdown(Math.floor(remainingTime / 1000));
-        if (remainingTime <= 0) {
+        if (remainingTime <= 0 && deleteAfter) {
           if (currentEmailRef.current) deleteInbox(currentEmailRef.current);
           setLoadingEmail(false);
           window.location.reload();
@@ -461,10 +462,10 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
           <div className="mt-[50px] flex justify-center items-center z-10 w-full">
             <div className="flex items-center gap-2">
-              <Switch.Root className="SwitchRoot" id="airplane-mode">
+              <Switch.Root className="SwitchRoot" id="airplane-mode" onCheckedChange={(checked) => {setDeleteAfter(checked)}}>
                 <Switch.Thumb className="SwitchThumb" />
               </Switch.Root>
-              <label>Hello</label>
+              <label>Delete after {process.env.NEXT_PUBLIC_DELETE_AFTER_MINUTES} minutes</label>
             </div>
             
           </div>
@@ -480,10 +481,10 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
                     <div className="w-full p-4 bg-gray-200 rounded-t-md flex justify-between">
                       <span>Inbox <span className="text-gray-600">&lt;{email || ""}&gt;</span></span>
-                      <span className="tabular-nums">
+                      {deleteAfter && <span className="tabular-nums">
                           {Math.floor(countdown / 60)}:
                           {String(countdown % 60).padStart(2, "0")}
-                      </span>
+                      </span>}
                     </div>
 
 
