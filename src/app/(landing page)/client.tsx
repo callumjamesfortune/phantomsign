@@ -424,7 +424,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                   x: isCountFinished ? 0 : 80,
                   opacity: isCountFinished ? 1 : 0
                 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.05 }}
               >
                 {isCountFinished && "Inboxes created"}
               </motion.span>
@@ -480,8 +480,9 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                     <div className="flex flex-col items-center bg-white border border-gray-400 rounded-md">
 
                     <div className="w-full p-4 bg-gray-200 rounded-t-md flex justify-between">
-                      <span>Inbox <span className="text-gray-600">&lt;{email || ""}&gt;</span></span>
+                      <span>Inbox <span className="text-gray-600">&lt;{email.split("@")[0] || ""}&gt;</span></span>
                       {deleteAfter && <span className="tabular-nums">
+                          <span className="mr-1">Deleting in</span> 
                           {Math.floor(countdown / 60)}:
                           {String(countdown % 60).padStart(2, "0")}
                       </span>}
