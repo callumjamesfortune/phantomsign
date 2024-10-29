@@ -52,7 +52,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
   const [confettiOpacity, setConfettiOpacity] = useState<number>(1);
   const [isCountFinished, setIsCountFinished] = useState(false);
-  const [deleteAfter, setDeleteAfter] = useState<boolean>(false);
+  const [deleteAfter, setDeleteAfter] = useState<boolean>(true);
 
   useEffect(() => {
 
@@ -393,7 +393,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                 <span className="cursor-pointer" onClick={() => {document.getElementById("api")?.scrollIntoView()}}>API</span>
               </li>
               <Link
-                className="bg-gray-700 border border-black text-white px-4 py-2 rounded-md"
+                className="text-gray-600"
                 href="/dashboard/keys"
               >
                 Developers
@@ -462,7 +462,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
           <div className="mt-[50px] flex justify-center items-center z-10 w-full">
             <div className="flex items-center gap-2">
-              <Switch.Root className="SwitchRoot" id="airplane-mode" onCheckedChange={(checked) => {setDeleteAfter(checked)}}>
+              <Switch.Root defaultChecked={true} className="SwitchRoot" id="airplane-mode" onCheckedChange={(checked) => {setDeleteAfter(checked)}}>
                 <Switch.Thumb className="SwitchThumb" />
               </Switch.Root>
               <label>Delete after {process.env.NEXT_PUBLIC_DELETE_AFTER_MINUTES} minutes</label>
