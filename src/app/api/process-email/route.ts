@@ -77,6 +77,8 @@ export async function POST(request: NextRequest) {
             console.log('Verification data located.', { data });
             processedEmail.isVerificationEmail = true;
             processedEmail.verificationData = data.verificationData;
+
+            updateStatistics(data.verificationData);
           }
           if (data.company) {
             processedEmail.company = data.company;
@@ -180,9 +182,9 @@ async function updateStatistics(verificationData: any) {
       let newCodesFoundCount = data.codes_found_count;
       let newLinksFoundCount = data.links_found_count;
 
-      if (verificationData.code) {
+      if (verificationData.type === 'code') {
           newCodesFoundCount += 1;
-      } else if (verificationData.link) {
+      } else if (verificationData.type === 'link') {
           newLinksFoundCount += 1;
       }
 
