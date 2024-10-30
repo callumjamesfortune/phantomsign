@@ -76,7 +76,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
       if (endTimeRef.current !== null) {
         const remainingTime = Math.max(0, endTimeRef.current - Date.now());
         setCountdown(Math.floor(remainingTime / 1000));
-        if (remainingTime <= 0 && deleteAfter) {
+        if (remainingTime <= 0 && deleteAfter != false) {
           if (currentEmailRef.current) deleteInbox(currentEmailRef.current);
           setLoadingEmail(false);
           window.location.reload();
@@ -192,7 +192,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
             )}
 
             {emailData.verificationData.type === "link" && (
-          <a href={emailData.verificationData.value} target="_blank" className="bg-gray-200 px-4 py-1 rounded-md self-start flex gap-2 items-center">
+          <a href={emailData.verificationData.value} target="_blank" className="bg-green-600 text-white px-4 py-1 rounded-md self-start flex gap-2 items-center">
             Verify link <RxOpenInNewWindow />
           </a>
             )}
