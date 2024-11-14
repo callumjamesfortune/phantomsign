@@ -1,15 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { User } from "@supabase/supabase-js";
-import { CheckIcon } from "@heroicons/react/outline";
 import Image from "next/image";
 import logo from "../../../public/phantom.svg";
 import { Toaster, toast } from "react-hot-toast";
 import Link from "next/link";
-import NotificationModal from "../notificationModal";
 import Footer from "../components/footer";
-import Confetti from 'react-confetti';
 import { Metadata } from "next";
 import { IoReload, IoCopyOutline } from "react-icons/io5";
 import { RxOpenInNewWindow } from "react-icons/rx"
@@ -17,23 +13,14 @@ import { BiCopy } from "react-icons/bi"
 import CountUp from 'react-countup';
 import { motion } from 'framer-motion';
 import * as Switch from "@radix-ui/react-switch";
+import About from "./about";
+import Api from "./api";
+import { LandingClientProps } from "../types";
 
 export const metadata: Metadata = {
   title: "PhantomSign | Throwaway emails",
   description: "AI powered throwaway email addresses. Perfect for sign-up forms and quick verifications.",
 };
-
-interface EmailStats {
-  generated_inboxes_count: number | null;
-  codes_found_count: number | null;
-  links_found_count: number | null;
-}
-
-interface LandingClientProps {
-  user: User | null;
-  emailStats: EmailStats | null;
-  inboxFromCookie: string | null;
-}
 
 export default function LandingClient({ user, emailStats, inboxFromCookie }: LandingClientProps) {
   const COUNTDOWN_TIME = parseInt(process.env.NEXT_PUBLIC_DELETE_AFTER_MINUTES!, 10) * 60 || 300; // Default to 300 seconds (5 minutes)
@@ -41,35 +28,13 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
   const [email, setEmail] = useState<string>("");
   const [verificationData, setVerificationData] = useState<string | JSX.Element | null>("");
-  const [loadingInbox, setLoadingInbox] = useState<boolean>(false);
   const [loadingEmail, setLoadingEmail] = useState<boolean>(false);
   const [countdown, setCountdown] = useState<number>(COUNTDOWN_TIME);
-  const [isNotificationEnabled, setIsNotificationEnabled] = useState<boolean>(false);
-  const [showModal, setShowModal] = useState<boolean>(false);
   const currentEmailRef = useRef<string | null>(null);
   const pollingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const endTimeRef = useRef<number | null>(null);
-  const [showConfetti, setShowConfetti] = useState<boolean>(false);
-  const [confettiOpacity, setConfettiOpacity] = useState<number>(1);
   const [isCountFinished, setIsCountFinished] = useState(false);
   const [deleteAfter, setDeleteAfter] = useState<boolean>(true);
-
-  useEffect(() => {
-
-    window.scrollTo(0,0);
-
-    if (showConfetti) {
-      const timeout = setTimeout(() => {
-        setConfettiOpacity(0); // Start fading after 5 seconds
-        setTimeout(() => {
-          setShowConfetti(false); // Remove confetti after fade-out
-          setConfettiOpacity(1); // Reset opacity for future uses
-        }, 1000); // Duration of the fade-out effect
-      }, 5000); // Display confetti for 5 seconds before fading
-
-      return () => clearTimeout(timeout);
-    }
-  }, [showConfetti]);
 
   useEffect(() => {
     const updateCountdown = () => {
@@ -95,48 +60,6 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
       endTimeRef.current = null;
     };
   }, [loadingEmail]);
-
-  useEffect(() => {
-    const checkNotificationPermission = () => {
-      if ("Notification" in window && Notification.permission === "granted") {
-        setIsNotificationEnabled(true);
-      }
-    };
-
-    checkNotificationPermission();
-  }, []);
-
-  const requestNotificationPermission = async () => {
-    if ("Notification" in window && "serviceWorker" in navigator) {
-      const permission = await Notification.requestPermission();
-      if (permission === "granted") {
-        try {
-          const registration = await navigator.serviceWorker.register("/sw.js");
-
-          const sw = await navigator.serviceWorker.ready;
-          const subscription = await sw.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(
-              process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
-            ),
-          });
-
-          await fetch("/api/subscribe", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ subscription }),
-          });
-
-          setIsNotificationEnabled(true);
-          setShowModal(false);
-        } catch (error) {
-          console.error("Push subscription error:", error);
-        }
-      }
-    }
-  };
 
   const deleteInbox = async (inbox: string) => {
     try {
@@ -290,7 +213,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
         setEmail(inbox);
         currentEmailRef.current = inbox;
-        setLoadingInbox(false);
+        // setLoadingInbox(false);
         setLoadingEmail(true);
         setCountdown(expiry - (Date.now()/1000)); // Reset the countdown timer
         endTimeRef.current = (expiry * 1000); // Update the end time reference
@@ -308,7 +231,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
   }, [])
 
   const generateEmail = async () => {
-    setLoadingInbox(true);
+    // setLoadingInbox(true);
     setVerificationData("");
 
     try {
@@ -326,7 +249,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
       setEmail(emailAddress);
       currentEmailRef.current = emailAddress;
-      setLoadingInbox(false);
+      //setLoadingInbox(false);
       setLoadingEmail(true);
       setCountdown(COUNTDOWN_TIME); // Reset the countdown timer
       endTimeRef.current = Date.now() + (COUNTDOWN_TIME+1) * 1000; // Update the end time reference
@@ -334,36 +257,14 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
     } catch (error: any) {
       console.error("Error generating inbox:", error.message);
       setVerificationData(`Error: ${error.message}`);
-      setLoadingInbox(false);
+      // setLoadingInbox(false);
       setLoadingEmail(false);
       toast.error(`Error generating email: ${error.message}`);
     }
   };
 
-  function urlBase64ToUint8Array(base64String: string): Uint8Array {
-    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-    const base64 = (base64String + padding)
-      .replace(/-/g, "+")
-      .replace(/_/g, "/");
-
-    const rawData = window.atob(base64);
-    const outputArray = new Uint8Array(rawData.length);
-
-    for (let i = 0; i < rawData.length; ++i) {
-      outputArray[i] = rawData.charCodeAt(i);
-    }
-
-    return outputArray;
-  }
-
   return (
     <>
-      {showModal && (
-        <NotificationModal
-          onEnable={requestNotificationPermission}
-          onClose={() => setShowModal(false)}
-        />
-      )}
       <div className="relative flex flex-col min-h-[100svh]">
         <Toaster />
 
@@ -505,232 +406,18 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                     }
 
                     </div>
-
                   </div>
-
               </div>
-
-
-
-
             </div>
           </div>
         </div>
       </div>
-      <div
-        id="about"
-        className="bg-white flex flex-col w-full gap-8 px-[5%] py-8"
-      >
-        <div className="w-full flex items-center">
-          <div className="w-full md:w-1/2 items-center bg-white rounded-md p-4 text-right">
-            <h2 className="text-[1.5em] mb-2">Generate an email</h2>
+      
+      <About />
 
-            <p>
-              PhantomSign will create a temporary email address that is valid
-              for up to 5 minutes.
-            </p>
-          </div>
-          <h1 className="text-gray-200 px-8 text-[4em]">1</h1>
-        </div>
+      <Api />
 
-        <div className="w-full flex items-center justify-end">
-          <h1 className="text-gray-200 px-8 text-[4em]">2</h1>
-          <div className="w-full md:w-1/2 items-center bg-white rounded-md p-4">
-            <h2 className="text-[1.5em] mb-2">Use it for signups</h2>
-
-            <p>
-              The PhantomSign email can be used to signup to a service of your
-              choice that may require the email to be verified.
-            </p>
-          </div>
-        </div>
-
-        <div className="w-full flex items-center">
-          <div className="w-full md:w-1/2 items-center bg-white rounded-md p-4 text-right">
-            <h2 className="text-[1.5em] mb-2">Receive code or link</h2>
-
-            <p>
-              PhantomSign will try to extract the verification code or link from
-              the verification email and output it straight to your screen.
-            </p>
-
-          </div>
-          <h1 className="text-gray-200 px-8 text-[4em]">3</h1>
-        </div>
-      </div>
-
-      <div
-        id="api"
-        className="bg-gray-100 border-t border-gray-300 min-h-screen w-full flex flex-col gap-8 px-[5%] py-8"
-      >
-        <div className="relative flex flex-col items-center p-6 w-full text-center text-black">
-
-          <h1 className="text-[2.5em] md:text-[4em] font-bold mb-6">
-            PhantomSign API
-          </h1>
-          <p className="text-black text-[1.2em] mb-8">
-            PhantomSign offers a simple and effective API to extract
-            verification codes and links from temporary email addresses.
-          </p>
-
-          <p className="text-black mb-8">
-            All API requests require a valid API key, which should be provided as a header:
-          </p>
-
-          <p className="text-black mb-8">
-            All endpoints are rate-limited to 20 requests/minute per IP
-          </p>
-
-          <div className="w-full flex flex-col md:flex-row items-center gap-4 justify-center mb-16">
-
-            <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
-              <span className="text-gray-600">x-api-key</span>
-              <span>[API KEY]</span>
-            </code>
-
-            <Link
-                className="bg-black text-white px-4 py-2 rounded-md"
-                href="/dashboard/keys"
-            >
-              Generate an API key
-            </Link>
-
-          </div>
-
-          <div className="w-full flex gap-8 flex-col md:flex-row">
-
-            <div className="w-full md:w-1/3 flex flex-col gap-2">
-
-              <h1 className="text-[1.4em] font-bold mb-4">Create inbox</h1>
-
-              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
-                <span className="text-green-600">POST</span>
-                <span>/api/generate-inbox</span>
-              </code>
-
-              <h2 className="font-bold">Responses</h2>
-
-              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
-                <span className="text-green-600">200</span>
-                <span>&quot;inbox&quot;: [email]</span>
-              </code>
-
-              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
-                <span className="text-red-600">401</span>
-                <span>&quot;error&quot;: [API key error]</span>
-              </code>
-
-            </div>
-
-            <div className="w-full md:w-1/3 flex flex-col gap-2">
-
-              <h1 className="text-[1.4em] font-bold mb-4">Poll inbox</h1>
-
-              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
-                <span className="text-yellow-600">GET</span>
-                <span>/api/poll-inbox?inbox=[email]</span>
-              </code>
-
-              <h2 className="font-bold">Responses</h2>
-
-              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
-                <span className="text-green-600">200</span>
-                <span>&quot;message&quot;: &quot;Awaiting email&quot;</span>
-              </code>
-
-              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
-                <span className="text-green-600">200</span>
-                <div className="flex flex-col items-start">
-                  <span>&#123;</span>
-                  <span>&quot;code&quot;: [Verification code]</span>
-                  <span>&quot;company&quot;: [Company name]</span>
-                  <span>&#125;</span>
-                </div>
-              </code>
-
-              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
-                <span className="text-green-600">200</span>
-                <div className="flex flex-col items-start">
-                  <span>&#123;</span>
-                  <span>&quot;link&quot;: [Verification link]</span>
-                  <span>&quot;company&quot;: [Company name]</span>
-                  <span>&#125;</span>
-                </div>
-              </code>
-
-              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
-                <span className="text-green-600">200</span>
-                <span>&quot;message&quot;: &quot;Email lacks content&quot;</span>
-              </code>
-
-              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
-                <span className="text-red-600">400</span>
-                <span>&quot;error&quot;: &quot;No inbox provided&quot;</span>
-              </code>
-
-              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
-                <span className="text-red-600">401</span>
-                <span>&quot;error&quot;: [API key error]</span>
-              </code>
-
-              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
-                <span className="text-red-600">404</span>
-                <span>&quot;error&quot;: &quot;Inbox not found&quot;</span>
-              </code>
-              
-            </div>
-
-            <div className="w-full md:w-1/3 flex flex-col gap-2">
-
-              <h1 className="text-[1.4em] font-bold mb-4">Delete inbox</h1>
-
-              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
-                <span className="text-red-600">DELETE</span>
-                <span>/api/delete-inbox</span>
-              </code>
-
-              <h2 className="font-bold">Request</h2>
-
-              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
-                <span className="text-green-600">Body</span>
-                <span>&#123;&quot;inbox&quot;: [email]&#125;</span>
-              </code>
-
-              <h2 className="font-bold">Responses</h2>
-
-              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
-                <span className="text-green-600">200</span>
-                <span>&quot;message&quot;: &quot;Inbox deleted&quot;</span>
-              </code>
-
-              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
-                <span className="text-red-600">400</span>
-                <span>&quot;error&quot;: &quot;No inbox provided&quot;</span>
-              </code>
-
-              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
-                <span className="text-red-600">403</span>
-                <span>&quot;error&quot;: [API key error]</span>
-              </code>
-
-              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
-                <span className="text-red-600">404</span>
-                <span>&quot;error&quot;: &quot;Inbox not found&quot;</span>
-              </code>
-              
-            </div>
-
-          </div>
-
-          
-        </div>
-      </div>
       <Footer />
-      {showConfetti && <Confetti
-        numberOfPieces={500}
-        recycle={false}
-        style={{ width: "100vw", opacity: confettiOpacity, transition: "opacity 2s" }} // Add transition for fading effect
-      />}
     </>
   );
 }
