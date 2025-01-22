@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 
 export default function LandingClient({ user, emailStats, inboxFromCookie }: LandingClientProps) {
   const COUNTDOWN_TIME = parseInt(process.env.NEXT_PUBLIC_DELETE_AFTER_MINUTES!, 10) * 60 || 300; // Default to 300 seconds (5 minutes)
-  const POLLING_INTERVAL = 5000; // 5 seconds
+  const POLLING_INTERVAL = 5000; // 2.5 seconds
 
   const [email, setEmail] = useState<string>("");
   const [verificationData, setVerificationData] = useState<string | JSX.Element | null>("");
@@ -63,17 +63,37 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
   const deleteInbox = async (inbox: string) => {
     try {
-      await fetch("/api/delete-inbox", {
+      await fetch(`/api/delete-inbox?$inbox=${inbox}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ inbox }),
+        }
       });
     } catch (error: any) {
       console.error(`Error deleting inbox for ${inbox}:`, error.message);
     }
   };
+
+  const ErrorTab = ({message}: {message: string}) => {
+
+    const clearCookiesAndReload = () => {
+
+      document.cookie = "phantomsign-inbox=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      window.location.reload();
+
+    }
+
+
+    return (
+      <div className="w-full h-full flex flex-col gap-4 items-center justify-center py-8">
+        <span className="px-4 py-2 rounded-md bg-red-600 text-center font-bold text-white">
+          {message}
+        </span>
+
+        <button className="px-4 py-2 rounded-md text-gray-400 underline" onClick={clearCookiesAndReload}>Generate new inbox</button>
+      </div>
+    )
+  }
 
   useEffect(() => {
     const poll = async () => {
@@ -152,11 +172,12 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
         } else if (response.status === 404) {
           console.error("Inbox not found");
           let displayContent = (
-        <div className="flex mt-8 gap-4 items-center">
-          <span className="px-4 py-2 rounded-md bg-red-600 text-center font-bold text-white">
-            Something went wrong
-          </span>
-        </div>
+            <ErrorTab message="Inbox not found" />
+            // <div className="w-full h-full flex gap-4 items-center justify-center py-8">
+            //   <span className="px-4 py-2 rounded-md bg-red-600 text-center font-bold text-white">
+            //     Inbox not found
+            //   </span>
+            // </div>
           );
           setVerificationData(displayContent);
           setLoadingEmail(false);
@@ -164,11 +185,12 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
         }
       } catch (error: any) {
         let displayContent = (
-          <div className="flex gap-4 items-center">
-        <span className="px-4 py-2 rounded-md bg-red-600 text-center font-bold text-white">
-          Something went wrong
-        </span>
-          </div>
+          <ErrorTab message="Something went wrong" />
+          // <div className="w-full h-full flex gap-4 items-center justify-center py-8">
+          //   <span className="px-4 py-2 rounded-md bg-red-600 text-center font-bold text-white">
+          //     Something went wrong
+          //   </span>
+          // </div>
         );
         setVerificationData(displayContent);
       }
@@ -219,9 +241,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
         endTimeRef.current = (expiry * 1000); // Update the end time reference
 
       } else {
-
         generateEmail();
-
       }
 
     } else {
@@ -269,7 +289,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
         <Toaster />
 
         <div
-  className="w-screen h-[350px] bg-white flex flex-col items-center justify-center px-[5%] py-2"
+  className="w-screen h-[350px] bg-white flex flex-col items-center justify-center px-[5%] py-2 "
   style={{
     backgroundImage: `radial-gradient(lightgray 10%, transparent 11%)`,
     backgroundSize: "15px 15px",
@@ -301,7 +321,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
               </Link>
             </ul>
           </div>
-          <h1 className="text-green-600 text-[2.5em] md:text-[4em] font-bold relative">
+          <h1 className="text-green-600 text-[2.5em] md:text-[4em] font-[800] relative">
             Phantom<span className="text-gray-600">Sign</span>
           </h1>
 
@@ -327,7 +347,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
                 }}
                 transition={{ duration: 0.05 }}
               >
-                {isCountFinished && "Inboxes created"}
+                {isCountFinished && "Inboxes created!"}
               </motion.span>
             </span>
           </div>

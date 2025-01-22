@@ -7,9 +7,9 @@ export default function Footer() {
 
         <div className='w-full rounded-t-md p-4 py-8 flex items-center bg-white border-2 border-gray-200 justify-between'>
             <div className="w-1/2 text-center flex flex-col gap-2">
-                <span>&copy; 2024 PhantomSign.com</span>
+                <span>&copy; 2025 PhantomSign.com</span>
                 <span>enquiries@phantomsign.com</span>
-                <span>Built by <a href="https://github.com/callum-fortune" className="underline">Callum Fortune</a></span>
+                <span>Built by <a href="https://github.com/callumjamesfortune" className="underline">Callum Fortune</a></span>
             </div>
             <div className="w-1/2 text-center flex flex-col gap-2">
                 <Link href="/login" className="underline">Login</Link>

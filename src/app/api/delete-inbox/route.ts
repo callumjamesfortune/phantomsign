@@ -4,9 +4,11 @@ import { validateApiKey } from '../../../lib/apiKeyValidator';
 
 export async function DELETE(req: NextRequest) {
   try {
-    const { inbox } = await req.json();
+    const { searchParams } = new URL(req.url);
+    const inbox = searchParams.get('inbox');
+
     if (!inbox) {
-      return NextResponse.json({ error: 'No inbox provided' }, { status: 400 });
+        return NextResponse.json({ error: 'No inbox provided' }, { status: 400 });
     }
 
     // Validate the API key

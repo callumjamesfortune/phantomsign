@@ -129,14 +129,7 @@ export default function Api() {
 
               <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
                 <span className="text-red-600">DELETE</span>
-                <span>/api/delete-inbox</span>
-              </code>
-
-              <h2 className="font-bold">Request</h2>
-
-              <code className="bg-white flex gap-4 rounded-md border border-gray-400 px-4 py-2">
-                <span className="text-green-600">Body</span>
-                <span>&#123;&quot;inbox&quot;: [email]&#125;</span>
+                <span>/api/delete-inbox?inbox=[email]</span>
               </code>
 
               <h2 className="font-bold">Responses</h2>
