@@ -29,6 +29,11 @@ interface CompleteEmailData {
   company: string;
 }
 
+const bannedDomains = [
+  "sudowrite.com",
+  "ses.notifs.matrix.org"
+]
+
 export async function POST(request: NextRequest) {
   console.log("PROCESSING EMAIL");
 
@@ -47,6 +52,14 @@ export async function POST(request: NextRequest) {
     verificationData: null,
     company: '',
   };
+
+  bannedDomains.forEach(domain => {
+
+    if(domain.includes(sender)){
+      return NextResponse.json({ error: 'Email is from a banned domain' }, { status: 400 });
+    }
+
+  });
 
   try {
     const parsedEmail = await simpleParser(decodedContent);
