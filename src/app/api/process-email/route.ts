@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
 
   bannedDomains.forEach(domain => {
 
-    if(domain.includes(sender)){
+    if (sender.endsWith(`${domain}`)) {
       return NextResponse.json({ error: 'Email is from a banned domain' }, { status: 400 });
     }
 
