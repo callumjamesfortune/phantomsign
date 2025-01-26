@@ -63,7 +63,7 @@ export default function LandingClient({ user, emailStats, inboxFromCookie }: Lan
 
   const deleteInbox = async (inbox: string) => {
     try {
-      await fetch(`/api/delete-inbox?$inbox=${inbox}`, {
+      await fetch(`/api/delete-inbox?inbox=${inbox}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
